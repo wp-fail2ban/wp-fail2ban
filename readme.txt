@@ -4,8 +4,8 @@ Author URI: https://charles.lecklider.org/
 Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Tags: fail2ban, security, syslog, login
 Requires at least: 3.4.0
-Tested up to: 3.6
-Stable tag: 2.1.0
+Tested up to: 3.9
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,6 +19,8 @@ Write all login attempts to syslog for integration with fail2ban.
 
 	Oct 17 20:59:54 foobar wordpress(www.example.com)[1234]: Authentication failure for admin from 192.168.0.1
 	Oct 17 21:00:00 foobar wordpress(www.example.com)[2345]: Accepted password for admin from 192.168.0.1
+
+*WP fail2ban* can also log all pingbacks.
 
 *WPf2b* comes with a `fail2ban` filter, `wordpress.conf`.
 
@@ -41,6 +43,22 @@ Requires PHP 5.3 or later.
 You may want to set WP_FAIL2BAN_BLOCK_USER_ENUMERATION, WP_FAIL2BAN_PROXIES and/or WP_FAIL2BAN_BLOCKED_USERS; see the FAQ for details.
 
 == Frequently Asked Questions ==
+
+= WP_FAIL2BAN_AUTH_LOG - what's it all about? =
+
+By default, *WPf2b* uses LOG_AUTH for logging authentication success or failure. However, some systems use LOG_AUTHPRIV instead, but there's no good run-time way to tell. If your system uses LOG_AUTHPRIV you should add the following to `wp-config.php`:
+
+	define('WP_FAIL2BAN_AUTH_LOG',LOG_AUTHPRIV);
+
+= WP_FAIL2BAN_LOG_PINGBACKS - what's it all about? =
+
+Based on a suggestion from *maghe*, *WPf2b* can now log pingbacks. To enable this feature, add the following to `wp-config.php`:
+
+	define('WP_FAIL2BAN_LOG_PINGBACKS',true);
+	
+By default, *WPf2b* uses LOG_USER for logging pingbacks. If you'd rather it used a different facility you can change it by adding something like the following to `wp-config.php`:
+
+	define('WP_FAIL2BAN_PINGBACK_LOG',LOG_LOCAL3);
 
 = WP_FAIL2BAN_BLOCK_USER_ENUMERATION - what's it all about? =
 
@@ -88,6 +106,11 @@ to the `[wordpress]` section in `jail.local`.
 
 == Changelog ==
 
+= 2.2.0 =
+*	Custom authentication log is now called WP_FAIL2BAN_AUTH_LOG
+*	Add logging for pingbacks
+*	Custom pingback log is called WP_FAIL2BAN_PINGBACK_LOG
+
 = 2.1.1 =
 *	Minor bugfix.
 
@@ -115,6 +138,12 @@ to the `[wordpress]` section in `jail.local`.
 *	Initial release.
 
 == Upgrade Notice ==
+
+= 2.2.0 =
+BREAKING CHANGE:  WP_FAIL2BAN_LOG has been renamed to WP_FAIL2BAN_AUTH_LOG
+
+Pingbacks are getting a lot of attention recently, so *WPf2b* can now log them.
+The `wordpress.conf` filter has been updated; you will need to update your `fail2ban` configuration.
 
 = 2.1.0 =
 The `wordpress.conf` filter has been updated; you will need to update your `fail2ban` configuration.

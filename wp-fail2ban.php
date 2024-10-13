@@ -3,13 +3,13 @@
 Plugin Name: WP fail2ban
 Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Description: Write all login attempts to syslog for integration with fail2ban.
-Version: 2.1.1
+Version: 2.2.0
 Author: Charles Lecklider
 Author URI: https://charles.lecklider.org/
 License: GPL2
 */
 
-/*  Copyright 2012-13  Charles Lecklider  (email : wordpress@charles.lecklider.org)
+/*  Copyright 2012-14  Charles Lecklider  (email : wordpress@charles.lecklider.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -27,11 +27,11 @@ License: GPL2
 
 namespace org\lecklider\charles\wp_fail2ban;
 
-function openlog()
+function openlog($log = LOG_AUTH, $custom_log = 'WP_FAIL2BAN_AUTH_LOG')
 {
 	\openlog('wordpress('.$_SERVER['HTTP_HOST'].')',
 			 LOG_NDELAY|LOG_PID,
-			 defined('WP_FAIL2BAN_LOG') ? WP_FAIL2BAN_LOG : LOG_AUTH);
+			 defined($custom_log) ? constant($custom_log) : $log);
 }
 
 function bail()
@@ -67,7 +67,7 @@ function remote_addr()
 	return $_SERVER['REMOTE_ADDR'];
 }
 
-if (defined('WP_FAIL2BAN_BLOCKED_USERS')) {
+if (defined('WP_FAIL2BAN_BLOCKED_USERS') && true === WP_FAIL2BAN_BLOCKED_USERS) {
 	add_action( 'authenticate',
 				function($user, $username, $password)
 				{
@@ -80,7 +80,7 @@ if (defined('WP_FAIL2BAN_BLOCKED_USERS')) {
 					return $user;
 				},1,3);
 }
-if (defined('WP_FAIL2BAN_BLOCK_USER_ENUMERATION')) {
+if (defined('WP_FAIL2BAN_BLOCK_USER_ENUMERATION') && true === WP_FAIL2BAN_BLOCK_USER_ENUMERATION) {
 	add_filter( 'redirect_canonical',
 				function($redirect_url, $requested_url)
 				{
@@ -105,4 +105,14 @@ add_action( 'wp_login_failed',
 				openlog();
 				\syslog(LOG_NOTICE,"Authentication failure for $username from ".remote_addr());
 			});
+if (defined('WP_FAIL2BAN_LOG_PINGBACKS') && true === WP_FAIL2BAN_LOG_PINGBACKS) {
+	add_action( 'xmlrpc_call',
+				function($call)
+				{
+					if ('pingback.ping' == $call) {
+						openlog(LOG_USER,'WP_FAIL2BAN_PINGBACK_LOG');
+						\syslog(LOG_INFO,"Pingback requested from ".remote_addr());
+					}
+				});
+}
 
