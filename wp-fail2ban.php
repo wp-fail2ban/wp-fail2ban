@@ -1,31 +1,34 @@
 <?php
-/*
-Plugin Name: WP fail2ban
-Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
-Description: Write all login attempts to syslog for integration with fail2ban.
-Version: 2.3.0
-Author: Charles Lecklider
-Author URI: https://charles.lecklider.org/
-License: GPL2
-*/
+/**
+ * Plugin Name: WP fail2ban
+ * Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
+ * Description: Write all login attempts to syslog for integration with fail2ban.
+ * Version: 2.3.1
+ * Author: Charles Lecklider
+ * Author URI: https://charles.lecklider.org/
+ * License: GPL2
+ * SPDX-License-Identifier: GPL-2.0
+ */
 
-/*  Copyright 2012-14  Charles Lecklider  (email : wordpress@charles.lecklider.org)
+/**
+ *  Copyright 2012-15  Charles Lecklider  (email : wordpress@charles.lecklider.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License, version 2, as
+ *  published by the Free Software Foundation.
+ *
+ *	This program is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with this program; if not, write to the Free Software
+ *	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as
-    published by the Free Software Foundation.
+namespace org\lecklider\charles\wordpress\wp_fail2ban;
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-namespace org\lecklider\charles\wp_fail2ban;
 
 function openlog($log = LOG_AUTH, $custom_log = 'WP_FAIL2BAN_AUTH_LOG')
 {
@@ -68,7 +71,7 @@ function remote_addr()
 }
 
 if (defined('WP_FAIL2BAN_BLOCKED_USERS')) {
-	add_action( 'authenticate',
+	add_filter( 'authenticate',
 				function($user, $username, $password)
 				{
 					if (!empty($username) && preg_match('/'.WP_FAIL2BAN_BLOCKED_USERS.'/i', $username)) {

@@ -35,6 +35,7 @@ Requires PHP 5.3 or later.
 
 	`[wordpress]`
 	`enabled = true`
+	`port = http,https`
 	`filter = wordpress`
 	`logpath = /var/log/auth.log`
 
@@ -95,14 +96,6 @@ For example, putting the following in `wp-config.php`:
 will block any attempt to log in as `admin` before most of the core WordPress code is run. Unless you go crazy with it, a regex is usually cheaper than a call to the database so this should help keep things running during an attack.
 
 *WPf2b* doesn't do anything to the regex other than make it case-insensitive.
-
-= Why is fail2ban complaining on my flavour of Linux? =
-
-Depending on your `fail2ban` configuration, you may need to add a line like:
-
-	port = http,https
-
-to the `[wordpress]` section in `jail.local`.
 
 == Changelog ==
 
