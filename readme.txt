@@ -88,6 +88,9 @@ to the `[wordpress]` section in `jail.local`.
 
 == Changelog ==
 
+= 2.1.1 =
+*	Minor bugfix.
+
 = 2.1.0 =
 *	Add support for blocking user enumeration; see `WP_FAIL2BAN_BLOCK_USER_ENUMERATION`
 *	Add support for CIDR notation in `WP_FAIL2BAN_PROXIES`.

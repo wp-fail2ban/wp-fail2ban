@@ -3,7 +3,7 @@
 Plugin Name: WP fail2ban
 Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Description: Write all login attempts to syslog for integration with fail2ban.
-Version: 2.1.0
+Version: 2.1.1
 Author: Charles Lecklider
 Author URI: https://charles.lecklider.org/
 License: GPL2
@@ -31,7 +31,7 @@ function openlog()
 {
 	\openlog('wordpress('.$_SERVER['HTTP_HOST'].')',
 			 LOG_NDELAY|LOG_PID,
-			 defined(WP_FAIL2BAN_LOG) ? WP_FAIL2BAN_LOG : LOG_AUTH);
+			 defined('WP_FAIL2BAN_LOG') ? WP_FAIL2BAN_LOG : LOG_AUTH);
 }
 
 function bail()
