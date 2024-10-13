@@ -5,7 +5,7 @@ Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Tags: fail2ban, login, security, syslog
 Requires at least: 3.4.0
 Tested up to: 4.6.0
-Stable tag: 3.5.0
+Stable tag: 3.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -193,6 +193,9 @@ By default, *WPf2b* uses LOG_AUTH for logging authentication success or failure.
 
 == Changelog ==
 
+= 3.5.1 =
+* Bugfix for `WP_FAIL2BAN_BLOCK_USER_ENUMERATION`.
+
 = 3.5.0 =
 * Add `WP_FAIL2BAN_OPENLOG_OPTIONS`.
 * Add `WP_FAIL2BAN_LOG_COMMENTS` and `WP_FAIL2BAN_COMMENT_LOG`.
@@ -200,7 +203,6 @@ By default, *WPf2b* uses LOG_AUTH for logging authentication success or failure.
 * Add `WP_FAIL2BAN_LOG_SPAM`.
 * Add `WP_FAIL2BAN_TRUNCATE_HOST`.
 * `WP_FAIL2BAN_BLOCKED_USERS` now supports an array of users with PHP 7.
-*
 
 = 3.0.3 =
 * Fix regex in `wordpress-hard.conf`
@@ -258,6 +260,9 @@ By default, *WPf2b* uses LOG_AUTH for logging authentication success or failure.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 3.5.1 =
+Bugfix: disable `WP_FAIL2BAN_BLOCK_USER_ENUMERATION` in admin area....
 
 = 3.5.0 =
 You will need up update your `fail2ban` filters.
