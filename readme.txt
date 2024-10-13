@@ -5,7 +5,7 @@ Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Tags: fail2ban, security, syslog, login
 Requires at least: 3.4.0
 Tested up to: 3.5
-Stable tag: 1.2
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,7 +40,20 @@ Requires PHP 5.3 or later.
 
 There are no options to configure.
 
+== Frequently Asked Questions ==
+
+= Why is fail2ban complaining on my flavour of Linux? =
+
+Depending on your `fail2ban` configuration, you may need to add a line like:
+
+	`port = http,https`
+
+to the `[wordpress]` section in `jail.local`.
+
 == Changelog ==
+
+= 1.2.1 =
+Update FAQ.
 
 = 1.2 =
 Fix harmless warning.
