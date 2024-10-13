@@ -4,8 +4,8 @@ Author URI: https://charles.lecklider.org/
 Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Tags: fail2ban, security, syslog, login
 Requires at least: 3.4.0
-Tested up to: 3.4.2
-Stable tag: 1.1
+Tested up to: 3.5
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,6 +41,9 @@ Requires PHP 5.3 or later.
 There are no options to configure.
 
 == Changelog ==
+
+= 1.2 =
+Fix harmless warning.
 
 = 1.1 =
 Minor cosmetic updates.
