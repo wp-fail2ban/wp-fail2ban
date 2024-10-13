@@ -4,8 +4,8 @@ Author URI: https://charles.lecklider.org/
 Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Tags: fail2ban, security, syslog, login
 Requires at least: 3.4.0
-Tested up to: 3.9
-Stable tag: 2.2.1
+Tested up to: 4.0
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,9 @@ to the `[wordpress]` section in `jail.local`.
 
 == Changelog ==
 
+= 2.3.0 =
+*	Bugfix in *experimental* `WP_FAIL2BAN_PROXIES` code (thanks to KyleCartmell).
+
 = 2.2.1 =
 *	Fix stupid mistake with WP_FAIL2BAN_BLOCKED_USERS.
 
@@ -141,6 +144,9 @@ to the `[wordpress]` section in `jail.local`.
 *	Initial release.
 
 == Upgrade Notice ==
+
+= 2.3.0 =
+Fix for WP_FAIL2BAN_PROXIES; if you're not using it you can safely skip this release.
 
 = 2.2.1 =
 Bugfix.
