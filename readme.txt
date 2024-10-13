@@ -1,11 +1,11 @@
 === WP fail2ban ===
 Contributors: invisnet
 Author URI: https://charles.lecklider.org/
-Plugin URI: https://charles.lecklider.org/wordpress/fail2ban/
+Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Tags: fail2ban, security, syslog, login
 Requires at least: 3.4.0
 Tested up to: 3.4.2
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,10 +31,9 @@ Requires PHP 5.3 or later.
 1. Copy `wordpress.conf` to your `fail2ban/filters.d` directory
 1. Edit `jail.local` to include something like:
 
-	`[wordpress]`  
-	`enabled = true`  
-	`filter = wordpress`  
-	`action = pf`  
+	`[wordpress]`
+	`enabled = true`
+	`filter = wordpress`
 	`logpath = /var/log/auth.log`
 
 1. Reload or restart `fail2ban`
@@ -43,5 +42,9 @@ There are no options to configure.
 
 == Changelog ==
 
+= 1.1 =
+Minor cosmetic updates.
+
 = 1.0 =
 Initial release.
+
