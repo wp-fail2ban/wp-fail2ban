@@ -4,8 +4,8 @@ Author URI: https://charles.lecklider.org/
 Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Tags: fail2ban, login, security, syslog
 Requires at least: 3.4.0
-Tested up to: 4.4.2
-Stable tag: 3.0.1
+Tested up to: 4.5.3
+Stable tag: 3.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,12 +60,14 @@ enabled = true
 filter = wordpress-hard
 logpath = /var/log/auth.log
 maxretry = 1
+port = http,https
 
 [wordpress-soft]
 enabled = true
 filter = wordpress-soft
 logpath = /var/log/auth.log
 maxretry = 3
+port = http,https
 ~~~
 5. Reload or restart `fail2ban`
 
@@ -151,15 +153,10 @@ By default, *WPf2b* uses LOG_AUTH for logging authentication success or failure.
 
 	define('WP_FAIL2BAN_AUTH_LOG',LOG_AUTHPRIV);
 
-= Why is fail2ban complaining on my flavour of Linux? =
-
-Depending on your `fail2ban` configuration, you may need to add a line like:
-
-	port = http,https
-
-to the `[wordpress]` section in `jail.local`.
-
 == Changelog ==
+
+= 3.0.2 =
+* Prevent double logging in WP 4.5.x for XML-RPC authentication failure
 
 = 3.0.1 =
 * Fix regex in `wordpress-hard.conf`

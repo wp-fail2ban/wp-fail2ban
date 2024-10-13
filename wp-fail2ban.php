@@ -4,7 +4,7 @@
  * Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
  * Description: Write all login attempts to syslog for integration with fail2ban.
  * Text Domain: wp-fail2ban
- * Version: 3.0.1
+ * Version: 3.0.2
  * Author: Charles Lecklider
  * Author URI: https://charles.lecklider.org/
  * License: GPL2
@@ -12,7 +12,7 @@
  */
 
 /**
- *  Copyright 2012-15  Charles Lecklider  (email : wordpress@charles.lecklider.org)
+ *  Copyright 2012-16  Charles Lecklider  (email : wordpress@charles.lecklider.org)
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License, version 2, as
@@ -142,19 +142,28 @@ if (!defined('WP_FAIL2BAN')) {
 					$msg = (wp_cache_get($username, 'userlogins'))
 							? "Authentication failure for $username from "
 							: "Authentication attempt for unknown user $username from ";
+					$msg .= remote_addr();
+					if (class_exists('wp_xmlrpc_server',false)) {
+						$msg .= ' via XML-RPC';
+					}
 					openlog();
-					\syslog(LOG_NOTICE,$msg.remote_addr());
+					\syslog(LOG_NOTICE,$msg);
 				});
 	/*
 	 * @since 3.0.0
 	 */
-	add_action( 'xmlrpc_login_error',
-				function($error, $user)
-				{
-					openlog();
-					\syslog(LOG_NOTICE,'XML-RPC authentication failure from '.remote_addr());
-					bail();
-				},10,2);
+	$v = explode('.',$wp_version);
+	if (4 == $v[0] && 5 > $v[1]) {
+		// prevent double logging
+		// will be removed for WP4.7
+		add_action( 'xmlrpc_login_error',
+					function($error, $user)
+					{
+						openlog();
+						\syslog(LOG_NOTICE,'XML-RPC authentication failure from '.remote_addr());
+						bail();
+					},10,2);
+	}
 	/*
 	 * @since 3.0.0
 	 */
