@@ -3,7 +3,7 @@
 Plugin Name: WP fail2ban
 Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Description: Write all login attempts to syslog for integration with fail2ban.
-Version: 2.2.0
+Version: 2.2.1
 Author: Charles Lecklider
 Author URI: https://charles.lecklider.org/
 License: GPL2
@@ -67,7 +67,7 @@ function remote_addr()
 	return $_SERVER['REMOTE_ADDR'];
 }
 
-if (defined('WP_FAIL2BAN_BLOCKED_USERS') && true === WP_FAIL2BAN_BLOCKED_USERS) {
+if (defined('WP_FAIL2BAN_BLOCKED_USERS')) {
 	add_action( 'authenticate',
 				function($user, $username, $password)
 				{

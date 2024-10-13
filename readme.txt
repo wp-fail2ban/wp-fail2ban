@@ -5,7 +5,7 @@ Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Tags: fail2ban, security, syslog, login
 Requires at least: 3.4.0
 Tested up to: 3.9
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,7 +55,7 @@ By default, *WPf2b* uses LOG_AUTH for logging authentication success or failure.
 Based on a suggestion from *maghe*, *WPf2b* can now log pingbacks. To enable this feature, add the following to `wp-config.php`:
 
 	define('WP_FAIL2BAN_LOG_PINGBACKS',true);
-	
+
 By default, *WPf2b* uses LOG_USER for logging pingbacks. If you'd rather it used a different facility you can change it by adding something like the following to `wp-config.php`:
 
 	define('WP_FAIL2BAN_PINGBACK_LOG',LOG_LOCAL3);
@@ -106,6 +106,9 @@ to the `[wordpress]` section in `jail.local`.
 
 == Changelog ==
 
+= 2.2.1 =
+*	Fix stupid mistake with WP_FAIL2BAN_BLOCKED_USERS.
+
 = 2.2.0 =
 *	Custom authentication log is now called WP_FAIL2BAN_AUTH_LOG
 *	Add logging for pingbacks
@@ -138,6 +141,9 @@ to the `[wordpress]` section in `jail.local`.
 *	Initial release.
 
 == Upgrade Notice ==
+
+= 2.2.1 =
+Bugfix.
 
 = 2.2.0 =
 BREAKING CHANGE:  WP_FAIL2BAN_LOG has been renamed to WP_FAIL2BAN_AUTH_LOG
