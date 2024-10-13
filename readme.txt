@@ -4,8 +4,8 @@ Author URI: https://charles.lecklider.org/
 Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Tags: fail2ban, security, syslog, login
 Requires at least: 3.4.0
-Tested up to: 3.5
-Stable tag: 1.2.1
+Tested up to: 3.6
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,29 +38,65 @@ Requires PHP 5.3 or later.
 
 1. Reload or restart `fail2ban`
 
-There are no options to configure.
+You may want to set WP_FAIL2BAN_PROXIES and/or WP_FAIL2BAN_BLOCKED_USERS; see the FAQ for details.
 
 == Frequently Asked Questions ==
+
+= WP_FAIL2BAN_PROXIES - what's it all about? =
+
+The idea here is to list the IP addresses of the trusted proxies that will appear as the remote IP for the request. When defined:
+
+*	If the remote address appears in the `WP_FAIL2BAN_PROXIES` list, *WPf2b* will log the IP address from the `X-Forwarded-For` header
+*	If the remote address does not appear in the `WP_FAIL2BAN_PROXIES` list, *WPf2b* will return a 403 error
+*	If there's no X-Forwarded-For header, *WPf2b* will behave as if `WP_FAIL2BAN_PROXIES` isn't defined
+
+To set `WP_FAIL2BAN_PROXIES`, add something like the following to `wp-config.php`:
+
+	define('WP_FAIL2BAN_PROXIES','192.168.0.42,192.168.0.43');
+
+*WPf2b* doesn't do anything clever with the list so don't add whitespace or CIDR notations.
+
+= WP_FAIL2BAN_BLOCKED_USERS - what's it all about? =
+
+The bots that try to brute-force WordPress logins aren't that clever (no doubt that will change), but they may only make one request per IP every few hours in an attempt to avoid things like `fail2ban`. With large botnets this can still create significant load.
+
+Based on a suggestion from *jmadea*, *WPf2b* now allows you to specify a regex that will shortcut the login process if the requested username matches.
+
+For example, putting the following in `wp-config.php`:
+
+	define('WP_FAIL2BAN_BLOCKED_USERS','^admin$');
+
+will block any attempt to log in as `admin` before most of the core WordPress code is run. Unless you go crazy with it, a regex is usually cheaper than a call to the database so this should help keep things running during an attack.
+
+*WPf2b* doesn't do anything to the regex other than make it case-insensitive.
 
 = Why is fail2ban complaining on my flavour of Linux? =
 
 Depending on your `fail2ban` configuration, you may need to add a line like:
 
-	`port = http,https`
+	port = http,https
 
 to the `[wordpress]` section in `jail.local`.
 
 == Changelog ==
 
+= 2.0.0 =
+*	Add *experimental* support for X-Forwarded-For header; see `WP_FAIL2BAN_PROXIES`
+*	Add *experimental* support for regex-based login blocking; see `WP_FAIL2BAN_BLOCKED_USERS`
+
 = 1.2.1 =
-Update FAQ.
+*	Update FAQ.
 
 = 1.2 =
-Fix harmless warning.
+*	Fix harmless warning.
 
 = 1.1 =
-Minor cosmetic updates.
+*	Minor cosmetic updates.
 
 = 1.0 =
-Initial release.
+*	Initial release.
 
+== Upgrade Notice ==
+
+= 2.0.0 =
+This is an experimental release. If your current version is working and you're not interested in the new features, skip this version - wait for 2.1.0. For those that do want to test this release, note that `wordpress.conf` has changed - you'll need to copy it to `fail2ban/filters.d` again.
