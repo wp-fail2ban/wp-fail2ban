@@ -5,7 +5,7 @@ Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Tags: fail2ban, login, security, syslog
 Requires at least: 3.4.0
 Tested up to: 4.5.3
-Stable tag: 3.0.2
+Stable tag: 3.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -155,6 +155,9 @@ By default, *WPf2b* uses LOG_AUTH for logging authentication success or failure.
 
 == Changelog ==
 
+= 3.0.3 =
+* Fix regex in `wordpress-hard.conf`
+
 = 3.0.2 =
 * Prevent double logging in WP 4.5.x for XML-RPC authentication failure
 
@@ -208,6 +211,9 @@ By default, *WPf2b* uses LOG_AUTH for logging authentication success or failure.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 3.0.3 =
+You will need up update your `fail2ban` filters.
 
 = 3.0.0 =
 BREAKING CHANGE: The `fail2ban` filters have been split into two files. You will need up update your `fail2ban` configuration.
