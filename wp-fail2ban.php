@@ -3,7 +3,7 @@
 Plugin Name: WP fail2ban
 Plugin URI: https://charles.lecklider.org/wordpress/wp-fail2ban/
 Description: Write all login attempts to syslog for integration with fail2ban.
-Version: 2.0.0
+Version: 2.1.0
 Author: Charles Lecklider
 Author URI: https://charles.lecklider.org/
 License: GPL2
@@ -44,21 +44,27 @@ function bail()
 
 function remote_addr()
 {
-	$ip = $_SERVER['REMOTE_ADDR'];
-
 	if (defined('WP_FAIL2BAN_PROXIES')) {
-		if (array_key_exists($_SERVER,'HTTP_X_FORWARDED_FOR')) {
-			if (in_array($ip, explode(',',WP_FAIL2BAN_PROXIES) )) {
-				$ip = (false===($len = strpos($_SERVER['HTTP_X_FORWARDED_FOR'],',')))
-						? $_SERVER['HTTP_X_FORWARDED_FOR']
-						: substr($_SERVER['HTTP_X_FORWARDED_FOR'],0,$len);
-			} else {
-				bail();
+		if (array_key_exists('HTTP_X_FORWARDED_FOR',$_SERVER)) {
+			$ip = ip2long($_SERVER['REMOTE_ADDR']);
+			foreach(explode(',',WP_FAIL2BAN_PROXIES) as $proxy) {
+				if (2 == count($cidr = explode('/',$proxy))) {
+					$net = ip2long($cidr[0]);
+					$mask = ~ ( (2 ^ (32 - $cidr[1])) - 1 );
+				} else {
+					$net = ip2long($proxy);
+					$mask = -1;
+				}
+				if ($net == $ip & $mask) {
+					return (false===($len = strpos($_SERVER['HTTP_X_FORWARDED_FOR'],',')))
+							? $_SERVER['HTTP_X_FORWARDED_FOR']
+							: substr($_SERVER['HTTP_X_FORWARDED_FOR'],0,$len);
+				}
 			}
 		}
 	}
 
-	return $ip;
+	return $_SERVER['REMOTE_ADDR'];
 }
 
 if (defined('WP_FAIL2BAN_BLOCKED_USERS')) {
@@ -73,6 +79,19 @@ if (defined('WP_FAIL2BAN_BLOCKED_USERS')) {
 
 					return $user;
 				},1,3);
+}
+if (defined('WP_FAIL2BAN_BLOCK_USER_ENUMERATION')) {
+	add_filter( 'redirect_canonical',
+				function($redirect_url, $requested_url)
+				{
+					if (intval(@$_GET['author'])) {
+						openlog();
+						\syslog(LOG_NOTICE,'Blocked user enumeration attempt from '.remote_addr());
+						bail();
+					}
+
+					return $redirect_url;
+				},10,2);
 }
 add_action( 'wp_login',
 			function($user_login, $user)
