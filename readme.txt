@@ -5,7 +5,7 @@ Plugin URI: https://wp-fail2ban.com/?utm_source=wordpress.org&utm_medium=readme&
 Tags: fail2ban, login, security, syslog, brute force, protection, classicpress
 Requires at least: 4.2
 Tested up to: 5.9
-Stable tag: 4.4.0.3
+Stable tag: 4.4.0.4
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -82,6 +82,10 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 1. Edit `wp-config.php` to suit your needs - see [Configuration](https://docs.wp-fail2ban.com/en/4.4/configuration.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0).
 
 == Changelog ==
+
+= 4.4.0.4 =
+* Fix warning with array of blocked users (h/t @Znuff).
+* Fix reports. [Premium only]
 
 = 4.4.0.3 =
 * Fix type error (h/t @brianshim).
@@ -316,6 +320,12 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 4.4.0.4 =
+This is a bugfix release. You do not need to update your filters from 4.4.0.
+
+= 4.4.0.3 =
+This is a bugfix release. You do not need to update your filters from 4.4.0.
 
 = 4.4.0.2 =
 This is a feature release. To take advantage of the new features, including the Blocklist Add-on, you will need up update your `fail2ban` filters; existing filters will continue to work as before.

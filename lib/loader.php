@@ -28,7 +28,7 @@ class Config
      * @since  4.3.2.1  Moved from inline array.
      */
     const CONFIG = [
-        'WP_FAIL2BAN_AUTH_LOG' => [
+        'WP_FAIL2BAN_AUTH_LOG' => [ //
             'validate'  => 'intval',
             'unset'     => true,
             'default'   => WPF2B_FACILITY_LOG_AUTH,
@@ -36,21 +36,21 @@ class Config
                 'logging',
                 'authentication',
                 'facility']],
-        'WP_FAIL2BAN_LOG_COMMENTS' => [
+        'WP_FAIL2BAN_LOG_COMMENTS' => [ //
             'validate'  => 'boolval',
             'unset'     => true,
             'field'     => [
                 'logging',
                 'comments',
                 'enabled']],
-        'WP_FAIL2BAN_LOG_COMMENTS_EXTRA' => [
+        'WP_FAIL2BAN_LOG_COMMENTS_EXTRA' => [ //
             'validate'  => 'intval',
             'unset'     => true,
             'field'     => [
                 'logging',
                 'comments',
                 'extra']],
-        'WP_FAIL2BAN_COMMENT_LOG' => [
+        'WP_FAIL2BAN_COMMENT_LOG' => [ //
             'validate'  => 'intval',
             'unset'     => false,
             'default'   => LOG_USER,
@@ -58,7 +58,7 @@ class Config
                 'logging',
                 'comments',
                 'facility']],
-        'WP_FAIL2BAN_COMMENT_EXTRA_LOG' => [
+        'WP_FAIL2BAN_COMMENT_EXTRA_LOG' => [ //
             'validate'  => 'intval',
             'unset'     => false,
             'default'   => WPF2B_FACILITY_LOG_AUTH,
@@ -66,14 +66,14 @@ class Config
                 'logging',
                 'comments-extra',
                 'facility']],
-        'WP_FAIL2BAN_LOG_PASSWORD_REQUEST' => [
+        'WP_FAIL2BAN_LOG_PASSWORD_REQUEST' => [ //
             'validate'  => 'boolval',
             'unset'     => true,
             'field'     => [
                 'logging',
                 'password-request',
                 'enabled']],
-        'WP_FAIL2BAN_PASSWORD_REQUEST_LOG' => [
+        'WP_FAIL2BAN_PASSWORD_REQUEST_LOG' => [ //
             'validate'  => 'intval',
             'unset'     => false,
             'default'   => LOG_USER,
@@ -81,14 +81,14 @@ class Config
                 'logging',
                 'password-request',
                 'facility']],
-        'WP_FAIL2BAN_LOG_PINGBACKS' => [
+        'WP_FAIL2BAN_LOG_PINGBACKS' => [ //
             'validate'  => 'boolval',
             'unset'     => true,
             'field'     => [
                 'logging',
                 'pingback',
                 'enabled']],
-        'WP_FAIL2BAN_PINGBACK_LOG' => [
+        'WP_FAIL2BAN_PINGBACK_LOG' => [ //
             'validate'  => 'intval',
             'unset'     => false,
             'default'   => LOG_USER,
@@ -96,14 +96,14 @@ class Config
                 'logging',
                 'pingback',
                 'facility']],
-        'WP_FAIL2BAN_LOG_SPAM' => [
+        'WP_FAIL2BAN_LOG_SPAM' => [ //
             'validate'  => 'boolval',
             'unset'     => true,
             'field'     => [
                 'logging',
                 'spam',
                 'enabled']],
-        'WP_FAIL2BAN_SPAM_LOG' => [
+        'WP_FAIL2BAN_SPAM_LOG' => [ //
             'validate'  => 'intval',
             'unset'     => false,
             'default'   => WPF2B_FACILITY_LOG_AUTH,
@@ -136,7 +136,7 @@ class Config
                 'syslog',
                 'workaround',
                 'http_host']],
-        'WP_FAIL2BAN_TRUNCATE_HOST' => [
+        'WP_FAIL2BAN_TRUNCATE_HOST' => [ //
             'validate'  => 'intval',
             'unset'     => true,
             'field'     => [
@@ -154,7 +154,7 @@ class Config
                 'block',
                 'user_enumeration']],
         'WP_FAIL2BAN_BLOCKED_USERS' => [
-            'validate'  => 'strval',
+            'validate'  => __CLASS__.'::str_array_val',
             'unset'     => true,
             'field'     => [
                 'block',
@@ -296,7 +296,7 @@ class Config
                 'plugins',
                 'xmlrpc',
                 'facility']],
-        'WP_FAIL2BAN_PLUGIN_OTHER_LOG' => [
+        'WP_FAIL2BAN_PLUGIN_OTHER_LOG' => [ //
             'validate'  => 'intval',
             'unset'     => false,
             'default'   => LOG_USER,
@@ -439,6 +439,42 @@ class Config
     public function validateIPs($value)
     {
         return (false === $value) ? [] : $value;
+    }
+
+    /**
+     * Validate string or array.
+     *
+     * @since  4.4.0.4
+     *
+     * @param  array|string|false   $value
+     *
+     * @return array|string
+     */
+    public static function str_array_val($value)
+    {
+        return self::$instance->validateStringOrArray($value);
+    }
+
+    /**
+     * Validate string or array.
+     *
+     * @since  4.4.0.4
+     *
+     * @param  array|string|false   $value
+     *
+     * @return array|string
+     */
+    public function validateStringOrArray($value)
+    {
+        if (false === $value) {
+            return [];
+
+        } elseif (is_array($value) || is_string($value)) {
+            return $value;
+
+        } else {
+            throw new \InvalidArgumentException();
+        }
     }
 
     /**
@@ -600,7 +636,9 @@ class Config
                 self::$cache[$define] = (isset($def['default']))
                     ? $def['validate']($def['default'])
                     : call_user_func($def['validate'], false);
-                define($define, self::$cache[$define]);
+                if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
+                    define($define, self::$cache[$define]); // @codeCoverageIgnore
+                }
             }
         }
 
