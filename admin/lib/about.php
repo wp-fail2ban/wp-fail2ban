@@ -246,7 +246,7 @@ function getCloudflareInfo(): string
             $l = array_slice($short_ips, 0, (int)ceil(count($short_ips)/2));
             $r = array_slice($short_ips, count($l));
             $fmt = <<<HTML
-<p>${lu}<p>
+<p>{$lu}<p>
 <table id="cloudflare-ips">
   <tr>
     <td>%s</td>

@@ -445,12 +445,17 @@ class SiteHealth
      *
      * For now, just try systemctl.
      *
+     * @since  5.2.2    Check for exec
      * @since  5.1.0
      *
      * @return array    The test result.
      */
     public function get_test_fail2ban_running()
     {
+        if (!function_exists('exec')) {
+            return false;
+        }
+
         $results = [
             'label'     => __('fail2ban is running', 'wp-fail2ban'),
             'status'    => 'good',

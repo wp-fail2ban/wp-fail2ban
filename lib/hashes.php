@@ -5,7 +5,7 @@
  * @package wp-fail2ban
  * @since   5.0.0
  *
- * Auto-generated: 2023-09-20T14:30:11+01:00
+ * Auto-generated: 2024-01-27T19:14:13+00:00
  */
 namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 
@@ -14,17 +14,17 @@ defined('ABSPATH') or exit; // @codeCoverageIgnore
 // phpcs:disable Squiz.WhiteSpace.SuperfluousWhitespace.EndLine
 // @codeCoverageIgnoreStart
 define('WP_FAIL2BAN_HASHES', array (
-  '182bdc01a8078c27833f6fc021740b9844785b3d' => 
+  '3572d8451fc20535288530157906929ac1a7af06' => 
   array (
-    'hard' => '5.2.0',
+    'extra' => '5.2.0',
   ),
   '5601dfbf66564f260075825a36be11c3efd8a429' => 
   array (
     'soft' => '5.2.0',
   ),
-  '3572d8451fc20535288530157906929ac1a7af06' => 
+  '182bdc01a8078c27833f6fc021740b9844785b3d' => 
   array (
-    'extra' => '5.2.0',
+    'hard' => '5.2.0',
   ),
   'a4a5a796cd298ff861137d4c57e7e572fd2f3624' => 
   array (
@@ -373,6 +373,18 @@ define('WP_FAIL2BAN_HASHES', array (
   '9d57a340eeb65c76a1d0fe69b525c51280576c45' => 
   array (
     'soft' => '4.4.0.7',
+  ),
+  '61b500c8a1b727b521b9d216d9ba0d2c457755db' => 
+  array (
+    'hard' => '5.2.1',
+  ),
+  '38d77f259ddb96f8d4aa3109334a099ffd257417' => 
+  array (
+    'soft' => '5.2.1',
+  ),
+  '364ec64afbd5de6f0f39282b60583acea04c3da0' => 
+  array (
+    'extra' => '5.2.1',
   ),
   'bf80156878456369d9b28b081a9e5311bda730cd' => 
   array (

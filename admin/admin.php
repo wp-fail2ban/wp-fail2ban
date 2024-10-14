@@ -122,7 +122,7 @@ function readme(string $ver, string $file): void
                     $li = preg_replace('|\((h/t .*?)\)|', '<span class="ht">$1</span>', $li);
                     $li = preg_replace('/^(Fix|Deprecate )/', '<span style="color:red">$1</span>', $li);
                     $li = preg_replace('/^(Update )/', '<span style="color:purple">$1</span>', $li);
-                    $li = preg_replace('/^(Site Health: )/', '<span style="color:blue">$1</span>', $li);
+                    $li = preg_replace('/^(Site Health|WAF: )/', '<span style="color:blue">$1</span>', $li);
                     $li = str_replace('[Premium only]', '<span style="color: grey; font-style: italic; font-weight: bold">Premium only</span>', $li);
                     if (!$inSubList && strlen($matches[1])) {
                         echo '<ul>';
