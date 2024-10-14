@@ -52,7 +52,7 @@ class TabPlugins extends TabLoggingBase
         add_settings_field('plugins-log-password',  __('Password',               'wp-fail2ban'), [$this, 'password'],                   self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
         add_settings_field('plugins-log-rest',      __('REST',                   'wp-fail2ban'), [$this, 'rest'],                       self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
         add_settings_field('plugins-log-spam',      __('Spam',                   'wp-fail2ban'), [$this, 'spam'],                       self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
-        add_settings_field('plugins-log-xmlrpc',    __('XML-RPC',                'wp-fail2ban'), [$this, 'xmlrpc'],                     self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
+        add_settings_field('plugins-log-xmlrpc',    __('XML‑RPC',                'wp-fail2ban'), [$this, 'xmlrpc'],                     self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
         add_settings_field('plugins-log-other',     __('Other',                  'wp-fail2ban'), [$this, 'other'],                      self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
         // phpcs:enable
 

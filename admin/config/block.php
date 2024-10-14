@@ -35,7 +35,7 @@ class TabBlock extends TabBase
      *
      * @since 4.3.2.1
      */
-    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com/en/'.WP_FAIL2BAN_VER_SHORT.'/defines/block.html';
+    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com/en/'.WP_FAIL2BAN_VER2.'/defines/block.html';
 
     /**
      * {@inheritDoc}
@@ -91,7 +91,11 @@ class TabBlock extends TabBase
             $this->help_entry('user-enumeration', [
                 __('Automated brute-force attacks ("bots") typically start by getting a list of valid usernames ("user enumeration").', 'wp-fail2ban'),
                 __('Blocking user enumeration can force attackers to guess usernames, making these attacks much less likely to succeed.', 'wp-fail2ban'),
-                __('<strong>N.B.</strong> Some Themes "leak" usernames (for example, via Author profile pages); see <strong>Block username logins</strong> for an alternative.', 'wp-fail2ban'),
+                sprintf(
+                    /* translators: %s: 'Block username logins' */
+                    __('<b>N.B.</b> Some Themes "leak" usernames (for example, via Author profile pages); see %s for an alternative.', 'wp-fail2ban'),
+                    sprintf('<b>%s</b>', $this->__['username-login'])
+                ),
                 $this->see_also(['WP_FAIL2BAN_BLOCK_USER_ENUMERATION'])
             ]),
             $this->help_entry('blacklist', [
@@ -101,7 +105,7 @@ class TabBlock extends TabBase
             ]),
             $this->help_entry('username-login', [
                 __('It is sometimes not possible to block user enumeration (for example, if your theme provides Author profiles). An alternative is to require users to login with their email address.', 'wp-fail2ban'),
-                __('<strong>N.B.</strong> This also applies to Blacklisted Usernames; you must list <em>email addresses</em>, not usernames.', 'wp-fail2ban'),
+                __('<b>N.B.</b> This also applies to Blacklisted Usernames; you must list <em>email addresses</em>, not usernames.', 'wp-fail2ban'),
                 $this->see_also(['WP_FAIL2BAN_BLOCK_USERNAME_LOGIN'])
             ])
         ]);

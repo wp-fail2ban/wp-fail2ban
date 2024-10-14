@@ -95,7 +95,7 @@ function readme(string $ver, string $file): void
 {
     if (file_exists($file)) {
         $rm = file($file, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
-        $inChangelog = $inList = false;
+        $inChangelog = $inList = $inSubList = false;
         foreach ($rm as $line) {
             if ('== Changelog ==' == $line) {
                 $inChangelog = true;
@@ -104,7 +104,7 @@ function readme(string $ver, string $file): void
             }
             if ($inChangelog) {
                 if (preg_match('/^= (.*) =$/', $line, $matches) &&
-                    substr($matches[1], 0, strlen($ver)) == $ver)
+                    ('Develop' == $matches[1] || substr($matches[1], 0, strlen($ver)) == $ver))
                 {
                     if ($inList) {
                         echo "</ul></dd>\n";
@@ -113,13 +113,20 @@ function readme(string $ver, string $file): void
                     echo "<dd><ul>\n";
                     $inList = true;
 
-                } elseif (preg_match('/^\* (.*)$/', $line, $matches)) {
-                    $li = $matches[1];
+                } elseif (preg_match('/^(\s*)\* (.*)$/', $line, $matches)) {
+                    $li = $matches[2];
                     $li = preg_replace('/\[(.*?)\]\((.*?)\)(\.)?/', '<a href="$2" target="_blank" rel="noopener">$1 <span class="dashicons dashicons-external"></span></a>', $li);
                     $li = preg_replace('/`(.*?)`/', '<tt>$1</tt>', $li);
                     $li = preg_replace('/\*\*(.*?)\*\*/', '<b>$1</b>', $li);
                     $li = preg_replace('/\*(.*?)\*/', '<i>$1</i>', $li);
                     $li = preg_replace('|\((h/t .*?)\)|', '<span class="ht">$1</span>', $li);
+                    if (!$inSubList && strlen($matches[1])) {
+                        echo '<ul>';
+                        $inSubList = true;
+                    } elseif ($inSubList && !strlen($matches[1])) {
+                        echo '</ul>';
+                        $inSubList = false;
+                    }
                     echo "<li>{$li}</li>\n";
 
                 } else {
@@ -213,22 +220,24 @@ function _settings(string $page = null, string $capability = 'manage_options'): 
  */
 function admin_menu(): void
 {
-    if (!is_multisite() && !wf_fs()->can_use_premium_code()) {
-        $hook = add_menu_page(
-            'WP fail2ban',
-            'WP fail2ban',
-            'manage_options',
-            'wp-fail2ban-menu',
-            __NAMESPACE__.'\welcome',
-            plugin_dir_url(WP_FAIL2BAN_FILE).'assets/menu.svg'
-        );
-        add_action("load-$hook", function () {
-            wp_enqueue_style('wpf2b-admin', plugins_url('css/admin.css', __FILE__));
-        });
-        add_action('admin_menu', __NAMESPACE__.'\admin_menu_fix', PHP_INT_MAX);
-        do_action('wp_fail2ban_menu');
+    if (!is_multisite()) {
+        if ((defined('WP_FAIL2BAN_FREE_ONLY') && false !== WP_FAIL2BAN_FREE_ONLY) || !wf_fs()->can_use_premium_code()) {
+            $hook = add_menu_page(
+                'WP fail2ban',
+                'WP fail2ban',
+                'manage_options',
+                'wp-fail2ban-menu',
+                __NAMESPACE__.'\welcome',
+                plugin_dir_url(WP_FAIL2BAN_FILE).'assets/menu.svg'
+            );
+            add_action("load-$hook", function () {
+                wp_enqueue_style('wpf2b-admin', plugins_url('css/admin.css', __FILE__));
+            });
+            add_action('admin_menu', __NAMESPACE__.'\admin_menu_fix', PHP_INT_MAX);
+            do_action('wp_fail2ban_menu');
 
-        _security_settings();
+            _security_settings();
+        }
     }
 }
 add_action('admin_menu', __NAMESPACE__.'\admin_menu');
@@ -243,7 +252,7 @@ add_action('admin_menu', __NAMESPACE__.'\admin_menu');
  */
 function network_admin_menu(): void
 {
-    if (!wf_fs()->can_use_premium_code()) {
+    if ((defined('WP_FAIL2BAN_FREE_ONLY') && false !== WP_FAIL2BAN_FREE_ONLY) || !wf_fs()->can_use_premium_code()) {
         _network_admin_menu();
     }
 }
@@ -394,8 +403,9 @@ function admin_head_dashboard(): void
         $message = __('Shows the last 5 messages sent to <code>syslog</code> - provides simple status at a glance and can be helpful for debugging.', 'wp-fail2ban');
         if (!wf_fs()->can_use_premium_code()) {
             $message .= sprintf(
-                __('The <a href="%s">Premium version</a> provides more advanced views.', 'wp-fail2ban'),
-                network_admin_url('admin.php?page=wp-fail2ban-menu-pricing')
+                /* translators: %s: <a href> internals */
+                __('The <a %s>Premium version</a> provides more advanced views.', 'wp-fail2ban'),
+                sprintf('href="%s"', network_admin_url('admin.php?page=wp-fail2ban-menu-pricing'))
             );
         }
 

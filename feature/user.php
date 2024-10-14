@@ -33,7 +33,7 @@ defined('ABSPATH') or exit;
  * @return mixed|null
  *
  * @wp-f2b-hard Blocked authentication attempt for .*
- * @wp-f2b-hard Blocked username authentication attempt for .*
+ * @wp-f2b-soft Blocked username authentication attempt for .*
  */
 function block_users($user, string $username, string $password) // : ?mixed
 {

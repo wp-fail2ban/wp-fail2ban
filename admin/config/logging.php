@@ -35,7 +35,7 @@ class TabLogging extends TabLoggingBase
      *
      * @since 4.3.2.1
      */
-    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com/en/'.WP_FAIL2BAN_VER_SHORT.'/defines/logging.html';
+    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com/en/'.WP_FAIL2BAN_VER2.'/defines/logging.html';
 
     /**
      * {@inheritDoc}
@@ -46,6 +46,7 @@ class TabLogging extends TabLoggingBase
         $this->__['what-where']         = __('What & Where',        'wp-fail2ban');
         $this->__['authentication']     = __('Authentication',      'wp-fail2ban');
         $this->__['comments']           = __('Comments',            'wp-fail2ban');
+        $this->__['comment-attempts']   = __('Comment Attempts',    'wp-fail2ban');
         $this->__['spam']               = __('Spam',                'wp-fail2ban');
         $this->__['password-request']   = __('Password Requests',   'wp-fail2ban');
         $this->__['pingbacks']          = __('Pingbacks',           'wp-fail2ban');
@@ -70,6 +71,7 @@ class TabLogging extends TabLoggingBase
         add_settings_section('wp-fail2ban-logging',         $this->__['what-where'],        [$this, 'sectionWhatWhere'],    self::SETTINGS_PAGE);
         add_settings_field('logging-log-authentication',    $this->__['authentication'],    [$this, 'authentication'],      self::SETTINGS_PAGE,    'wp-fail2ban-logging');
         add_settings_field('logging-log-comments',          $this->__['comments'],          [$this, 'comments'],            self::SETTINGS_PAGE,    'wp-fail2ban-logging');
+        add_settings_field('logging-log-comment-attempts',  $this->__['comment-attempts'],  [$this, 'commentAttempts'],     self::SETTINGS_PAGE,    'wp-fail2ban-logging');
         add_settings_field('logging-log-spam',              $this->__['spam'],              [$this, 'spam'],                self::SETTINGS_PAGE,    'wp-fail2ban-logging');
         add_settings_field('logging-log-password-request',  $this->__['password-request'],  [$this, 'passwordRequest'],     self::SETTINGS_PAGE,    'wp-fail2ban-logging');
         add_settings_field('logging-log-pingbacks',         $this->__['pingbacks'],         [$this, 'pingbacks'],           self::SETTINGS_PAGE,    'wp-fail2ban-logging');
@@ -98,8 +100,8 @@ class TabLogging extends TabLoggingBase
             $this->help_entry('comments', [
                 $this->see_also([
                     'WP_FAIL2BAN_LOG_COMMENTS',
-                    'WP_FAIL2BAN_LOG_COMMENTS_EXTRA',
-                    'WP_FAIL2BAN_COMMENT_EXTRA_LOG'
+                    'WP_FAIL2BAN_LOG_COMMENT_ATTEMPTS',
+                    'WP_FAIL2BAN_COMMENT_ATTEMPT_LOG'
                 ], false)
             ]),
             $this->help_entry('spam', [
@@ -166,95 +168,24 @@ class TabLogging extends TabLoggingBase
      */
     public function comments(): void
     {
-        add_filter('wp_fail2ban_log_WP_FAIL2BAN_LOG_COMMENTS', [$this, 'commentsExtra'], 10, 3);
-
         $this->log(
             'WP_FAIL2BAN_LOG_COMMENTS',
-            'WP_FAIL2BAN_COMMENT_LOG',
-            ['comments-extra', 'logging-comments-extra-facility']
+            'WP_FAIL2BAN_COMMENT_LOG'
         );
     }
 
     /**
-     * Comments extra helper - checked.
+     * Attempted Comments.
      *
-     * @since  4.4.0    Add type hint, return type
-     * @since  4.0.0
+     * @since  5.0.0
      *
-     * @param  int      $value  Value to check
-     *
-     * @return string
+     * @return void
      */
-    protected function commentExtraChecked(int $value): string
+    public function commentAttempts(): void
     {
-        return checked($value == ($value & Config::get('WP_FAIL2BAN_LOG_COMMENTS_EXTRA')), true, false);
-    }
-
-    /**
-     * Comments extra helper - disabled.
-     *
-     * @since  4.4.0    Add return type
-     * @since  4.0.0
-     *
-     * @return string
-     */
-    protected function commentExtraDisabled(): string
-    {
-        return 'disabled="disabled';
-    }
-
-    /**
-     * Comments extra.
-     *
-     * @since  4.4.0    Add type hints, return type
-     * @since  4.0.0
-     *
-     * @param  string   $html           HTML prefixed to output
-     * @param  string   $define_name    Not used
-     * @param  string   $define_log     Not used
-     *
-     * @return string
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function commentsExtra(string $html, string $define_name, string $define_log): string
-    {
-        $fmt = <<< HTML
-<table>
-  <tr>
-    <th>%s</th>
-    <td>
-      <fieldset id="comments-extra" disabled="disabled">
-        <label><input type="checkbox" %s> %s</label><br>
-        <label><input type="checkbox" %s> %s</label><br>
-        <label><input type="checkbox" %s> %s</label><br>
-        <label><input type="checkbox" %s> %s</label><br>
-        <label><input type="checkbox" %s> %s</label>
-      </fieldset>
-    </td>
-  </tr>
-  <tr>
-    <th>%s</th>
-    <td>%s</td>
-  </tr>
-</table>
-HTML;
-
-        return $html.sprintf(
-            $fmt,
-            __('Also log:', 'wp-fail2ban'),
-            $this->commentExtraChecked(WPF2B_EVENT_COMMENT_NOT_FOUND),
-            __('Post not found', 'wp-fail2ban'),
-            $this->commentExtraChecked(WPF2B_EVENT_COMMENT_CLOSED),
-            __('Comments closed', 'wp-fail2ban'),
-            $this->commentExtraChecked(WPF2B_EVENT_COMMENT_TRASH),
-            __('Trash post', 'wp-fail2ban'),
-            $this->commentExtraChecked(WPF2B_EVENT_COMMENT_DRAFT),
-            __('Draft post', 'wp-fail2ban'),
-            $this->commentExtraChecked(WPF2B_EVENT_COMMENT_PASSWORD),
-            __('Password-protected post', 'wp-fail2ban'),
-            __('Use facility:', 'wp-fail2ban'),
-            $this->getLogFacilities('WP_FAIL2BAN_COMMENT_EXTRA_LOG', false)
+        $this->log(
+            'WP_FAIL2BAN_LOG_COMMENT_ATTEMPTS',
+            'WP_FAIL2BAN_COMMENT_ATTEMPT_LOG'
         );
     }
 

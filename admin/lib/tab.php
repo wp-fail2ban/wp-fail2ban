@@ -26,7 +26,7 @@ abstract class TabBase
      * @since  4.3.2.1
      * @var    string   Help link: Reference
      */
-    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com';
+    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com/en/'.WP_FAIL2BAN_VER2;
     /**
      * @since  4.3.2.1
      * @var    string   Help link: Support
@@ -276,7 +276,7 @@ abstract class TabBase
      */
     public function gettext(string $translation, string $text, string $domain): string
     {
-        return str_replace('___WPF2BVER___', WP_FAIL2BAN_VER_SHORT, $translation);
+        return str_replace('___WPF2BVER___', WP_FAIL2BAN_VER2, $translation);
     }
 
     /**
@@ -433,6 +433,7 @@ abstract class TabBase
     /**
      * Link to documentation
      *
+     * @since  5.0.0    Simplify
      * @since  4.4.0    Add type hint, return type
      * @since  4.3.0    Protected
      * @since  4.2.0
@@ -443,13 +444,15 @@ abstract class TabBase
      */
     protected function doc_link(string $define): string
     {
-        static $wp_f2b_ver;
+        $link = <<< HTML
+<a href="%s/defines/constants/%s.html"
+   style="text-decoration: none;"
+   target="_blank"
+   title="%s">%s<span class="dashicons dashicons-external"
+                      style="vertical-align: text-bottom"></span></a>
+HTML;
 
-        if (empty($wp_f2b_ver)) {
-            $wp_f2b_ver = substr(WP_FAIL2BAN_VER, 0, strrpos(WP_FAIL2BAN_VER, '.'));
-        }
-
-        return sprintf('<a href="https://docs.wp-fail2ban.com/en/%s/defines/constants/%s.html" style="text-decoration: none;" target="_blank" title="%s">%s<span class="dashicons dashicons-external" style="vertical-align: text-bottom"></span></a>', $wp_f2b_ver, $define, __('Documentation', 'wp-fail2ban'), $define);
+        return sprintf($link, self::HELP_LINK_REFERENCE, $define, __('Documentation', 'wp-fail2ban'), $define);
     }
 
     /**
@@ -465,13 +468,17 @@ abstract class TabBase
      */
     protected function see_also(array $defines, $para = true): string
     {
-        $html = sprintf(
-            '<em>%s</em>&nbsp;&nbsp;%s',
-            __('See also:', 'wp-fail2ban'),
-            implode('&nbsp;/&nbsp;', array_map(function ($i) {
-                return $this->doc_link($i);
-            }, $defines))
-        );
+        $html = sprintf('<em>%s</em>', __('See also:', 'wp-fail2ban'));
+        if (1 == count($defines)) {
+            $html .= '&nbsp;'.$this->doc_link($defines[0]);
+        } else {
+            $html .= sprintf(
+                '<br>&nbsp;&mdash;&nbsp;%s',
+                implode('<br>&nbsp;&mdash;&nbsp;', array_map(function ($i) {
+                    return $this->doc_link($i);
+                }, $defines))
+            );
+        }
         if ($para) {
             $html = '<p>'.$html.'</p>';
         }

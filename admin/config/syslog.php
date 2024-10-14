@@ -35,7 +35,7 @@ class TabSyslog extends TabBase
      *
      * @since 4.3.2.1
      */
-    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com/en/'.WP_FAIL2BAN_VER_SHORT.'/defines/syslog.html';
+    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com/en/'.WP_FAIL2BAN_VER2.'/defines/syslog.html';
 
     /**
      * {@inheritDoc}
@@ -119,15 +119,23 @@ HTML;
                 __('Some syslog implementations assume that the first part of the message (the tag) won&lsquo;t exceed some (small) number of characters. This option tells <em>WPf2b</em> to use <tt>wp</tt> instead of <tt>wordpress</tt>, thereby saving 7 characters; this may be enough to make syslog happy.', 'wp-fail2ban')
             ]),
             $this->help_entry('workarounds-specify-host', [
-                __('"Short Tag" may not be enough, so this allows you to specify the hostname. See the <a href="https://docs.wp-fail2ban.com/en/___WPF2BVER___/defines/constants/WP_FAIL2BAN_HTTP_HOST.html" target="_blank">documentation</a> for more details.', 'wp-fail2ban')
+                sprintf(
+                    /* translators: %s: <a href> internals */
+                    __('"Short Tag" may not be enough, so this allows you to specify the hostname. See the <a %s>documentation</a> for more details.', 'wp-fail2ban'),
+                    'href="https://docs.wp-fail2ban.com/en/___WPF2BVER___/defines/constants/WP_FAIL2BAN_HTTP_HOST.html" target="_blank">'
+                )
             ]),
             $this->help_entry('workarounds-truncate_host', [
                 __('When all else fails, this allows you to truncate the hostname after a number of characters.', 'wp-fail2ban'),
-                __('<strong>N.B.</strong> This may be removed in a future release; it was broken prior to 4.3 and there were no bug reports, so it seems likely absolutely no-one is using it.', 'wp-fail2ban'),
+                __('<b>N.B.</b> This may be removed in a future release; it was broken prior to 4.3 and there were no bug reports, so it seems likely absolutely no-one is using it.', 'wp-fail2ban'),
                 $this->see_also(['WP_FAIL2BAN_TRUNCATE_HOST'])
             ])
         ], [
-            __('<tt>syslog</tt> was only <a href="https://tools.ietf.org/html/rfc5424" target="_blank">standardised</a> in 2009, so unfortunately there are still implementations that need some help.', 'wp-fail2ban'),
+            sprintf(
+                /* translators: %s: <a href> internals */
+                __('<tt>syslog</tt> was only <a %s>standardised</a> in 2009, so unfortunately there are still implementations that need some help.', 'wp-fail2ban'),
+                'href="https://tools.ietf.org/html/rfc5424" target="_blank">'
+            ),
             __('By far the most common limitation is the length of the initial information fields; these options provide ways to shorten the data in those fields.', 'wp-fail2ban'),
         ]);
 

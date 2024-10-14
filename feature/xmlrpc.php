@@ -11,6 +11,7 @@ namespace    org\lecklider\charles\wordpress\wp_fail2ban\feature;
 use          org\lecklider\charles\wordpress\wp_fail2ban\Syslog;
 
 use function org\lecklider\charles\wordpress\wp_fail2ban\bail;
+use function org\lecklider\charles\wordpress\wp_fail2ban\core\remote_addr;
 
 defined('ABSPATH') or exit;
 
@@ -68,7 +69,7 @@ function xmlrpc_login_error(\IXR_Error $error, \WP_Error $user): \IXR_Error
 function xmlrpc_pingback_error(\IXR_Error $ixr_error): \IXR_Error
 {
     if (48 !== $ixr_error->code) {
-        Syslog::single(LOG_NOTICE, 'Pingback error '.$ixr_error->code.' generated');
+        Syslog::single(LOG_NOTICE, 'Pingback error '.$ixr_error->code.' generated', 'WP_FAIL2BAN_PINGBACK_LOG');
 
         do_action(__FUNCTION__, $ixr_error);
     }

@@ -47,7 +47,7 @@ if ( function_exists( __NAMESPACE__ . '\\wf_fs' ) ) {
                 'has_paid_plans'                 => true,
                 'trial'                          => array(
                 'days'               => 14,
-                'is_require_payment' => false,
+                'is_require_payment' => true,
             ),
                 'menu'                           => array(
                 'slug'    => 'wp-fail2ban-menu',
@@ -71,7 +71,7 @@ if ( function_exists( __NAMESPACE__ . '\\wf_fs' ) ) {
     } );
     // Set custom icon
     $fs->add_filter( 'plugin_icon', function () {
-        return __DIR__ . '/assets/icon.svg';
+        return __DIR__ . '/assets/icon.png';
     } );
     // Set forum URL
     $fs->add_filter( 'support_forum_url', function () {
@@ -93,6 +93,9 @@ if ( function_exists( __NAMESPACE__ . '\\wf_fs' ) ) {
         // TODO: $fs->add_filter('trial_promotion_message',
     }
     
+    $fs->override_i18n( array(
+        'yee-haw' => __( 'Congratulations', 'wp-fail2ban' ),
+    ) );
     // Signal that SDK was initiated.
     do_action( 'wf_fs_loaded' );
     require_once __DIR__ . '/functions.php';

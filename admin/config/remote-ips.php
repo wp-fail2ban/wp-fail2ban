@@ -35,7 +35,7 @@ class TabRemoteIPs extends TabBase
      *
      * @since 4.3.2.1
      */
-    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com/en/'.WP_FAIL2BAN_VER_SHORT.'/defines/remote-ips.html';
+    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com/en/'.WP_FAIL2BAN_VER2.'/defines/remote-ips.html';
 
     /**
      * {@inheritDoc}
@@ -85,8 +85,13 @@ class TabRemoteIPs extends TabBase
     {
         $this->add_help_tab('wp-fail2ban-proxies', [
             $this->help_entry('remote-ips-proxies', [
-                __('A list of IPv4 addresses in full CIDR notation. The list of Cloudflare IPs can be found <a href="https://www.cloudflare.com/ips-v4" rel="noopener" target="_blank">here</a>', 'wp-fail2ban'),
-                __('<strong>NB:</strong> IPv6 is not yet supported. Abbreviated CIDR like <code>127/8</code> is not supported.', 'wp-fail2ban'),
+                sprintf(
+                    /* translators: 1, 2: <a href> internals, links to Cloudflare IP lists */
+                    __('A list of IP addresses in full CIDR notation. The list of Cloudflare IPs can be found <a %1$s>here</a> (IPv4) and <a %2$s>here</a> (IPv6).', 'wp-fail2ban'),
+                    'href="https://www.cloudflare.com/ips-v4" rel="noopener" target="_blank"',
+                    'href="https://www.cloudflare.com/ips-v6" rel="noopener" target="_blank"'
+                ),
+                __('<b>N.B.</b> Abbreviated IPv4 CIDR like <code>127/8</code> is not supported.', 'wp-fail2ban'),
                 $this->doc_link('WP_FAIL2BAN_PROXIES')
             ])
         ]);

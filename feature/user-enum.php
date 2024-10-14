@@ -175,3 +175,57 @@ function oembed_response_data(array $data, \WP_Post $post, int $width, int $heig
     return $data;
 }
 
+/**
+ * Return empty user sitemap
+ *
+ * Bots can guess the sitemap name so return an empty list.
+ *
+ * @since  5.0.0
+ *
+ * @param  $null    null
+ * @param  int      $page_num
+ *
+ * @return array    Empty array
+ *
+ * @codeCoverageIgnore
+ */
+function wp_sitemaps_users_pre_url_list($null, int $page_num): array
+{
+    return [];
+}
+
+/**
+ * Return zero pages
+ *
+ * This removes the list of users from the sitemap to make search engines happier.
+ *
+ * @since  5.0.0
+ *
+ * @param  $null    null
+ *
+ * @return int      0
+ *
+ * @codeCoverageIgnore
+ */
+function wp_sitemaps_users_pre_max_num_pages($null): int
+{
+    return 0;
+}
+
+/**
+ * Drop users sitemap provider
+ *
+ * @since  5.0.0
+ *
+ * @param  WP_Sitemaps_Provider $provider Instance of a WP_Sitemaps_Provider.
+ * @param  string               $name     Name of the sitemap provider.
+ *
+ * @return bool false
+ */
+function wp_sitemaps_add_provider($provider, $name)
+{
+    return ('users' == $name)
+        ? false
+        : $provider;
+}
+

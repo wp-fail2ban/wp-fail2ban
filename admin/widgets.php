@@ -50,7 +50,7 @@ function dashboard_widget_last_messages(): void
     echo '</tbody>';
 
     if (null === ($tfoot = apply_filters(__METHOD__.'::tfoot', null))) {
-        $dismiss = 'wp-fail2ban-'.WP_FAIL2BAN_VER_SHORT.'-last-5-messages-upgrade';
+        $dismiss = 'wp-fail2ban-'.WP_FAIL2BAN_VER2.'-last-5-messages-upgrade';
         if (array_key_exists($dismiss, $_GET)) {
             update_site_option($dismiss, intval($_GET[$dismiss]));
         }
@@ -91,7 +91,7 @@ function dashboard_widget_last_messages_data(): array
         $data[] = [
             'dt'  => str_replace(' ', '&nbsp;<wbr>', $message['dt']),
             'lvl' => $message['lvl'],
-            'msg' => htmlentities($message['msg'], ENT_SUBSTITUTE|ENT_HTML5, 'UTF-8')
+            'msg' => str_replace('&colon;', '&colon;<wbr>', htmlentities($message['msg'], ENT_SUBSTITUTE|ENT_HTML5, 'UTF-8'))
         ];
     }
 
@@ -101,6 +101,7 @@ function dashboard_widget_last_messages_data(): array
 /**
  * Hook: heartbeat_received
  *
+ * @since  5.0.0    Remove return type and $response type to handle other broken plugins
  * @since  4.4.0    Add return type
  * @since  4.3.4.0
  *
@@ -111,7 +112,7 @@ function dashboard_widget_last_messages_data(): array
  *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
-function heartbeat_received(array $response, array $data, string $screen_id): array
+function heartbeat_received($response, array $data, string $screen_id)
 {
     if (isset($data['wp_fail2ban']) && 'wp_fail2ban_last_messages' == $data['wp_fail2ban']) {
         $response['wp-fail2ban-last-messages'] = dashboard_widget_last_messages_data();

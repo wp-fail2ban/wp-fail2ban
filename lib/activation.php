@@ -12,10 +12,12 @@ namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 defined('ABSPATH') or exit;
 
 \register_activation_hook(WP_FAIL2BAN_FILE, function () {
+    define('WP_FAIL2BAN_ACTIVATING', true);
+
     foreach (get_mu_plugins() as $plugin => $data) {
         if (0 === strpos($data['Name'], 'WP fail2ban')) {
             $wp_f2b_ver = substr(WP_FAIL2BAN_VER, 0, strrpos(WP_FAIL2BAN_VER, '.'));
-            $error_msg = __('<h1>Cannot activate WP fail2ban</h1>', 'wp-fail2ban');
+            $error_msg = '<h1>'.__('Cannot activate WP fail2ban', 'wp-fail2ban').'</h1>';
             $mu_file = WPMU_PLUGIN_DIR.'/'.$plugin;
             if (is_link($mu_file)) {
                 if (false === ($link = readlink($mu_file)) ||
@@ -70,11 +72,27 @@ HTML;
 HTML;
             }
             $error_msg .= sprintf(
-                __('<p>Please see the <a href="%s" target="_blank">documentation</a> for how to configure %s for <tt>mu-plugins</tt>.</p>'),
-                "https://docs.wp-fail2ban.com/en/{$wp_f2b_ver}/configuration.html#mu-plugins-support",
-                $wpf2b
+                '<p>%s</p>',
+                sprintf(
+                    /* translators: 1: <a href> internals */
+                    __('Please see the <a %1$s>documentation</a> for how to configure <i>WP fail2ban</i> for <tt>mu-plugins</tt>.', 'wp-fail2ban'),
+                    sprintf(
+                        'href="%s" target="_blank"',
+                        "https://docs.wp-fail2ban.com/en/{$wp_f2b_ver}/configuration.html#mu-plugins-support"
+                    )
+                )
             );
-            $error_msg .= sprintf(__('<p>Click <a href="%s">here</a> to return to the plugins page.</p>'), admin_url('plugins.php'));
+            $error_msg .= sprintf(
+                '<p>%s</p>',
+                sprintf(
+                    /* translators: %s: <a href> internals */
+                    __('Click <a %s>here</a> to return to the plugins page.'),
+                    sprintf(
+                        'href="%s"',
+                        admin_url('plugins.php')
+                    )
+                )
+            );
 
             deactivate_plugins(plugin_basename(WP_FAIL2BAN_FILE));
             wp_die($error_msg);

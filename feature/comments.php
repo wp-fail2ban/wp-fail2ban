@@ -5,9 +5,12 @@
  * @package wp-fail2ban
  * @since   4.4.0   Require PHP 7.4
  * @since   4.0.0
+ *
+ * @wp-f2b-soft Comment attempt on .* post \d+
  */
 namespace org\lecklider\charles\wordpress\wp_fail2ban\feature;
 
+use       org\lecklider\charles\wordpress\wp_fail2ban\Config;
 use       org\lecklider\charles\wordpress\wp_fail2ban\Syslog;
 
 defined('ABSPATH') or exit;
@@ -36,8 +39,30 @@ function notify_post_author(bool $maybe_notify, int $comment_ID): bool
 }
 
 /**
+ * Attempted/extra log helper
+ *
+ * @since  5.0.0
+ *
+ * @return string
+ */
+function _get_comment_attempt_log(): string
+{
+    // New setting defined, use new log
+    if (true === Config::get('WP_FAIL2BAN_LOG_COMMENT_ATTEMPTS')) {
+        return 'WP_FAIL2BAN_COMMENT_ATTEMPT_LOG';
+
+    } elseif (Config::get('WP_FAIL2BAN_LOG_COMMENTS_EXTRA')) {
+        return 'WP_FAIL2BAN_COMMENT_EXTRA_LOG';
+
+    } else {
+        return 'WP_FAIL2BAN_COMMENT_ATTEMPT_LOG';
+    }
+}
+
+/**
  * Log attempted comment on non-existent post
  *
+ * @since  5.0.0    Use attempted/extra log helper
  * @since  4.4.0    Add type hint, return type
  * @since  4.3.4.0  Refactor to use Syslog::single
  * @since  4.0.0
@@ -45,12 +70,10 @@ function notify_post_author(bool $maybe_notify, int $comment_ID): bool
  * @param  int  $comment_post_ID
  *
  * @return void
- *
- * @wp-f2b-extra Comment post not found \d+
  */
 function comment_id_not_found(int $comment_post_ID): void
 {
-    Syslog::single(LOG_NOTICE, "Comment post not found {$comment_post_ID}", 'WP_FAIL2BAN_COMMENT_EXTRA_LOG');
+    Syslog::single(LOG_NOTICE, "Comment attempt on non-existent post {$comment_post_ID}", _get_comment_attempt_log());
 
     do_action(__FUNCTION__, $comment_post_ID);
 }
@@ -58,6 +81,7 @@ function comment_id_not_found(int $comment_post_ID): void
 /**
  * Log attempted comment on closed post
  *
+ * @since  5.0.0    Use attempted/extra log helper
  * @since  4.4.0    Add type hint, return type
  * @since  4.3.4.0  Refactor to use Syslog::single
  * @since  4.0.0
@@ -65,12 +89,10 @@ function comment_id_not_found(int $comment_post_ID): void
  * @param  int  $comment_post_ID
  *
  * @return void
- *
- * @wp-f2b-extra Comments closed on post \d+
  */
 function comment_closed(int $comment_post_ID): void
 {
-    Syslog::single(LOG_NOTICE, "Comments closed on post {$comment_post_ID}", 'WP_FAIL2BAN_COMMENT_EXTRA_LOG');
+    Syslog::single(LOG_NOTICE, "Comment attempt on closed post {$comment_post_ID}", _get_comment_attempt_log());
 
     do_action(__FUNCTION__, $comment_post_ID);
 }
@@ -78,6 +100,7 @@ function comment_closed(int $comment_post_ID): void
 /**
  * Log attempted comment on trashed post
  *
+ * @since  5.0.0    Use attempted/extra log helper
  * @since  4.4.0    Add type hint, return type
  * @since  4.3.4.0  Refactor to use Syslog::single
  * @since  4.0.2    Fix message
@@ -86,12 +109,10 @@ function comment_closed(int $comment_post_ID): void
  * @param  int  $comment_post_ID
  *
  * @return void
- *
- * @wp-f2b-extra Comment attempt on trash post \d+
  */
 function comment_on_trash(int $comment_post_ID): void
 {
-    Syslog::single(LOG_NOTICE, "Comment attempt on trash post {$comment_post_ID}", 'WP_FAIL2BAN_COMMENT_EXTRA_LOG');
+    Syslog::single(LOG_NOTICE, "Comment attempt on trashed post {$comment_post_ID}", _get_comment_attempt_log());
 
     do_action(__FUNCTION__, $comment_post_ID);
 }
@@ -99,6 +120,7 @@ function comment_on_trash(int $comment_post_ID): void
 /**
  * Log attempted comment on draft post
  *
+ * @since  5.0.0    Use attempted/extra log helper
  * @since  4.4.0    Add type hint, return type
  * @since  4.3.4.0  Refactor to use Syslog::single
  * @since  4.0.2    Fix message
@@ -107,12 +129,10 @@ function comment_on_trash(int $comment_post_ID): void
  * @param  int $comment_post_ID
  *
  * @return void
- *
- * @wp-f2b-extra Comment attempt on draft post \d+
  */
 function comment_on_draft(int $comment_post_ID): void
 {
-    Syslog::single(LOG_NOTICE, "Comment attempt on draft post {$comment_post_ID}", 'WP_FAIL2BAN_COMMENT_EXTRA_LOG');
+    Syslog::single(LOG_NOTICE, "Comment attempt on draft post {$comment_post_ID}", _get_comment_attempt_log());
 
     do_action(__FUNCTION__, $comment_post_ID);
 }
@@ -120,6 +140,7 @@ function comment_on_draft(int $comment_post_ID): void
 /**
  * Log attempted comment on password-protected post
  *
+ * @since  5.0.0    Use attempted/extra log helper
  * @since  4.4.0    Add type hint, return type
  * @since  4.3.4.0  Refactor to use Syslog::single
  * @since  4.0.2    Fix message
@@ -128,12 +149,10 @@ function comment_on_draft(int $comment_post_ID): void
  * @param  int $comment_post_ID
  *
  * @return void
- *
- * @wp-f2b-extra Comment attempt on password-protected post \d+
  */
 function comment_on_password_protected(int $comment_post_ID): void
 {
-    Syslog::single(LOG_NOTICE, "Comment attempt on password-protected post {$comment_post_ID}", 'WP_FAIL2BAN_COMMENT_EXTRA_LOG');
+    Syslog::single(LOG_NOTICE, "Comment attempt on password-protected post {$comment_post_ID}", _get_comment_attempt_log());
 
     do_action(__FUNCTION__, $comment_post_ID);
 }

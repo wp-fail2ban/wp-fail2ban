@@ -6,7 +6,9 @@
  * @since   4.4.0   Require PHP 7.4
  * @since   4.3.4.0
  */
-namespace org\lecklider\charles\wordpress\wp_fail2ban;
+namespace    org\lecklider\charles\wordpress\wp_fail2ban;
+
+use function org\lecklider\charles\wordpress\wp_fail2ban\core\remote_addr;
 
 defined('ABSPATH') or exit;
 
@@ -185,7 +187,7 @@ abstract class Syslog
      * @since  4.4.0    Add return type
      * @since  4.3.4.0
      *
-     * @param  int      $level
+     * @param  int      $level      LOG_DEBUG|LOG_INFO|LOG_NOTICE|LOG_WARNING|LOG_ERR
      * @param  string   $msg
      * @param  string   $log
      * @param  string   $remote_addr

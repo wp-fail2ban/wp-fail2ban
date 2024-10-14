@@ -4,7 +4,7 @@
  * Plugin URI: https://wp-fail2ban.com/
  * Description: Write a myriad of WordPress events to syslog for integration with fail2ban.
  * Text Domain: wp-fail2ban
- * Version: 4.4.0.9
+ * Version: 5.0.0
  * Author: Charles Lecklider
  * Author URI: https://invis.net/
  * License: GPLv3
@@ -12,10 +12,10 @@
  * Requires PHP: 7.4
  * Network: true
  *
-  */
+   */
 
 /*
- *  Copyright 2012-22  Charles Lecklider  (email : wordpress@invis.net)
+ *  Copyright 2012-23  Charles Lecklider  (email : wordpress@invis.net)
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -53,4 +53,6 @@ defined('ABSPATH') or exit;
 
 require_once __DIR__.'/constants.php';
 require_once __DIR__.'/freemius.php';
+
+// @codeCoverageIgnoreEnd
 

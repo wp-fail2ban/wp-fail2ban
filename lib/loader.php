@@ -43,6 +43,13 @@ class Config
                 'logging',
                 'comments',
                 'enabled']],
+        'WP_FAIL2BAN_LOG_COMMENT_ATTEMPTS' => [
+            'validate' => 'boolval',
+            'unset' => true,
+            'field'     => [
+                'logging',
+                'comment',
+                'attempts']],
         'WP_FAIL2BAN_LOG_COMMENTS_EXTRA' => [ //
             'validate'  => 'intval',
             'unset'     => true,
@@ -57,6 +64,14 @@ class Config
             'field'     => [
                 'logging',
                 'comments',
+                'facility']],
+        'WP_FAIL2BAN_COMMENT_ATTEMPT_LOG' => [ //
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => WPF2B_FACILITY_LOG_AUTH,
+            'field'     => [
+                'logging',
+                'comment-attempts',
                 'facility']],
         'WP_FAIL2BAN_COMMENT_EXTRA_LOG' => [ //
             'validate'  => 'intval',
@@ -433,12 +448,29 @@ class Config
      *
      * @see premium\Config\validateIPs()
      *
+     * @since  5.0.0    Refactor; handle empty string
+     * @since  4.4.1    Always return array
+     *
      * @param  array|string $value
-     * @return array|string
+     * @return array
      */
-    public function validateIPs($value)
+    public function validateIPs($value): array
     {
-        return (false === $value) ? [] : $value;
+        // Default value
+        if (false === $value) {
+            return [];
+        }
+
+        // Split the string
+        if (is_string($value)) {
+            $value = array_map('\\trim', explode(',', $value));
+        }
+
+        if (is_array($value)) {
+            return array_filter($value); // Make sure there are no empty values
+        }
+
+        throw new \InvalidArgumentException('Wrong type.');
     }
 
     /**
@@ -604,6 +636,7 @@ class Config
     /**
      * Helper: get value
      *
+     * @since  5.0.0    Add filter
      * @since  4.4.0    Add type hints, return type
      * @since  4.3.3    Refactored for lazy-loading
      * @since  4.3.0
@@ -630,12 +663,12 @@ class Config
                 throw new \UnexpectedValueException($define);
 
             } elseif (!($def['ndef'] = !defined($define))) { // defined($define)
-                self::$cache[$define] = $def['validate'](constant($define));
+                self::$cache[$define] = $def['validate'](apply_filters($define, constant($define)));
 
             } else {
                 self::$cache[$define] = (isset($def['default']))
-                    ? $def['validate']($def['default'])
-                    : call_user_func($def['validate'], false);
+                    ? $def['validate'](apply_filters($define, $def['default']))
+                    : call_user_func($def['validate'], apply_filters($define, false));
                 if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
                     define($define, self::$cache[$define]); // @codeCoverageIgnore
                 }
@@ -712,7 +745,7 @@ class Config
             case 'WP_FAIL2BAN_BLOCK_USERNAME_LOGIN':
                 return __('Allow <b>email addresses only</b> for login.', 'wp-fail2ban');
             case 'WP_FAIL2BAN_PROXIES':
-                return __('Trusted IPv4 list.', 'wp-fail2ban');
+                return __('Trusted IPv4 and IPv6 list.', 'wp-fail2ban');
             default:
                 return apply_filters(__METHOD__, null, $define);
         }

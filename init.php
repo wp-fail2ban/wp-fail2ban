@@ -54,9 +54,12 @@ function plugins_loaded(): void
      * @since 4.0.0     Refactored
      * @since 3.5.0
      */
-    if (true === Config::get('WP_FAIL2BAN_LOG_COMMENTS')) {
+    if (true === Config::get('WP_FAIL2BAN_LOG_COMMENTS') || defined('PHPUNIT_COMPOSER_INSTALL')) {
         add_filter('notify_post_author', __NAMESPACE__.'\feature\notify_post_author', 10, 2);
 
+        /**
+         * @deprecated 5.0.0
+         */
         if ($comments = Config::get('WP_FAIL2BAN_LOG_COMMENTS_EXTRA')) {
             if ($comments & WPF2B_EVENT_COMMENT_NOT_FOUND) {
                 add_action('comment_id_not_found', __NAMESPACE__.'\feature\comment_id_not_found');
@@ -75,6 +78,16 @@ function plugins_loaded(): void
             }
         }
     }
+    /**
+     * @since 5.0.0
+     */
+    if (true === Config::get('WP_FAIL2BAN_LOG_COMMENT_ATTEMPTS') || defined('PHPUNIT_COMPOSER_INSTALL')) {
+        add_action('comment_id_not_found', __NAMESPACE__.'\feature\comment_id_not_found');
+        add_action('comment_closed', __NAMESPACE__.'\feature\comment_closed');
+        add_action('comment_on_trash', __NAMESPACE__.'\feature\comment_on_trash');
+        add_action('comment_on_draft', __NAMESPACE__.'\feature\comment_on_draft');
+        add_action('comment_on_password_protected', __NAMESPACE__.'\feature\comment_on_password_protected');
+    }
 
     /**
      * Password
@@ -82,7 +95,7 @@ function plugins_loaded(): void
      * @since 4.0.0     Refactored
      * @since 3.5.0
      */
-    if (true === Config::get('WP_FAIL2BAN_LOG_PASSWORD_REQUEST')) {
+    if (true === Config::get('WP_FAIL2BAN_LOG_PASSWORD_REQUEST') || defined('PHPUNIT_COMPOSER_INSTALL')) {
         add_action('retrieve_password', __NAMESPACE__.'\feature\retrieve_password');
     }
 
@@ -93,7 +106,7 @@ function plugins_loaded(): void
      * @since 4.0.0     Refactored
      * @since 3.5.0
      */
-    if (true === Config::get('WP_FAIL2BAN_LOG_SPAM')) {
+    if (true === Config::get('WP_FAIL2BAN_LOG_SPAM') || defined('PHPUNIT_COMPOSER_INSTALL')) {
         add_action('comment_post', __NAMESPACE__.'\feature\log_spam_comment', 10, 2);
         add_action('wp_set_comment_status', __NAMESPACE__.'\feature\log_spam_comment', 10, 2);
     }
@@ -104,10 +117,11 @@ function plugins_loaded(): void
      * @since 4.0.0     Refactored
      * @since 2.1.0
      */
-    if (true === Config::get('WP_FAIL2BAN_BLOCK_USER_ENUMERATION')) {
+    if (true === Config::get('WP_FAIL2BAN_BLOCK_USER_ENUMERATION') || defined('PHPUNIT_COMPOSER_INSTALL')) {
         add_filter('parse_request', __NAMESPACE__.'\feature\parse_request', 1);
         add_filter('rest_user_query', __NAMESPACE__.'\feature\rest_user_query', 10, 2);
         add_filter('oembed_response_data', __NAMESPACE__.'\feature\oembed_response_data', PHP_INT_MAX-1, 4);
+        add_filter('wp_sitemaps_add_provider', __NAMESPACE__.'\feature\wp_sitemaps_add_provider', 10, 2);
     }
 
     /**
@@ -117,7 +131,7 @@ function plugins_loaded(): void
      * @since 4.0.0     Refactored
      * @since 2.0.0
      */
-    if (Config::get('WP_FAIL2BAN_BLOCKED_USERS') || Config::get('WP_FAIL2BAN_BLOCK_USERNAME_LOGIN')) {
+    if (Config::get('WP_FAIL2BAN_BLOCKED_USERS') || Config::get('WP_FAIL2BAN_BLOCK_USERNAME_LOGIN') || defined('PHPUNIT_COMPOSER_INSTALL')) {
         add_filter('authenticate', __NAMESPACE__.'\feature\block_users', 1, 3);
     }
 
@@ -196,11 +210,12 @@ function init(): void
     add_filter('auto_update_plugin', __NAMESPACE__.'\auto_update_plugin', 10, 2);
 
     /**
-     * @since 4.4.0.8 Add our tests to Site Health
+     * @since 5.0.0 Add our tests to Site Health
      */
     add_filter('site_status_tests', __NAMESPACE__.'\SiteHealth::get_tests');
 }
 add_action('init', __NAMESPACE__.'\init');
+
 
 /**
  * Init as late as possible.

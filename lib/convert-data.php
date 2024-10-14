@@ -32,63 +32,6 @@ abstract class ConvertData
     ];
 
     /**
-     * @var string[] Map Event ID to Slug.
-     */
-    const EVENT2SLUG = [
-        0x00000000                            => 'deactivated',
-        WPF2B_EVENT_AUTH_OK                   => 'auth_ok',
-        WPF2B_EVENT_AUTH_FAIL                 => 'auth_fail',
-        WPF2B_EVENT_AUTH_BLOCK_USER           => 'auth_block_user',
-        WPF2B_EVENT_AUTH_BLOCK_USER_ENUM      => 'auth_block_user_enum',
-        WPF2B_EVENT_AUTH_BLOCK_USERNAME_LOGIN => 'auth_block_usernames',
-        WPF2B_EVENT_AUTH_EMPTY_USER           => 'auth_empty_user',
-        WPF2B_EVENT_COMMENT                   => 'comment',
-        WPF2B_EVENT_COMMENT_SPAM              => 'comment_spam',
-        WPF2B_EVENT_COMMENT_NOT_FOUND         => 'comment_not_found',
-        WPF2B_EVENT_COMMENT_CLOSED            => 'comment_closed',
-        WPF2B_EVENT_COMMENT_TRASH             => 'comment_trash',
-        WPF2B_EVENT_COMMENT_DRAFT             => 'comment_draft',
-        WPF2B_EVENT_COMMENT_PASSWORD          => 'comment_password',
-        WPF2B_EVENT_XMLRPC_PINGBACK           => 'xmlrpc_pingback',
-        WPF2B_EVENT_XMLRPC_PINGBACK_ERROR     => 'xmlrpc_pingback_error',
-        WPF2B_EVENT_XMLRPC_MULTI_AUTH_FAIL    => 'xmlrpc_multi_auth_fail',
-        WPF2B_EVENT_XMLRPC_AUTH_OK            => 'xmlrpc_auth_ok',
-        WPF2B_EVENT_XMLRPC_AUTH_FAIL          => 'xmlrpc_auth_fail',
-        WPF2B_EVENT_PASSWORD_REQUEST          => 'password_request',
-        WPF2B_EVENT_REST_AUTH_OK              => 'rest_auth_ok',
-        WPF2B_EVENT_REST_AUTH_FAIL            => 'rest_auth_fail',
-        0xFFFFFFFF                            => 'activated',
-    ];
-
-    /**
-     * @var int[] Map Event Slug to ID.
-     */
-    const SLUG2EVENT = array(
-        'deactivated'             => 0x00000000,
-        'auth_ok'                 => WPF2B_EVENT_AUTH_OK,
-        'auth_fail'               => WPF2B_EVENT_AUTH_FAIL,
-        'auth_block_user'         => WPF2B_EVENT_AUTH_BLOCK_USER,
-        'auth_block_user_enum'    => WPF2B_EVENT_AUTH_BLOCK_USER_ENUM,
-        'auth_block_usernames'    => WPF2B_EVENT_AUTH_BLOCK_USERNAME_LOGIN,
-        'auth_empty_user'         => WPF2B_EVENT_AUTH_EMPTY_USER,
-        'comment_spam'            => WPF2B_EVENT_COMMENT_SPAM,
-        'comment_not_found'       => WPF2B_EVENT_COMMENT_NOT_FOUND,
-        'comment_closed'          => WPF2B_EVENT_COMMENT_CLOSED,
-        'comment_trash'           => WPF2B_EVENT_COMMENT_TRASH,
-        'comment_draft'           => WPF2B_EVENT_COMMENT_DRAFT,
-        'comment_password'        => WPF2B_EVENT_COMMENT_PASSWORD,
-        'xmlrpc_pingback'         => WPF2B_EVENT_XMLRPC_PINGBACK,
-        'xmlrpc_pingback_error'   => WPF2B_EVENT_XMLRPC_PINGBACK_ERROR,
-        'xmlrpc_multi_auth_fail'  => WPF2B_EVENT_XMLRPC_MULTI_AUTH_FAIL,
-        'xmlrpc_auth_ok'          => WPF2B_EVENT_XMLRPC_AUTH_OK,
-        'xmlrpc_auth_fail'        => WPF2B_EVENT_XMLRPC_AUTH_FAIL,
-        'password_request'        => WPF2B_EVENT_PASSWORD_REQUEST,
-        'rest_auth_ok'            => WPF2B_EVENT_REST_AUTH_OK,
-        'rest_auth_fail'          => WPF2B_EVENT_REST_AUTH_FAIL,
-        'activated'               => 0xFFFFFFFF,
-    );
-
-    /**
      * @var int[] Map syslog facility name to value.
      */
     protected static $FacilityName2Value = [];
