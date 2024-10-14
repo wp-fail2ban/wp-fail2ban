@@ -44,7 +44,6 @@ class Config
         if (is_null(self::$instance)) {
             global $wp_fail2ban;
 
-            init_constants();
             init_defaults();
 
             $class = get_called_class();
