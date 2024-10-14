@@ -183,7 +183,7 @@ function init(): void
              * @since 3.6.0
              */
             if (defined('WP_FAIL2BAN_XMLRPC_LOG') && WP_FAIL2BAN_XMLRPC_LOG) {
-                xmlrpc_log(); // @codeCoverageIgnore
+                feature\xmlrpc_log(); // @codeCoverageIgnore
             }
             /**
              * @since 4.3.0 Refactored

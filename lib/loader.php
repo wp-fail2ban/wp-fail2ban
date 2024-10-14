@@ -338,6 +338,14 @@ class Config
                 'misc',
                 'last-log',
                 'disabled']],
+        'WP_FAIL2BAN_SITE_HEALTH_SKIP_FILTERS' => [
+            'validate'  => 'boolval',
+            'unset'     => false,
+            'field'     => [
+                'misc',
+                'site-health',
+                'filters',
+                'disabled']],
     ];
 
     /**

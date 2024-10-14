@@ -5,7 +5,7 @@
  * @package wp-fail2ban
  * @since   5.0.0
  *
- * Auto-generated: 2023-08-09T16:31:04+01:00
+ * Auto-generated: 2023-09-20T14:30:11+01:00
  */
 namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 
@@ -14,6 +14,18 @@ defined('ABSPATH') or exit; // @codeCoverageIgnore
 // phpcs:disable Squiz.WhiteSpace.SuperfluousWhitespace.EndLine
 // @codeCoverageIgnoreStart
 define('WP_FAIL2BAN_HASHES', array (
+  '182bdc01a8078c27833f6fc021740b9844785b3d' => 
+  array (
+    'hard' => '5.2.0',
+  ),
+  '5601dfbf66564f260075825a36be11c3efd8a429' => 
+  array (
+    'soft' => '5.2.0',
+  ),
+  '3572d8451fc20535288530157906929ac1a7af06' => 
+  array (
+    'extra' => '5.2.0',
+  ),
   'a4a5a796cd298ff861137d4c57e7e572fd2f3624' => 
   array (
     'extra' => '4.3.0.10',
@@ -254,13 +266,13 @@ define('WP_FAIL2BAN_HASHES', array (
   array (
     'soft' => '4.3.4.0',
   ),
-  '65db493c6d82a1cf253ce11d4f49f63ad5c9ca06' => 
-  array (
-    'soft' => '5.1.0.4',
-  ),
   'a1da3ee89e838a9a5aa4fa21725701ba08b267ea' => 
   array (
     'hard' => '5.1.0.4',
+  ),
+  '65db493c6d82a1cf253ce11d4f49f63ad5c9ca06' => 
+  array (
+    'soft' => '5.1.0.4',
   ),
   'ed284bb74147632ced519ddbeb457aff87b1141f' => 
   array (
@@ -386,13 +398,13 @@ define('WP_FAIL2BAN_HASHES', array (
   array (
     'extra' => '4.2.7.1',
   ),
-  '2871319d7a942365373aeae529db8bcfe3d54018' => 
-  array (
-    'extra' => '5.1.0.5',
-  ),
   'd02780e21ed306cba65bbf042accd607e6dcd8f4' => 
   array (
     'soft' => '5.1.0.5',
+  ),
+  '2871319d7a942365373aeae529db8bcfe3d54018' => 
+  array (
+    'extra' => '5.1.0.5',
   ),
   '9b873b82963e0be0a81c13310e3ebec910e612f8' => 
   array (
@@ -570,13 +582,13 @@ define('WP_FAIL2BAN_HASHES', array (
   array (
     'extra' => '5.1.1',
   ),
-  '802c4804a6f38b003a15639f8ae1fc4f5679e0f1' => 
-  array (
-    'hard' => '5.1.1',
-  ),
   '84404d97cbb9db18b47fdf48315e007982ba5443' => 
   array (
     'soft' => '5.1.1',
+  ),
+  '802c4804a6f38b003a15639f8ae1fc4f5679e0f1' => 
+  array (
+    'hard' => '5.1.1',
   ),
   '00d5e11958eaedeb360342d7391ae14ae4823d36' => 
   array (

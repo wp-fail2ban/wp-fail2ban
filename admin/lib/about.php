@@ -270,6 +270,22 @@ HTML;
 }
 
 /**
+ * li helper
+ *
+ * @since  5.2.1
+ *
+ * @param  string   $class_wpf2b
+ * @param  string   $class_dashicon
+ * @param  string   $blurb
+ */
+function li(string $class_wpf2b, string $class_dashicon, string $blurb): void
+{
+    echo <<<HTML
+<li><span class="wpf2b-{$class_wpf2b}"><span class="dashicons dashicons-{$class_dashicon}"></span> {$blurb}</span></li>
+HTML;
+}
+
+/**
  * About content
  *
  * @since  4.2.0
@@ -344,15 +360,18 @@ function about(): void
                     switch ($obs['status']) {
                         case 'good':
                             // OK
-                            printf('<li><span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s</span></li>', __('Up to date.', 'wp-fail2ban'));
+                            li('ok', 'yes', __('Up to date.', 'wp-fail2ban'));
                             break;
                         case 'recommended':
-                            printf('<li><span class="wpf2b-warning"><span class="dashicons dashicons-warning"></span> %s</span></li>', __('Unknown.', 'wp-fail2ban'));
+                            li('warning', 'warning', __('Status unknown.', 'wp-fail2ban'));
                             $run_site_health = true;
                             break;
                         case 'critical':
-                            printf('<li><span class="wpf2b-error"><span class="dashicons dashicons-no"></span> %s</span></li>', __('Obsolete filter(s) found.', 'wp-fail2ban'));
+                            li('error', 'no', __('Obsolete filter(s) found.', 'wp-fail2ban'));
                             $run_site_health = true;
+                            break;
+                        case 'old':
+                            li('warning', 'warning', __('Outdated but compatible filter(s).', 'wp-fail2ban'));
                             break;
                     }
 
@@ -361,9 +380,9 @@ function about(): void
                         // obj already failed
                     } elseif ('good' == $mod['status']) {
                         // OK
-                        printf('<li><span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s</span></li>', __('Not modified.', 'wp-fail2ban'));
+                        li('ok', 'yes', __('Not modified.', 'wp-fail2ban'));
                     } else {
-                        printf('<li><span class="wpf2b-warning"><span class="dashicons dashicons-warning"></span> %s</span></li>', __('Modified filter(s) found.', 'wp-fail2ban'));
+                        li('warning', 'warning', __('Modified filter(s) found.', 'wp-fail2ban'));
                         $run_site_health = true;
                     }
                     echo ' ';
@@ -373,9 +392,9 @@ function about(): void
                         // obj already failed
                     } elseif ('good' == $mis['status']) {
                         // OK
-                        printf('<li><span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s</span></li>', __('All present.', 'wp-fail2ban'));
+                        li('ok', 'yes', __('All filters present.', 'wp-fail2ban'));
                     } else {
-                        printf('<li><span class="wpf2b-error"><span class="dashicons dashicons-no"></span> %s</span></li>', __('Incomplete.', 'wp-fail2ban'));
+                        li('error', 'no', __('Incomplete.', 'wp-fail2ban'));
                         $run_site_health = true;
                     }
 

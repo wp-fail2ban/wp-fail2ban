@@ -14,6 +14,11 @@ class SiteHealth
 {
     const PREFIX = '[WP fail2ban] ';
 
+    const FAIL2BAN_PATHS = [
+        '/etc/fail2ban',
+        '/usr/local/etc/fail2ban'
+    ];
+
     protected static $instance = null;
 
     /**
@@ -29,6 +34,28 @@ class SiteHealth
             self::$instance = new SiteHealth();
         }
         return self::$instance;
+    }
+
+    /**
+     * Should we skip checking the filters?
+     *
+     * @since  5.2.1
+     *
+     * @return bool
+     */
+    public static function should_skip_filters(): bool
+    {
+        if (Config::get('WP_FAIL2BAN_SITE_HEALTH_SKIP_FILTERS')) {
+            return true;
+        }
+
+        if (!empty($open_basedir = ini_get('open_basedir'))) {
+            $path = \untrailingslashit(self::get_fail2ban_path());
+
+            return (false !== strpos($open_basedir, $path));
+        }
+
+        return false;
     }
 
     /**
@@ -60,7 +87,7 @@ class SiteHealth
             'label' => 'fail2ban running',
             'test'  => [$instance, 'get_test_fail2ban_running']
             ];
-        if (!defined('WP_FAIL2BAN_SITE_HEALTH_SKIP_FILTERS')) {
+        if (!self::should_skip_filters()) {
             $tests['direct']['wp_fail2ban_filter_obsolete'] = [
                 'label' => 'WP fail2ban obsolete filters',
                 'test'  => [$instance, 'get_test_filter_obsolete']
@@ -74,18 +101,33 @@ class SiteHealth
                 'test'  => [$instance, 'get_test_filter_missing']
             ];
         }
-        $tests['direct']['wp_fail2ban_blocklist_installed'] = [
-            'label' => 'WP fail2ban Blocklist installed',
-            'test'  => [$instance, 'get_test_blocklist_installed']
-        ];
-        $tests['direct']['wp_fail2ban_cf7_installed'] = [
-            'label' => 'Add-on for Contact Form 7 installed',
-            'test'  => [$instance, 'get_test_cf7_installed']
-        ];
-        $tests['direct']['wp_fail2ban_gf_installed'] = [
-            'label' => 'Add-on for Gravity Forms installed',
-            'test'  => [$instance, 'get_test_gf_installed']
-        ];
+        if (!defined('WP_FAIL2BAN_SITE_HEALTH_SKIP_RECOMMEND') ||
+            ( is_array(WP_FAIL2BAN_SITE_HEALTH_SKIP_RECOMMEND) &&
+              true !== WP_FAIL2BAN_SITE_HEALTH_SKIP_RECOMMEND['addon']['wpf2b-addon-blocklist'] ?? false))
+        {
+            $tests['direct']['wp_fail2ban_blocklist_installed'] = [
+                'label' => 'WP fail2ban Blocklist installed',
+                'test'  => [$instance, 'get_test_blocklist_installed']
+            ];
+        }
+        if (!defined('WP_FAIL2BAN_SITE_HEALTH_SKIP_RECOMMEND') ||
+            ( is_array(WP_FAIL2BAN_SITE_HEALTH_SKIP_RECOMMEND) &&
+              true !== WP_FAIL2BAN_SITE_HEALTH_SKIP_RECOMMEND['addon']['wp-fail2ban-addon-contact-form-7'] ?? false))
+        {
+            $tests['direct']['wp_fail2ban_cf7_installed'] = [
+                'label' => 'Add-on for Contact Form 7 installed',
+                'test'  => [$instance, 'get_test_cf7_installed']
+            ];
+        }
+        if (!defined('WP_FAIL2BAN_SITE_HEALTH_SKIP_RECOMMEND') ||
+            ( is_array(WP_FAIL2BAN_SITE_HEALTH_SKIP_RECOMMEND) &&
+              true !== WP_FAIL2BAN_SITE_HEALTH_SKIP_RECOMMEND['addon']['wp-fail2ban-addon-gravity-forms'] ?? false))
+        {
+            $tests['direct']['wp_fail2ban_gf_installed'] = [
+                'label' => 'Add-on for Gravity Forms installed',
+                'test'  => [$instance, 'get_test_gf_installed']
+            ];
+        }
 
         return $tests;
     }
@@ -229,10 +271,9 @@ class SiteHealth
             }
 
         } else {
-            $paths = [
-                '/etc/fail2ban/'.$suffix,
-                '/usr/local/etc/fail2ban/'.$suffix
-            ];
+            $paths = array_map(function ($e) use ($suffix) {
+                return trailingslashit($e).$suffix;
+            }, self::FAIL2BAN_PATHS);
 
             foreach ($paths as $path) {
                 if (is_dir($path)) {
@@ -585,7 +626,9 @@ class SiteHealth
                             $failure['version']
                         );
                         if (count($failure['reasons'] ?? [])) {
-                            $output .= ': '.join('; ', $failure['reasons']);
+                            $output .= ': '.join('; ', array_map(function ($v) {
+                                return rtrim($v, '.');
+                            }, $failure['reasons']));
                         }
                         $output .= '.</li>';
                         break;
@@ -595,30 +638,10 @@ class SiteHealth
             $output .= $this->update_filters_asap();
             $results['description'] = $output;
 
-        } elseif (($status['old'])) {
-            $results['label'] = __('One or more of your fail2ban filters are out of date', 'wp-fail2ban');
-            $results['status'] = 'recommended';
-            $output = sprintf('<p>%s</p>', __('The existing <code>fail2ban</code> filters listed below will work with your current configuration. If you enable a feature added or changed since the filter version, it will not work correctly until you update the filters.', 'wp-fail2ban'));
-            $output .= '<ul>';
-            foreach ($failures as $filter => $failure) {
-                switch ($failure['status']) {
-                    case 'old':
-                        $output .= '<li><span class="dashicons dashicons-info" style="color: #72aee6"></span> '.sprintf(
-                            /* translators: %s: The filter name. */
-                            __('%s is from version %s', 'wp-fail2ban'),
-                            "<code>wordpress-{$filter}.conf</code>",
-                            $failure['version']
-                        );
-                        if (count($failure['reasons'] ?? [])) {
-                            $output .= ': '.join('; ', $failure['reasons']);
-                        }
-                        $output .= '.</li>';
-                        break;
-                }
-            }
-            $output .= '</ul>';
-            $output .= $this->update_filters_asap(false);
-            $results['description'] = $output;
+        } elseif ($status['old']) {
+            $results['label'] = __('One or more of your fail2ban filters are out of date, but compatible', 'wp-fail2ban');
+            $results['description'] = __('Your filters are compatible with your current configuration. There is no need to update them at this time.', 'wp-fail2ban');
+            $results['old'] = 'old';
 
         } elseif ($status['custom']) {
             $results['status'] = 'custom';
