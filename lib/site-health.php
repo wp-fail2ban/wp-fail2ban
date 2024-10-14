@@ -118,7 +118,7 @@ class SiteHealth
             }
         }
 
-        return [];
+        return false;
     }
 
     /**
@@ -133,7 +133,7 @@ class SiteHealth
     public function get_test_log_comments_extra_deprecated()
     {
         if (Config::ndef('WP_FAIL2BAN_LOG_COMMENTS_EXTRA')) {
-            return [];
+            return false;
         }
 
         return [
@@ -177,7 +177,7 @@ class SiteHealth
     public function get_test_comments_extra_log_deprecated()
     {
         if (Config::ndef('WP_FAIL2BAN_COMMENTS_EXTRA_LOG')) {
-            return [];
+            return false;
         }
 
         return [
@@ -256,17 +256,44 @@ class SiteHealth
      *
      * @return bool
      */
-    protected function check_filter_needs_update(string $ver): bool
+    protected function check_filter_needs_update(string $ver, string $filter, array &$reasons): ?bool
     {
         list($major, $minor, $patch) = explode('.', $ver);
 
-        /* Always update for major version changes */
+        /* Specific version update logic */
+        switch ($major) {
+            case 4:
+                switch ($minor) {
+                    case 4:
+                        $rv = null;
+
+                        switch ($filter) {
+                            case 'hard':
+                                // [hard] Untrusted X-Forwarded-For header
+                                if (count(Config::get('WP_FAIL2BAN_PROXIES'))) {
+                                    $reasons[] = __('Untrusted proxies will not be blocked.', 'wp-fail2ban');
+                                    $rv = true;
+                                }
+                                break;
+                            case 'soft':
+                                // [soft] Comment attempt on .* post \d+
+                                if (Config::get('WP_FAIL2BAN_LOG_COMMENT_ATTEMPTS') ||
+                                    Config::get('WP_FAIL2BAN_LOG_COMMENTS_EXTRA') > 0)
+                                {
+                                    $reasons[] = __('Attempted comments will not be blocked.', 'wp-fail2ban');
+                                    $rv = true;
+                                }
+                                break;
+                        }
+                        return $rv;
+                }
+                break;
+        }
+
+        /* Always update for major version changes that aren't handled above */
         if ($major != WP_FAIL2BAN_VER_MAJOR) {
             return true;
         }
-
-        /* Specific version update logic */
-        // Nothing to check yet
 
         return apply_filters(__METHOD__, false, $major, $minor, $patch);
     }
@@ -317,15 +344,26 @@ class SiteHealth
                                   array_key_exists($filter, WP_FAIL2BAN_HASHES[$installed_file]))
                         {
                             $ver = WP_FAIL2BAN_HASHES[$installed_file][$filter];
-                            if ($this->check_filter_needs_update($ver)) {
-                                $failures[$filter] = [
-                                    'status' => 'obsolete',
-                                    'version' => $ver
-                                ];
-                                $status['obsolete'] = true;
-
-                            } else {
-                                // OK - compatible
+                            $reasons = [];
+                            switch ($this->check_filter_needs_update($ver, $filter, $reasons)) {
+                                case true:
+                                    $failures[$filter] = [
+                                        'status' => 'obsolete',
+                                        'version' => $ver,
+                                        'reasons' => $reasons
+                                    ];
+                                    $status['obsolete'] = true;
+                                    break;
+                                case null:
+                                    $failures[$filter] = [
+                                        'status' => 'old',
+                                        'version' => $ver
+                                    ];
+                                    $status['old'] = true;
+                                    break;
+                                case false:
+                                    // OK - compatible
+                                    break;
                             }
 
                         } else {
@@ -389,11 +427,11 @@ class SiteHealth
 
             // get the active status; there is no output
             if (false === exec('/usr/bin/systemctl is-active --quiet fail2ban', $output, $rv)) {
-                return [];
+                return false;
             }
             // get the status
             if (false === exec('/usr/bin/systemctl status --quiet fail2ban', $output)) {
-                return [];
+                return false;
             }
 
             if ($rv) { // 0 is active
@@ -417,12 +455,61 @@ class SiteHealth
 
         } else {
             // for now don't try anything else
-            return [];
+            return false;
         }
 
         $results['label'] = self::PREFIX.$results['label'];
 
         return $results;
+    }
+
+    /**
+     * Common messages about updating filters
+     *
+     * @since  5.2.0
+     *
+     * @param  bool $asap
+     *
+     * @return string
+     */
+    protected function update_filters_asap(bool $asap = true): string
+    {
+        $output = ($asap)
+            ? sprintf(
+                '<p>%s</p>',
+                sprintf(
+                    /* translators: %s: fail2ban */
+                    __('You should update your %s filters as soon as possible. This is usually done by your server administrator.', 'wp-fail2ban'),
+                    '<code>fail2ban</code>'
+                )
+            )
+            : sprintf(
+                '<p>%s</p>',
+                sprintf(
+                    /* translators: %s: fail2ban */
+                    __('You should update your %s filters. This is usually done by your server administrator.', 'wp-fail2ban'),
+                    '<code>fail2ban</code>'
+                )
+            );
+        if (file_exists('/opt/digitalocean/bin/droplet-agent')) {
+            // Probably running DO droplet
+            $output .= sprintf(
+                /* translators: 1: "Life With WP fail2ban", 2: "DigitalOcean WordPress Droplet" */
+                __('It looks like you&rsquo;re using a %1$s; step-by-step instructions for updating the filters can be found on the %2$s site.', 'wp-fail2ban'),
+                '<b>DigitalOcean WordPress Droplet</b>',
+                '&ldquo;<a href="https://life-with.wp-fail2ban.com/core/maintenance/updating-filters/digitalocean-wordpress-droplet/" rel="noopener" target="_blank">Life With WP fail2ban</a>&rdquo;<span class="dashicons dashicons-external"></span>'
+            );
+        }
+        $output .= sprintf(
+            '<p><a href="%s" target="_blank" rel="noopener">%s</a><span class="dashicons dashicons-external"></span></p>',
+            sprintf(
+                'https://docs.wp-fail2ban.com/en/%s/maintenance.html',
+                WP_FAIL2BAN_VER2
+            ),
+            __('Learn more about updating filters.', 'wp-fail2ban')
+        );
+
+        return $output;
     }
 
     /**
@@ -493,39 +580,44 @@ class SiteHealth
                     case 'obsolete':
                         $output .= '<li><span class="dashicons dashicons-warning" style="color: #dc3232"></span> '.sprintf(
                             /* translators: %s: The filter name. */
-                            __('%s is <strong>obsolete</strong> (version %s).', 'wp-fail2ban'),
+                            __('%s is <strong>obsolete</strong> (version %s)', 'wp-fail2ban'),
                             "<code>wordpress-{$filter}.conf</code>",
                             $failure['version']
-                        ).'</li>';
+                        );
+                        if (count($failure['reasons'] ?? [])) {
+                            $output .= ': '.join('; ', $failure['reasons']);
+                        }
+                        $output .= '.</li>';
                         break;
                 }
             }
             $output .= '</ul>';
-            $output .= sprintf(
-                '<p>%s</p>',
-                sprintf(
-                    /* translators: %s: fail2ban */
-                    __('You should update your %s filters as soon as possible. This is usually done by your server administrator.', 'wp-fail2ban'),
-                    '<code>fail2ban</code>'
-                )
-            );
-            if (file_exists('/opt/digitalocean/bin/droplet-agent')) {
-                // Probably running DO droplet
-                $output .= sprintf(
-                    /* translators: 1: "Life With WP fail2ban", 2: "DigitalOcean WordPress Droplet" */
-                    __('It looks like you&rsquo;re using a %1$s; step-by-step instructions for updating the filters can be found on the %2$s site.', 'wp-fail2ban'),
-                    '<b>DigitalOcean WordPress Droplet</b>',
-                    '&ldquo;<a href="https://life-with.wp-fail2ban.com/core/maintenance/updating-filters/digitalocean-wordpress-droplet/" rel="noopener" target="_blank">Life With WP fail2ban</a>&rdquo;<span class="dashicons dashicons-external"></span>'
-                );
+            $output .= $this->update_filters_asap();
+            $results['description'] = $output;
+
+        } elseif (($status['old'])) {
+            $results['label'] = __('One or more of your fail2ban filters are out of date', 'wp-fail2ban');
+            $results['status'] = 'recommended';
+            $output = sprintf('<p>%s</p>', __('The existing <code>fail2ban</code> filters listed below will work with your current configuration. If you enable a feature added or changed since the filter version, it will not work correctly until you update the filters.', 'wp-fail2ban'));
+            $output .= '<ul>';
+            foreach ($failures as $filter => $failure) {
+                switch ($failure['status']) {
+                    case 'old':
+                        $output .= '<li><span class="dashicons dashicons-info" style="color: #72aee6"></span> '.sprintf(
+                            /* translators: %s: The filter name. */
+                            __('%s is from version %s', 'wp-fail2ban'),
+                            "<code>wordpress-{$filter}.conf</code>",
+                            $failure['version']
+                        );
+                        if (count($failure['reasons'] ?? [])) {
+                            $output .= ': '.join('; ', $failure['reasons']);
+                        }
+                        $output .= '.</li>';
+                        break;
+                }
             }
-            $output .= sprintf(
-                '<p><a href="%s" target="_blank" rel="noopener">%s</a><span class="dashicons dashicons-external"></span></p>',
-                sprintf(
-                    'https://docs.wp-fail2ban.com/en/%s/maintenance.html',
-                    WP_FAIL2BAN_VER2
-                ),
-                __('Learn more about updating filters.', 'wp-fail2ban')
-            );
+            $output .= '</ul>';
+            $output .= $this->update_filters_asap(false);
             $results['description'] = $output;
 
         } elseif ($status['custom']) {
@@ -556,7 +648,7 @@ class SiteHealth
     {
         // The filter_obsolete has already failed to run
         if (is_null($failures = $this->check_filters($status))) {
-            return [];
+            return false;
         }
 
         $results = [
@@ -624,7 +716,7 @@ class SiteHealth
     {
         // The filter_obsolete has already failed to run
         if (is_null($failures = $this->check_filters($status))) {
-            return [];
+            return false;
         }
 
         $results = [
@@ -757,9 +849,9 @@ class SiteHealth
      *
      * @since  5.0.0
      *
-     * @return array    The test result.
+     * @return array|false  The test result.
      */
-    protected function get_test_addon_installed(array $params): array
+    protected function get_test_addon_installed(array $params)
     {
         $results = [
             'label'     => '',
@@ -818,9 +910,9 @@ class SiteHealth
         return $results;
     }
 
-    public function get_test_cf7_installed(): array
+    public function get_test_cf7_installed()
     {
-        $results = [];
+        $results = false;
 
         if (defined('WPCF7_VERSION')) {
             $results = $this->get_test_addon_installed([
@@ -845,9 +937,9 @@ class SiteHealth
         return $results;
     }
 
-    public function get_test_gf_installed(): array
+    public function get_test_gf_installed()
     {
-        $results = [];
+        $results = false;
 
         if (class_exists('\GFCommon')) {
             $results = $this->get_test_addon_installed([

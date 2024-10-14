@@ -15,6 +15,7 @@ defined('ABSPATH') or exit;
 /**
  * Log password reset requests
  *
+ * @since  5.2.0    Add guard to work around WooCommerce bug
  * @since  4.4.0    Add type hint, return type
  * @since  3.5.0
  *
@@ -26,8 +27,14 @@ defined('ABSPATH') or exit;
  */
 function retrieve_password(string $user_login): void
 {
-    Syslog::single(LOG_NOTICE, "Password reset requested for {$user_login}", 'WP_FAIL2BAN_PASSWORD_REQUEST_LOG');
+    static $already_called = false;
 
-    do_action(__FUNCTION__, $user_login);
+    if (!$already_called) {
+        $already_called = true;
+
+        Syslog::single(LOG_NOTICE, "Password reset requested for {$user_login}", 'WP_FAIL2BAN_PASSWORD_REQUEST_LOG');
+
+        do_action(__FUNCTION__, $user_login);
+    }
 }
 

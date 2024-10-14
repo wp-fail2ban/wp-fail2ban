@@ -54,6 +54,7 @@ function xmlrpc_login_error(\IXR_Error $error, \WP_Error $user): \IXR_Error
  *
  * @see \wp_xmlrpc_server::pingback_error()
  *
+ * @since  5.2.0    Use default facility
  * @since  4.4.0    Add type hints, return type
  * @since  4.3.0    Added action
  * @since  4.0.0    Return $ixr_error
@@ -69,7 +70,7 @@ function xmlrpc_login_error(\IXR_Error $error, \WP_Error $user): \IXR_Error
 function xmlrpc_pingback_error(\IXR_Error $ixr_error): \IXR_Error
 {
     if (48 !== $ixr_error->code) {
-        Syslog::single(LOG_NOTICE, 'Pingback error '.$ixr_error->code.' generated', 'WP_FAIL2BAN_PINGBACK_LOG');
+        Syslog::single(LOG_NOTICE, 'Pingback error '.$ixr_error->code.' generated');
 
         do_action(__FUNCTION__, $ixr_error);
     }

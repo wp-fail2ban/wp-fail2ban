@@ -52,7 +52,7 @@ function _remote_addr(): ?IP
 
                 } else {
                     // Not a known proxy: hard fail and bail out
-                    Syslog::single(LOG_NOTICE, "Unknown Proxy with X-Forwarded-For", 'WP_FAIL2BAN_AUTH_LOG', (string)$ip);
+                    Syslog::single(LOG_NOTICE, 'Untrusted X-Forwarded-For header', 'WP_FAIL2BAN_AUTH_LOG', (string)$ip);
 
                     do_action(__FUNCTION__.'.unknown_proxy', $ip);
 
