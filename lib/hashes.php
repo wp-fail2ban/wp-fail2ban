@@ -5,7 +5,7 @@
  * @package wp-fail2ban
  * @since   5.0.0
  *
- * Auto-generated: 2024-07-28T16:52:36+01:00
+ * Auto-generated: 2024-08-05T18:04:22+01:00
  */
 namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 
@@ -614,6 +614,10 @@ define('WP_FAIL2BAN_HASHES', array (
   array (
     'hard' => '5.1.1',
   ),
+  '858752295048d97d4b1b43593f6f410b5a052fb0' => 
+  array (
+    'extra' => '5.2.2',
+  ),
   'be24ef72171097dbfcdd72cf47d4e8befb62a4f8' => 
   array (
     'soft' => '5.2.2',
@@ -621,10 +625,6 @@ define('WP_FAIL2BAN_HASHES', array (
   'b7b76848d4788affe8c24b3480368d35e1798fad' => 
   array (
     'hard' => '5.2.2',
-  ),
-  '858752295048d97d4b1b43593f6f410b5a052fb0' => 
-  array (
-    'extra' => '5.2.2',
   ),
   '00d5e11958eaedeb360342d7391ae14ae4823d36' => 
   array (
