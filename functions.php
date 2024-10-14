@@ -182,6 +182,8 @@ function bail()
 /**
  * Compute remote IP address
  *
+ * @since   4.3.0.9 Backport fix for warning for empty proxy list (h/t @stevegrunwell)
+ *
  * @return string
  *
  * @todo Test me!
@@ -195,7 +197,7 @@ function remote_addr()
      * @since 4.0.0
      */
     if (is_null($remote_addr)) {
-        if (defined('WP_FAIL2BAN_PROXIES')) {
+        if (defined('WP_FAIL2BAN_PROXIES') && !empty(WP_FAIL2BAN_PROXIES)) {
             if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
                 $ip = ip2long($_SERVER['REMOTE_ADDR']);
                 /**

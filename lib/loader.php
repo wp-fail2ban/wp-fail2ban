@@ -196,6 +196,14 @@ class Config
                                 'plugins',
                                 'auth',
                                 'enabled')),
+                        'WP_FAIL2BAN_PLUGIN_LOG_BLOCK' => array(
+                            'validate'  => 'boolval',
+                            'unset'     => true,
+                            'field'     => array(
+                                'logging',
+                                'plugins',
+                                'block',
+                                'enabled')),
                         'WP_FAIL2BAN_PLUGIN_LOG_COMMENT' => array(
                             'validate'  => 'boolval',
                             'unset'     => true,
@@ -243,6 +251,14 @@ class Config
                                 'logging',
                                 'plugins',
                                 'auth',
+                                'facility')),
+                        'WP_FAIL2BAN_PLUGIN_BLOCK_LOG' => array(
+                            'validate'  => 'intval',
+                            'unset'     => false,
+                            'field'     => array(
+                                'logging',
+                                'plugins',
+                                'block',
                                 'facility')),
                         'WP_FAIL2BAN_PLUGIN_COMMENT_LOG' => array(
                             'validate'  => 'intval',

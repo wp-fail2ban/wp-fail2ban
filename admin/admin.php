@@ -15,6 +15,71 @@ require_once __DIR__.'/widgets.php';
 require_once __DIR__.'/lib/about.php';
 
 /**
+ * Helper: Add a new submenu "under" the Freemius "Add-Ons" submenu
+ *
+ * @since   4.3.0.9     Backport from 4.3.4.0
+ *
+ * @param   string      $page_title The text to be displayed in the title tags of the page when the menu
+ *                                  is selected.
+ * @param   string      $capability The capability required for this menu to be displayed to the user.
+ * @param   string      $menu_slug  The slug name to refer to this menu by. Should be unique for this menu
+ *                                  and only include lowercase alphanumeric, dashes, and underscores characters
+ *                                  to be compatible with sanitize_key().
+ * @param   callable    $function   The function to be called to output the content for this page.
+ * @return  false|string    The resulting page's hook_suffix, or false if the user does not have the capability required.
+ */
+function add_wpf2b_addon_page($page_title, $capability, $menu_slug, $function)
+{
+    global $submenu;
+
+    $menu_title = " - $page_title";
+
+    if (!$capability) {
+        $capability = (is_multisite())
+            ? 'manage_network_options'
+            : 'manage_options';
+    }
+
+    $parent = (wf_fs()->is_activation_mode()) ? null : 'wp-fail2ban-menu';
+    $sub_menu = 'wp-fail2ban-menu-addons';
+
+    if ($hook = add_submenu_page($parent, $page_title, $menu_title, $capability, $menu_slug, $function)) {
+        foreach ($submenu as $id => &$menu) {
+            if (isset($menu[0]) && $menu[0][2] == 'wp-fail2ban-menu') {
+                $new_submenu    = [];
+                $menu_item      = array_pop($menu);
+
+                // Find the submenu we're appending to
+                for ($i = 0; $i < count($menu) && $sub_menu != $menu[$i][2]; $i++) {
+                    $new_submenu[] = $menu[$i];
+                }
+
+                if ($i < count($menu)) {
+                    $new_submenu[] = $menu[$i++];
+                }
+
+                // Find the menu item alphabetically before the new item
+                for (; $i < count($menu) && isset($menu[$i][0]) && 0 === strpos($menu[$i][0], ' - ') && 0 > strcmp($menu[$i][0], $menu_title); $i++) {
+                    $new_submenu[] = $menu[$i];
+                }
+
+                $new_submenu[] = $menu_item;
+
+                for (; $i < count($menu); $i++) {
+                    $new_submenu[] = $menu[$i];
+                }
+
+                $menu = $new_submenu;
+
+                break;
+            }
+        }
+    }
+
+    return $hook;
+}
+
+/**
  * Helper: Security and Settings menu
  *
  * @since 4.3.0

@@ -39,6 +39,7 @@ function init_defaults()
      * @since 4.2.0
      */
     define('DEFAULT_WP_FAIL2BAN_PLUGIN_AUTH_LOG',       LOG_AUTH);
+    define('DEFAULT_WP_FAIL2BAN_PLUGIN_BLOCK_LOG',      LOG_USER);
     define('DEFAULT_WP_FAIL2BAN_PLUGIN_COMMENT_LOG',    LOG_USER);
     define('DEFAULT_WP_FAIL2BAN_PLUGIN_OTHER_LOG',      LOG_USER);
     define('DEFAULT_WP_FAIL2BAN_PLUGIN_PASSWORD_LOG',   LOG_USER);

@@ -16,9 +16,10 @@ defined('ABSPATH') or exit;
 /**
  * Register plugin
  *
+ * @since 4.3.0.9   Reduce maximum slug length to 200; caused "index too long" with ancient versions of MySQL
  * @since 4.2.0
  *
- * @param string    $slug   Plugin slug. This must be the actual plugin slug. Maximum length is 255 which should be more than enough.
+ * @param string    $slug   Plugin slug. This must be the actual plugin slug. Maximum length is 200 which should be more than enough.
  * @param string    $name   Plugin display name. This should be an unescaped string - HTML is allowed.
  *
  * @return int|false        ID
@@ -27,11 +28,11 @@ function register_plugin($slug, $name)
 {
     global $wp_fail2ban;
 
-    if (255 < strlen($slug)) {
+    if (200 < strlen($slug)) {
         throw new \LengthException('slug too long');
     }
 
-    if (255 < strlen($name)) {
+    if (200 < strlen($name)) {
         throw new \LengthException('name too long');
     }
 
@@ -100,6 +101,7 @@ function register_message($plugin_slug, array $msg)
         'rest'      => WPF2B_EVENT_CLASS_REST,
         'spam'      => WPF2B_EVENT_CLASS_SPAM,
         'xmlrpc'    => WPF2B_EVENT_CLASS_XMLRPC,
+        'block'     => WPF2B_EVENT_CLASS_BLOCK,
         'other'     => 0
     ];
 

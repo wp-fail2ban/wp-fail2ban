@@ -1,12 +1,12 @@
-=== WP fail2ban ===
+=== WP fail2ban - Advanced Security Plugin ===
 Contributors: invisnet
 Donate link: https://paypal.me/invisnet/
 Author URI: https://invis.net/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.3.0
 Plugin URI: https://wp-fail2ban.com/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.3.0
 Tags: fail2ban, login, security, syslog, brute force, protection, classicpress
 Requires at least: 4.2
-Tested up to: 5.6
-Stable tag: 4.3.0.8
+Tested up to: 5.8
+Stable tag: 4.3.0.9
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -77,6 +77,14 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 1. Edit `wp-config.php` to suit your needs - see [Configuration](https://docs.wp-fail2ban.com/en/4.3/configuration.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.3.0).
 
 == Changelog ==
+
+= 4.3.0.9 =
+* Fix incorrect constant for disabling last messages (h/t @kermina).
+* Fix false positive with blocking user enumeration when a Contributor tries to list posts by another user.
+* Fix index issue with ancient versions of MySQL. [Premium only]
+* Fix harmless warning with a defined but empty `WP_FAIL2BAN_PROXIES` (h/t @stevegrunwell).
+* Backport new Block event class.
+* Update Freemius library.
 
 = 4.3.0.8 =
 * Workaround issue with user enumeration blocking being triggered by Gutenberg pre-loading Author list. (h/t @brrrrrrrt) [WordPress only]
@@ -265,6 +273,11 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 4.3.0.9 =
+This is a bugfix release. You do not need to update your filters from 4.3.0.
+
+The maximum slug length for registering custom plugin messages has been reduced to 200 characters.
 
 = 4.3.0.8 =
 This is a bugfix (workaround) release. You do not need to update your filters from 4.3.0.

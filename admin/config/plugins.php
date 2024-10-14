@@ -34,6 +34,7 @@ class TabPlugins extends TabLoggingBase
         // phpcs:disable Generic.Functions.FunctionCallArgumentSpacing
         add_settings_section('wp-fail2ban-plugins', __('Event Class Facilities', 'wp-fail2ban'), [$this, 'sectionLoggingEventClasses'],      'wp-fail2ban-plugins');
         add_settings_field('plugins-log-auth',      __('Authentication',         'wp-fail2ban'), [$this, 'auth'],     'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
+        add_settings_field('plugins-log-block',     __('Block',                  'wp-fail2ban'), [$this, 'block'],    'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
         add_settings_field('plugins-log-comment',   __('Comment',                'wp-fail2ban'), [$this, 'comment'],  'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
         add_settings_field('plugins-log-password',  __('Password',               'wp-fail2ban'), [$this, 'password'], 'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
         add_settings_field('plugins-log-rest',      __('REST',                   'wp-fail2ban'), [$this, 'rest'],     'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
@@ -69,6 +70,16 @@ class TabPlugins extends TabLoggingBase
     public function auth()
     {
         $this->log('WP_FAIL2BAN_PLUGIN_LOG_AUTH', 'WP_FAIL2BAN_PLUGIN_AUTH_LOG');
+    }
+
+    /**
+     * Block
+     *
+     * @since   4.3.0.9 Backport from 4.3.4.0
+     */
+    public function block()
+    {
+        $this->log('WP_FAIL2BAN_PLUGIN_LOG_BLOCK', 'WP_FAIL2BAN_PLUGIN_BLOCK_LOG');
     }
 
     /**

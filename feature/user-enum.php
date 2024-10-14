@@ -45,6 +45,7 @@ function _log_bail_user_enum()
  *
  * @see \WP::parse_request()
  *
+ * @since 4.3.0.9   Backport from 4.3.4.0
  * @since 4.3.0.6   Ignore `author` if it's the current user
  * @since 4.3.0     Refactored to make XDebug happy; h/t @dinghy
  *                  Changed cap to 'edit_others_posts'
@@ -57,14 +58,45 @@ function _log_bail_user_enum()
  */
 function parse_request($query)
 {
-    if (!current_user_can('edit_others_posts') &&
-        !is_null($author = array_value('author', $query->query_vars)) &&
-        get_current_user_id() != intval($author))
-    {
-        _log_bail_user_enum();
+    /**
+     * Is there an author in the query?
+     */
+    if (is_null($author = array_value('author', $query->query_vars))) {
+        return $query;
+
+    /**
+     * Does the user have enough privileges this doesn't matter?
+     */
+    } elseif (current_user_can('edit_others_posts')) {
+        return $query;
+
+    /**
+     * Are they asking about themselves?
+     */
+    } elseif (get_current_user_id() == intval($author)) {
+        return $query;
+
+    /**
+     * OK, we have an unprivileged user asking about a different user
+     */
+    } else {
+        global $pagenow;
+
+        /**
+         * `edit.php` allows Contributors to list posts by other users
+         */
+        if (is_admin() && 'edit.php' == $pagenow && current_user_can('edit_posts')) {
+            return $query;
+
+        /**
+         * TODO: is there some other esoteric case to handle?
+         */
+        } else {
+            // noop
+        }
     }
 
-    return $query;
+    return _log_bail_user_enum();
 }
 
 /**

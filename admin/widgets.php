@@ -7,7 +7,9 @@
  */
 namespace org\lecklider\charles\wordpress\wp_fail2ban;
 
-(defined('ABSPATH') && (!defined('WP_FAIL2BAN_LOG_DISABLE_LAST') || true !== WP_FAIL2BAN_LOG_DISABLE_LAST)) or exit;
+if (!defined('ABSPATH') || (defined('WP_FAIL2BAN_DISABLE_LAST_LOG') && false === WP_FAIL2BAN_DISABLE_LAST_LOG)) {
+    return;
+}
 
 /**
  * Last 5 Messages Widget
