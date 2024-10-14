@@ -154,7 +154,7 @@ class SiteHealth
                 ),
                 sprintf(
                     /* translators: %s: 'WP_FAIL2BAN_LOG_COMMENTS_EXTRA' (simplifies custom dictionary) */
-                    __('%s will be removed in version 5.1.', 'wp-fail2ban'),
+                    __('%s will be removed in version 6.0.', 'wp-fail2ban'),
                     '<tt>WP_FAIL2BAN_LOG_COMMENTS_EXTRA</tt>'
                 )
             ),
@@ -198,7 +198,7 @@ class SiteHealth
                 ),
                 sprintf(
                     /* translators: %s: 'WP_FAIL2BAN_COMMENTS_EXTRA_LOG' (simplifies custom dictionary) */
-                    __('%s will be removed in version 5.1.', 'wp-fail2ban'),
+                    __('%s will be removed in version 6.0.', 'wp-fail2ban'),
                     '<tt>WP_FAIL2BAN_COMMENTS_EXTRA_LOG</tt>'
                 )
             ),
@@ -337,6 +337,7 @@ class SiteHealth
      * This test will not work if we do not have access to fail2ban/filter.d;
      * e.g. if we're running chroot'd
      *
+     * @since  5.0.1    Drop cron nag
      * @since  5.0.0
      *
      * @return array    The test result.
@@ -370,9 +371,9 @@ class SiteHealth
                 __('This may be expected behaviour, depending on your server configuration. You should ask your server administrator to review the documentation linked below and take any appropriate action.', 'wp-fail2ban')
             );
             $results['actions']     = sprintf(
-                '<p><a href="%s" target="_blank">%s</a><span class="dashicons dashicons-external"></span></p>',
+                '<p><a href="%s" target="_blank" rel="noopener">%s</a><span class="dashicons dashicons-external"></span></p>',
                 sprintf(
-                    'https://docs.wp-fail2ban.com/en/%s/configuration/site-health-tool',
+                    'https://docs.wp-fail2ban.com/en/%s/configuration/site-health-tool.html',
                     WP_FAIL2BAN_VER2
                 ),
                 __('Configuring the Site Health tool', 'wp-fail2ban')
@@ -410,36 +411,19 @@ class SiteHealth
                 '<p>%s</p>',
                 sprintf(
                     /* translators: %s: fail2ban */
-                    __('You should update your %s filters as soon as possible. This must be done by your server administrator.', 'wp-fail2ban'),
+                    __('You should update your %s filters as soon as possible. This is usually done by your server administrator.', 'wp-fail2ban'),
                     '<code>fail2ban</code>'
                 )
             );
+            $output .= sprintf(
+                '<p><a href="%s" target="_blank" rel="noopener">%s</a><span class="dashicons dashicons-external"></span></p>',
+                sprintf(
+                    'https://docs.wp-fail2ban.com/en/%s/maintenance.html',
+                    WP_FAIL2BAN_VER2
+                ),
+                __('Learn more about updating filters.', 'wp-fail2ban')
+            );
             $results['description'] = $output;
-
-            if (wp_doing_cron()) {
-                wf_fs()->remove_sticky('wp_fail2ban_filter_obsolete');
-                wf_fs()->add_sticky_admin_message(
-                    sprintf(
-                        '<p>%s</p><p>%s</p>',
-                        sprintf(
-                            /* translators: %s: fail2ban. */
-                            __('Using the latest version of the %s filters is critical for the correct behaviour of WP fail2ban.', 'wp-fail2ban'),
-                            '<code>fail2ban</code>'
-                        ),
-                        sprintf(
-                            __('Please check the %s.', 'wp-fail2ban'),
-                            sprintf(
-                                '<a href="%s">%s</a>',
-                                admin_url('/site-health.php'),
-                                __('Site Health screen', 'wp-fail2ban')
-                            )
-                        )
-                    ),
-                    'wp_fail2ban_filter_obsolete',
-                    $results['label'],
-                    'error'
-                );
-            }
 
         } elseif ($status['custom']) {
             $results['status'] = 'custom';

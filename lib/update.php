@@ -13,9 +13,9 @@ defined('ABSPATH') or exit;
  * Allow auto-updates based on semver
  *
  * Major version must match.
- * Minor version must match.
  * Patch and below are ignored.
  *
+ * @since  5.0.1    Only Major must match
  * @since  4.4.0.9
  *
  * @param  mixed    $update
@@ -29,8 +29,8 @@ function auto_update_plugin($update, $item)
         $old_ver = explode('.', WP_FAIL2BAN_VER);
         $new_ver = explode('.', $item->new_version);
 
-        // Only allow auto-update if Major and Minor match
-        return ($old_ver[0] == $new_ver[0] && $old_ver[1] == $new_ver[1])
+        // Only allow auto-update if Major matches
+        return ($old_ver[0] == $new_ver[0])
             ? $update // Do not force auto-update
             : false;
     }
