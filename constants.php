@@ -12,16 +12,25 @@ namespace org\lecklider\charles\wordpress\wp_fail2ban;
 // @codeCoverageIgnoreStart
 
 if (!defined('WP_FAIL2BAN_VER')) {
-    define('WP_FAIL2BAN_VER', '5.0.1');
+    define('WP_FAIL2BAN_VER', '5.1.0.5');
 }
 if (!defined('WP_FAIL2BAN_VER_SHORT')) {
     define('WP_FAIL2BAN_VER_SHORT', '5');
 }
 if (!defined('WP_FAIL2BAN_VER_MEDIUM')) {
-    define('WP_FAIL2BAN_VER_MEDIUM', '5.0');
+    define('WP_FAIL2BAN_VER_MEDIUM', '5.1');
 }
 if (!defined('WP_FAIL2BAN_VER2')) {
-    define('WP_FAIL2BAN_VER2', '5.0');
+    define('WP_FAIL2BAN_VER2', '5.1');
+}
+if (!defined('WP_FAIL2BAN_VER_MAJOR')) {
+    define('WP_FAIL2BAN_VER_MAJOR', '5');
+}
+if (!defined('WP_FAIL2BAN_VER_MINOR')) {
+    define('WP_FAIL2BAN_VER_MINOR', '1');
+}
+if (!defined('WP_FAIL2BAN_VER_PATCH')) {
+    define('WP_FAIL2BAN_VER_PATCH', '0');
 }
 if (!defined('WP_FAIL2BAN_DIR')) {
     define('WP_FAIL2BAN_DIR', __DIR__);

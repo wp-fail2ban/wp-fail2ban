@@ -188,6 +188,7 @@ function oembed_response_data(array $data, \WP_Post $post, int $width, int $heig
  * @return array    Empty array
  *
  * @codeCoverageIgnore
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 function wp_sitemaps_users_pre_url_list($null, int $page_num): array
 {
@@ -206,6 +207,7 @@ function wp_sitemaps_users_pre_url_list($null, int $page_num): array
  * @return int      0
  *
  * @codeCoverageIgnore
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 function wp_sitemaps_users_pre_max_num_pages($null): int
 {

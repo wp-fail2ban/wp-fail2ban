@@ -452,7 +452,7 @@ abstract class TabBase
                       style="vertical-align: text-bottom"></span></a>
 HTML;
 
-        return sprintf($link, self::HELP_LINK_REFERENCE, $define, __('Documentation', 'wp-fail2ban'), $define);
+        return sprintf($link, self::HELP_LINK_REFERENCE, $define, __('Reference', 'wp-fail2ban'), $define);
     }
 
     /**
@@ -603,6 +603,8 @@ HTML;
      * @param  string           $cssClass
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function radio($define, bool $show_desc = true, string $plan = 'bronze', bool $echo = true): string
     {
@@ -615,9 +617,10 @@ HTML;
         $html = '';
         foreach ($wp_fail2ban['config'][$define]['values'] as $value) {
             $checked = $this->def_checked($define, $value, false);
-            $html .= "<p><input type=\"radio\" disabled=\"disabled\" {$checked}>";
             if ($show_desc) {
-                $html .= "<label>".$this->description("{$define}.{$value}", false).'</label>';
+                $html .= "<p><label><input type=\"radio\" disabled=\"disabled\" {$checked}> ".$this->description("{$define}.{$value}", false).'</label>';
+            } else {
+                $html .= "<p><input type=\"radio\" disabled=\"disabled\" {$checked}>";
             }
             $html .= '</p>';
         }
@@ -731,6 +734,28 @@ HTML;
     protected function description(string $define, bool $echo = true): string
     {
         if (!is_null($desc = Config::desc($define))) {
+            if ($echo) {
+                echo '<p class="description">'.$desc.'</p>';
+            }
+            return $desc;
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Helper: setting description extended
+     *
+     * @since  5.1.0
+     *
+     * @param  string   $define
+     * @param  bool     $echo
+     *
+     * @return string
+     */
+    protected function description_ex(string $define, bool $echo = true): string
+    {
+        if (!is_null($desc = Config::desc_ex($define))) {
             if ($echo) {
                 echo '<p class="description">'.$desc.'</p>';
             }

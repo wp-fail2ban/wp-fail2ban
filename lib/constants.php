@@ -32,8 +32,8 @@ defined('ABSPATH') or exit; // @codeCoverageIgnore
 17 | ..
 16 | ..
 ---
-15 | ID
-14 | ..
+15 | ..
+14 | ID
 13 | ..
 12 | ..
 11 | ..
@@ -51,6 +51,7 @@ defined('ABSPATH') or exit; // @codeCoverageIgnore
 00 | Success
 */
 
+define('WPF2B_EVENT_CLASS_WAF',                 0x00008000);    /** @since 5.1.0 */
 define('WPF2B_EVENT_CLASS_AUTH',                0x00010000);
 define('WPF2B_EVENT_CLASS_COMMENT',             0x00020000);
 define('WPF2B_EVENT_CLASS_XMLRPC',              0x00040000);
@@ -75,7 +76,6 @@ define('WPF2B_EVENT_J', 0x0800);
 define('WPF2B_EVENT_K', 0x1000);
 define('WPF2B_EVENT_L', 0x2000);
 define('WPF2B_EVENT_M', 0x4000);
-define('WPF2B_EVENT_N', 0x8000);
 
 define('WPF2B_EVENT_SUCCESS',                   0x00000001);    /** @since 4.3.0 */
 define('WPF2B_EVENT_FAILURE',                   0x00000002);    /** @since 4.3.0 */
@@ -84,6 +84,13 @@ define('WPF2B_EVENT_FAILURE',                   0x00000002);    /** @since 4.3.0
  *
  */
 define('WPF2B_EVENT_ACTIVATED',                 0xffffffff);
+
+/**
+ * WAF
+ */
+define('WPF2B_EVENT_WAF_ERROR',                 WPF2B_EVENT_CLASS_WAF | WPF2B_EVENT_FAILURE);   /** @since 5.1.0 **/
+define('WPF2B_EVENT_WAF_SQLI',                  WPF2B_EVENT_CLASS_WAF | WPF2B_EVENT_CLASS_BLOCK | WPF2B_EVENT_A);   /** @since 5.1.0 **/
+define('WPF2B_EVENT_WAF_UPDATE_OPTION',         WPF2B_EVENT_CLASS_WAF | WPF2B_EVENT_CLASS_BLOCK | WPF2B_EVENT_B);   /** @since 5.1.0 **/
 
 /**
  * Auth

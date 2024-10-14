@@ -15,6 +15,7 @@ defined('ABSPATH') or exit;
  * Major version must match.
  * Patch and below are ignored.
  *
+ * @since  5.1.0    Handle missing slug (Google Sitekit)
  * @since  5.0.1    Only Major must match
  * @since  4.4.0.9
  *
@@ -25,7 +26,7 @@ defined('ABSPATH') or exit;
  */
 function auto_update_plugin($update, $item)
 {
-    if ('wp-fail2ban' == $item->slug) {
+    if ('wp-fail2ban' == $item->slug ?? '') {
         $old_ver = explode('.', WP_FAIL2BAN_VER);
         $new_ver = explode('.', $item->new_version);
 

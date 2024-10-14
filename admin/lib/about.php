@@ -193,7 +193,7 @@ function getDbInfo(): string
 
     if ('good' == $results['status']) {
         $fmt = <<<HTML
-<p><span class="ok">%s:</span> %s</p>
+<p><span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s:</span> %s</p>
 HTML;
         $html =sprintf($fmt, __('OK'), strip_tags($results['description']));
 
@@ -231,9 +231,9 @@ function getCloudflareInfo(): string
             if (0 < ($lu = Config::get('WP_FAIL2BAN_EX_PROXY_CLOUDFLARE_IPS_UPDATED'))) {
                 $tz = new \DateTimeZone(wp_timezone_string());
                 $dt = new \DateTimeImmutable("@{$lu}", $tz);
-                $lu = sprintf('<span class="ok">%s:</span> %s', __('OK'), $dt->format('Y/m/d H:i:s O'));
+                $lu = sprintf('<span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s:</span> %s', __('OK'), $dt->format('Y/m/d H:i:s O'));
             } else {
-                $lu = sprintf('<span class="error"><em>%s</em></span>', __('Last update unknown', 'wp-fail2bam'));
+                $lu = sprintf('<span class="wpf2b-error"><em>%s</em></span>', __('Last update unknown', 'wp-fail2bam'));
             }
 
             // There's space for 2 columns of CIDR IPv4 addresses, so first filter by length
@@ -263,7 +263,7 @@ HTML;
             $html = __('Not set.', 'wp-fail2ban');
         }
     } else {
-        $html = __('Not enabled.', 'wp-fail2ban');
+        $html = '<span class="dashicons dashicons-ellipsis"></span> '.__('Not enabled.', 'wp-fail2ban');
     }
 
     return $html;
@@ -314,7 +314,7 @@ function about(): void
               </section>
               <hr>
               <section>
-    <?php readme(WP_FAIL2BAN_VER2, WP_FAIL2BAN_DIR.'/readme.txt'); ?>
+    <?php readme(WP_FAIL2BAN_VER_SHORT, WP_FAIL2BAN_DIR.'/readme.txt'); ?>
               </section>
             </div>
           </div>
@@ -337,34 +337,33 @@ function about(): void
                 <?php if (!defined('WP_FAIL2BAN_SITE_HEALTH_SKIP_FILTERS')): ?>
                 <dt>Filters</dt>
                 <dd>
-                    <p><?php
+                    <ul class="filters"><?php
                     $run_site_health = false;
                     $shi = SiteHealth::get_instance();
                     $obs = $shi->get_test_filter_obsolete();
                     switch ($obs['status']) {
                         case 'good':
                             // OK
-                            printf('<span class="ok">%s</span>', __('Up to date.', 'wp-fail2ban'));
+                            printf('<li><span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s</span></li>', __('Up to date.', 'wp-fail2ban'));
                             break;
                         case 'recommended':
-                            printf('<span class="warning">%s</span>', __('Unknown.', 'wp-fail2ban'));
+                            printf('<li><span class="wpf2b-warning"><span class="dashicons dashicons-warning"></span> %s</span></li>', __('Unknown.', 'wp-fail2ban'));
                             $run_site_health = true;
                             break;
                         case 'critical':
-                            printf('<span class="error">%s</span>', __('Obsolete.', 'wp-fail2ban'));
+                            printf('<li><span class="wpf2b-error"><span class="dashicons dashicons-no"></span> %s</span></li>', __('Obsolete filter(s) found.', 'wp-fail2ban'));
                             $run_site_health = true;
                             break;
                     }
-                    echo ' ';
 
                     $mod = $shi->get_test_filter_modified();
                     if (empty($mod)) {
                         // obj already failed
                     } elseif ('good' == $mod['status']) {
                         // OK
-                        printf('<span class="ok">%s</span>', __('Not modified.', 'wp-fail2ban'));
+                        printf('<li><span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s</span></li>', __('Not modified.', 'wp-fail2ban'));
                     } else {
-                        printf('<span class="warning">%s</span>', __('Modified.', 'wp-fail2ban'));
+                        printf('<li><span class="wpf2b-warning"><span class="dashicons dashicons-warning"></span> %s</span></li>', __('Modified filter(s) found.', 'wp-fail2ban'));
                         $run_site_health = true;
                     }
                     echo ' ';
@@ -374,16 +373,18 @@ function about(): void
                         // obj already failed
                     } elseif ('good' == $mis['status']) {
                         // OK
-                        printf('<span class="ok">%s</span>', __('All present.', 'wp-fail2ban'));
+                        printf('<li><span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s</span></li>', __('All present.', 'wp-fail2ban'));
                     } else {
-                        printf('<span class="error">%s</span>', __('Incomplete.', 'wp-fail2ban'));
+                        printf('<li><span class="wpf2b-error"><span class="dashicons dashicons-no"></span> %s</span></li>', __('Incomplete.', 'wp-fail2ban'));
                         $run_site_health = true;
                     }
 
                     if ($run_site_health) {
-                        printf('</p><p><span class="error">%s</span>', __('Run Site Health Tool.', 'wp-fail2ban'));
+                        printf('</ul><p><span class="wpf2b-error"><span class="dashicons dashicons-star-filled"></span> %s</span></p>', __('Run Site Health Tool.', 'wp-fail2ban'));
+                    } else {
+                        echo '</ul>';
                     }
-                    ?></p>
+                    ?>
                 </dd>
                 <?php endif; ?>
               </dl>

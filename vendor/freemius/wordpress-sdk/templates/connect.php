@@ -47,28 +47,25 @@
 		$site_url = substr( $site_url, $protocol_pos + 3 );
 	}
 
-	$freemius_site_www = 'https://freemius.com';
-
 	$freemius_usage_tracking_url = $fs->get_usage_tracking_terms_url();
 	$freemius_plugin_terms_url   = $fs->get_eula_url();
 
-	$freemius_site_url = $fs->is_premium() ?
-		$freemius_site_www :
-		$freemius_usage_tracking_url;
-
-	if ( $fs->is_premium() ) {
-		$freemius_site_url .= '?' . http_build_query( array(
-				'id'   => $fs->get_id(),
-				'slug' => $slug,
-			) );
-	}
-
-	$freemius_link = '<a href="' . $freemius_site_url . '" target="_blank" rel="noopener" tabindex="1">freemius.com</a>';
-
 	$error = fs_request_get( 'error' );
 
+    $has_release_on_freemius = $fs->has_release_on_freemius();
+
 	$require_license_key = $is_premium_only ||
-	                       ( $is_freemium && $is_premium_code && fs_request_get_bool( 'require_license', true ) );
+                           (
+                               $is_freemium &&
+                               ( $is_premium_code || ! $has_release_on_freemius ) &&
+                               fs_request_get_bool( 'require_license', ( $is_premium_code || $has_release_on_freemius ) )
+                           );
+
+	$freemius_activation_terms_url = ($fs->is_premium() && $require_license_key) ?
+		$fs->get_license_activation_terms_url() :
+		$freemius_usage_tracking_url;
+
+	$freemius_activation_terms_html = '<a href="' . esc_url( $freemius_activation_terms_url ) . '" target="_blank" rel="noopener" tabindex="1">freemius.com</a>';
 
 	if ( $is_pending_activation ) {
 		$require_license_key = false;
@@ -120,18 +117,10 @@
     /* translators: %s: name (e.g. Hey John,) */
     $hey_x_text = esc_html( sprintf( fs_text_x_inline( 'Hey %s,', 'greeting', 'hey-x', $slug ), $first_name ) );
 
-    $is_gdpr_required = ( ! $is_pending_activation && ! $require_license_key ) ?
-	    FS_GDPR_Manager::instance()->is_required() :
-        false;
-
-    if ( is_null( $is_gdpr_required ) ) {
-        $is_gdpr_required = $fs->fetch_and_store_current_user_gdpr_anonymously();
-    }
-
     $activation_state = array(
         'is_license_activation'       => $require_license_key,
         'is_pending_activation'       => $is_pending_activation,
-        'is_gdpr_required'            => $is_gdpr_required,
+        'is_gdpr_required'            => true,
         'is_network_level_activation' => $is_network_level_activation,
         'is_dialog'                   => $is_optin_dialog,
     );
@@ -179,7 +168,7 @@
             <?php $fs->do_action( 'connect/before_message', $activation_state ) ?>
 
 			<?php if ( ! empty( $error ) ) : ?>
-				<p class="fs-error"><?php echo $fs->apply_filters( 'connect_error_esc_html', esc_html( $error ) ) ?></p>
+				<div class="fs-error"><?php echo $fs->apply_filters( 'connect_error_esc_html', esc_html( $error ) ) ?></div>
 			<?php endif ?>
             <?php
                 if ( ! $is_pending_activation && ! $require_license_key ) {
@@ -232,11 +221,13 @@
                         $filter = 'connect_message';
 
 						if ( ! $fs->is_plugin_update() ) {
-                            $default_optin_message = esc_html( sprintf( ( $is_gdpr_required ?
-                                /* translators: %s: module type (plugin, theme, or add-on) */
-                                fs_text_inline( 'Opt in to get email notifications for security & feature updates, educational content, and occasional offers, and to share some basic WordPress environment info. This will help us make the %s more compatible with your site and better at doing what you need it to.', 'connect-message', $slug ) :
-                                /* translators: %s: module type (plugin, theme, or add-on) */
-                                fs_text_inline( 'Opt in to get email notifications for security & feature updates, and to share some basic WordPress environment info. This will help us make the %s more compatible with your site and better at doing what you need it to.', 'connect-message', $slug ) ), $fs->get_module_label( true ) ) );
+                            $default_optin_message = esc_html(
+                                sprintf(
+                                    /* translators: %s: module type (plugin, theme, or add-on) */
+                                    fs_text_inline( 'Opt in to get email notifications for security & feature updates, educational content, and occasional offers, and to share some basic WordPress environment info. This will help us make the %s more compatible with your site and better at doing what you need it to.', 'connect-message', $slug ),
+                                    $fs->get_module_label( true )
+                                )
+                            );
                         } else {
 							// If Freemius was added on a plugin update, set different
 							// opt-in message.
@@ -244,9 +235,7 @@
                             /* translators: %s: module type (plugin, theme, or add-on) */
                             $default_optin_message = esc_html( sprintf( fs_text_inline( 'We have introduced this opt-in so you never miss an important update and help us make the %s more compatible with your site and better at doing what you need it to.', 'connect-message_on-update_why' ), $fs->get_module_label( true ) ) );
 
-							$default_optin_message .= '<br><br>' . esc_html( $is_gdpr_required ?
-								fs_text_inline( 'Opt in to get email notifications for security & feature updates, educational content, and occasional offers, and to share some basic WordPress environment info.', 'connect-message_on-update', $slug ) :
-								fs_text_inline( 'Opt in to get email notifications for security & feature updates, and to share some basic WordPress environment info.', 'connect-message_on-update', $slug ) );
+                            $default_optin_message .= '<br><br>' . esc_html( fs_text_inline( 'Opt in to get email notifications for security & feature updates, educational content, and occasional offers, and to share some basic WordPress environment info.', 'connect-message_on-update', $slug ) );
 
                             if ( $fs->is_enable_anonymous() ) {
                                 $default_optin_message .= ' ' . esc_html( fs_text_inline( 'If you skip this, that\'s okay! %1$s will still work just fine.', 'connect-message_on-update_skip', $slug ) );
@@ -267,14 +256,14 @@
 								'<b>' . esc_html( $fs->get_plugin_name() ) . '</b>',
 								'<b>' . $current_user->user_login . '</b>',
 								'<a href="' . $site_url . '" target="_blank" rel="noopener noreferrer">' . $site_url . '</a>',
-                                $freemius_link
+                                $freemius_activation_terms_html
 							),
 							$first_name,
 							$fs->get_plugin_name(),
 							$current_user->user_login,
 							'<a href="' . $site_url . '" target="_blank" rel="noopener noreferrer">' . $site_url . '</a>',
-							$freemius_link,
-							$is_gdpr_required
+							$freemius_activation_terms_html,
+							true
 						);
 					}
 
@@ -408,10 +397,10 @@
 			// Set core permission list items.
 			$permissions = array();
 
-			// Add newsletter permissions if enabled.
-			if ( $is_gdpr_required || $fs->is_permission_requested( 'newsletter' ) ) {
-				$permissions[] = $permission_manager->get_newsletter_permission();
-			}
+            // Add newsletter permissions if enabled.
+            if ( $fs->is_permission_requested( 'newsletter' ) ) {
+                $permissions[] = $permission_manager->get_newsletter_permission();
+            }
 
             $permissions = $permission_manager->get_permissions(
                 $require_license_key,
@@ -453,12 +442,16 @@
 		<?php endif ?>
         </div>
 		<div class="fs-terms">
-            <a class="fs-tooltip-trigger<?php echo is_rtl() ? ' rtl' : '' ?>" href="<?php echo $freemius_site_url ?>" target="_blank" rel="noopener" tabindex="1">Powered by Freemius<?php if ( $require_license_key ) : ?> <span class="fs-tooltip" style="width: 170px"><?php echo $fs->get_text_inline( 'Freemius is our licensing and software updates engine', 'permissions-extensions_desc' ) ?></span><?php endif ?></a>
+            <a class="fs-tooltip-trigger<?php echo is_rtl() ? ' rtl' : '' ?>" href="<?php echo esc_url( $freemius_activation_terms_url ) ?>" target="_blank" rel="noopener" tabindex="1">Powered by Freemius<?php if ( $require_license_key ) : ?> <span class="fs-tooltip" style="width: 170px"><?php echo $fs->get_text_inline( 'Freemius is our licensing and software updates engine', 'permissions-extensions_desc' ) ?></span><?php endif ?></a>
             &nbsp;&nbsp;-&nbsp;&nbsp;
 			<a href="https://freemius.com/privacy/" target="_blank" rel="noopener"
 			   tabindex="1"><?php fs_esc_html_echo_inline( 'Privacy Policy', 'privacy-policy', $slug ) ?></a>
 			&nbsp;&nbsp;-&nbsp;&nbsp;
-			<a href="<?php echo $require_license_key ? $freemius_plugin_terms_url : $freemius_usage_tracking_url ?>" target="_blank" rel="noopener" tabindex="1"><?php $require_license_key ? fs_echo_inline( 'License Agreement', 'license-agreement', $slug ) : fs_echo_inline( 'Terms of Service', 'tos', $slug ) ?></a>
+			<?php if ($require_license_key) : ?>
+				<a href="<?php echo esc_url( $freemius_plugin_terms_url ) ?>" target="_blank" rel="noopener" tabindex="1"><?php fs_echo_inline( 'License Agreement', 'license-agreement', $slug ) ?></a>
+			<?php else : ?>
+				<a href="<?php echo esc_url( $freemius_usage_tracking_url ) ?>" target="_blank" rel="noopener" tabindex="1"><?php fs_echo_inline( 'Terms of Service', 'tos', $slug ) ?></a>
+			<?php endif; ?>
 		</div>
 	</div>
 	<?php
@@ -840,7 +833,7 @@
 								resetLoadingMode();
 
 								// Show error.
-								$('.fs-content').prepend('<p class="fs-error">' + (resultObj.error.message ?  resultObj.error.message : resultObj.error) + '</p>');
+								$('.fs-content').prepend('<div class="fs-error">' + (resultObj.error.message ?  resultObj.error.message : resultObj.error) + '</div>');
 							}
 						},
 						error: function () {
@@ -1045,3 +1038,5 @@
 		//endregion
 	})(jQuery);
 </script>
+<?php
+    fs_require_once_template( 'api-connectivity-message-js.php' );

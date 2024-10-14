@@ -5,7 +5,7 @@
  * @package wp-fail2ban
  * @since   5.0.0
  *
- * Auto-generated: 2023-03-05T14:46:02+00:00
+ * Auto-generated: 2023-06-10T16:52:02+01:00
  */
 namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 
@@ -121,6 +121,30 @@ define('WP_FAIL2BAN_HASHES', array (
   '85e84753e2ab6a48d85e529f9d32ddf6a8123ab0' => 
   array (
     'hard' => '4.2.4',
+  ),
+  '441be3af8c13feba0f388e2e244fda128493f104' => 
+  array (
+    'hard' => '5.1.0',
+  ),
+  'b9a8599858ec7055a879aeee6e9cae956b0fae9d' => 
+  array (
+    'soft' => '5.1.0',
+  ),
+  '89d2f0c2a4645394542369e0d4dc4de40131175b' => 
+  array (
+    'extra' => '5.1.0',
+  ),
+  '232dbee5e323cbf1fec712b8823591f7367b5d17' => 
+  array (
+    'hard' => '5.1.0.3',
+  ),
+  '7b23a219cfb675df21d9c1ef00fb2ef37250a5c3' => 
+  array (
+    'soft' => '5.1.0.3',
+  ),
+  '31c215036dba11f777331be950a6065a3aa05b31' => 
+  array (
+    'extra' => '5.1.0.3',
   ),
   '0aa220a2ebec5eb53360471e88269899dff74e3b' => 
   array (
@@ -326,6 +350,18 @@ define('WP_FAIL2BAN_HASHES', array (
   array (
     'soft' => '4.4.0.7',
   ),
+  'bf80156878456369d9b28b081a9e5311bda730cd' => 
+  array (
+    'soft' => '5.1.0.1',
+  ),
+  'c6fbb593393561f11584cc98900c2231d9c3c197' => 
+  array (
+    'hard' => '5.1.0.1',
+  ),
+  '176d6e84a70457db4ba4d59ece5c631d9766e758' => 
+  array (
+    'extra' => '5.1.0.1',
+  ),
   '318bd65a58bad8d3a40beccbfea6811418ad51c3' => 
   array (
     'soft' => '4.2.7.1',
@@ -337,6 +373,18 @@ define('WP_FAIL2BAN_HASHES', array (
   'c08c6bf17b0e6fbf2a9220f3c071feb73daeabe7' => 
   array (
     'extra' => '4.2.7.1',
+  ),
+  'ad8e6f03ed87b74edeb6e27f9485a0fbc791a344' => 
+  array (
+    'extra' => '5.0.1',
+  ),
+  '10126d31ac3282e35a6fd3a1c8fc29368f872e8b' => 
+  array (
+    'soft' => '5.0.1',
+  ),
+  'a2f794a5dec104df328b6c1251fb4d591fd35766' => 
+  array (
+    'hard' => '5.0.1',
   ),
   'b09cd2b8fc691c3ad2862c9a11e88a355919373b' => 
   array (
@@ -493,6 +541,18 @@ define('WP_FAIL2BAN_HASHES', array (
   '581e3d989e89ae4f004b3ba92713decf78e976e2' => 
   array (
     'hard' => '4.2.1',
+  ),
+  '00d5e11958eaedeb360342d7391ae14ae4823d36' => 
+  array (
+    'extra' => '5.1.0.2',
+  ),
+  '6d262337298abcaced7eee21428072adb2e6c0b4' => 
+  array (
+    'hard' => '5.1.0.2',
+  ),
+  '39d123cdadc97f9cb0bd634c6ca738ec2dd4e791' => 
+  array (
+    'soft' => '5.1.0.2',
   ),
 ));
 // @codeCoverageIgnoreEnd

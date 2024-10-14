@@ -8,8 +8,6 @@
  */
 namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 
-use          org\lecklider\charles\wordpress\wp_fail2ban\premium\WPf2b;
-
 defined('ABSPATH') or exit;
 
 class SiteHealth
@@ -58,6 +56,10 @@ class SiteHealth
             'test'  => [$instance, 'get_test_comments_extra_log_deprecated']
         ];
 
+        $tests['direct']['wp_fail2ban_running'] = [
+            'label' => 'fail2ban running',
+            'test'  => [$instance, 'get_test_fail2ban_running']
+            ];
         if (!defined('WP_FAIL2BAN_SITE_HEALTH_SKIP_FILTERS')) {
             $tests['direct']['wp_fail2ban_filter_obsolete'] = [
                 'label' => 'WP fail2ban obsolete filters',
@@ -244,6 +246,32 @@ class SiteHealth
     }
 
     /**
+     * Do the filters actually need to be updated?
+     *
+     * 5.0.x => 5.1.y: NO
+     *
+     * @since  5.1.0
+     *
+     * @param  string   $ver    Version of existing filter
+     *
+     * @return bool
+     */
+    protected function check_filter_needs_update(string $ver): bool
+    {
+        list($major, $minor, $patch) = explode('.', $ver);
+
+        /* Always update for major version changes */
+        if ($major != WP_FAIL2BAN_VER_MAJOR) {
+            return true;
+        }
+
+        /* Specific version update logic */
+        // Nothing to check yet
+
+        return apply_filters(__METHOD__, false, $major, $minor, $patch);
+    }
+
+    /**
      * Check all the standard filters for obsolete version or modification
      *
      * @since  5.0.0
@@ -285,9 +313,11 @@ class SiteHealth
                         if ($installed_file == $local_file) {
                             // OK - identical
 
-                        } elseif (isset(WP_FAIL2BAN_HASHES[$installed_file][$filter])) {
+                        } elseif (array_key_exists($installed_file, WP_FAIL2BAN_HASHES) &&
+                                  array_key_exists($filter, WP_FAIL2BAN_HASHES[$installed_file]))
+                        {
                             $ver = WP_FAIL2BAN_HASHES[$installed_file][$filter];
-                            if (version_compare($ver, WP_FAIL2BAN_VER2, '<')) {
+                            if ($this->check_filter_needs_update($ver)) {
                                 $failures[$filter] = [
                                     'status' => 'obsolete',
                                     'version' => $ver
@@ -329,6 +359,70 @@ class SiteHealth
         $flags = $status;
 
         return $failures;
+    }
+
+    /**
+     * Is fail2ban running?
+     *
+     * For now, just try systemctl.
+     *
+     * @since  5.1.0
+     *
+     * @return array    The test result.
+     */
+    public function get_test_fail2ban_running()
+    {
+        $results = [
+            'label'     => __('fail2ban is running', 'wp-fail2ban'),
+            'status'    => 'good',
+            'badge'     => [
+                'label' => __('Security'),
+                'color' => 'blue'
+            ],
+            'description'   => sprintf('<p>%s</p>', __('<tt>fail2ban</tt> is running.', 'wp-fail2ban')),
+            'actions'       => '',
+            'test'          => 'wp_fail2ban_running'
+        ];
+
+        if (file_exists('/usr/bin/systemctl')) {
+            $output = [];
+
+            // get the active status; there is no output
+            if (false === exec('/usr/bin/systemctl is-active --quiet fail2ban', $output, $rv)) {
+                return [];
+            }
+            // get the status
+            if (false === exec('/usr/bin/systemctl status --quiet fail2ban', $output)) {
+                return [];
+            }
+
+            if ($rv) { // 0 is active
+                $results['label']       = __('fail2ban is not running', 'wp-fail2ban');
+                $results['status']      = 'critical';
+                $results['description'] = sprintf(
+                    /* translators: %s: fail2ban */
+                    __('%s is not running - your server is unprotected.', 'wp-fail2ban'),
+                    '<tt>fail2ban</tt>'
+                );
+                $results['actions']     = sprintf(
+                    '<p><a href="https://life-with.wp-fail2ban.com/core/maintenance/fail2ban/starting/digitalocean-wordpress-droplet/" target="_blank" rel="noopener">%s<span class="dashicons dashicons-external"></span></a></p>',
+                    sprintf(
+                        /* translators: %s: fail2ban */
+                        __('Enable %s', 'wp-fail2ban'),
+                        '<tt>fail2ban</tt>'
+                    )
+                );
+            }
+            $results['description'] .= '<pre>'.join("\n", $output).'</pre>';
+
+        } else {
+            // for now don't try anything else
+            return [];
+        }
+
+        $results['label'] = self::PREFIX.$results['label'];
+
+        return $results;
     }
 
     /**
@@ -415,6 +509,15 @@ class SiteHealth
                     '<code>fail2ban</code>'
                 )
             );
+            if (file_exists('/opt/digitalocean/bin/droplet-agent')) {
+                // Probably running DO droplet
+                $output .= sprintf(
+                    /* translators: 1: "Life With WP fail2ban", 2: "DigitalOcean WordPress Droplet" */
+                    __('It looks like you&rsquo;re using a %1$s; step-by-step instructions for updating the filters can be found on the %2$s site.', 'wp-fail2ban'),
+                    '<b>DigitalOcean WordPress Droplet</b>',
+                    '&ldquo;<a href="https://life-with.wp-fail2ban.com/core/maintenance/updating-filters/digitalocean-wordpress-droplet/" rel="noopener" target="_blank">Life With WP fail2ban</a>&rdquo;<span class="dashicons dashicons-external"></span>'
+                );
+            }
             $output .= sprintf(
                 '<p><a href="%s" target="_blank" rel="noopener">%s</a><span class="dashicons dashicons-external"></span></p>',
                 sprintf(

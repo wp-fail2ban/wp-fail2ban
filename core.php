@@ -10,6 +10,7 @@ namespace    org\lecklider\charles\wordpress\wp_fail2ban\core;
 
 use          org\lecklider\charles\wordpress\wp_fail2ban\Config;
 use          org\lecklider\charles\wordpress\wp_fail2ban\InvalidIpException;
+use          org\lecklider\charles\wordpress\wp_fail2ban\IpRangeList;
 use          org\lecklider\charles\wordpress\wp_fail2ban\IP;
 use          org\lecklider\charles\wordpress\wp_fail2ban\Syslog;
 
@@ -37,13 +38,13 @@ function _remote_addr(): ?IP
                 /**
                  * User-defined proxies, typically upstream nginx
                  */
-                $proxies = array_filter(Config::get('WP_FAIL2BAN_PROXIES'));
+                $proxies = new IpRangeList(Config::get('WP_FAIL2BAN_PROXIES'), 'WP_FAIL2BAN_PROXIES');
 
-                if (empty($proxies)) {
+                if (0 == count($proxies)) {
                     // No proxies set; don't care about the header
                     return $ip;
 
-                } elseif ($ip->inRanges($proxies, 'WP_FAIL2BAN_PROXIES')) {
+                } elseif ($proxies->containsIP($ip)) {
                     // From a known proxy
 
                     $xIPs = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'], 2);

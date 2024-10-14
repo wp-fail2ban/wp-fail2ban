@@ -704,6 +704,8 @@ class Config
      * @param  mixed    $value      Value to set
      * @param  array    $settings   Premium: settings to use
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setter(string $define, $value, array &$settings = null): bool
     {
@@ -722,6 +724,19 @@ class Config
     public static function desc(string $define): ?string
     {
         return self::$instance->getDesc($define);
+    }
+
+    /**
+     * Helper: get description extended
+     *
+     * @since  5.1.0
+     *
+     * @param  string       $define Constant name.
+     * @return string|null  Description.
+     */
+    public static function desc_ex(string $define): ?string
+    {
+        return self::$instance->getDescEx($define);
     }
 
     /**
@@ -746,6 +761,22 @@ class Config
                 return __('Allow <b>email addresses only</b> for login.', 'wp-fail2ban');
             case 'WP_FAIL2BAN_PROXIES':
                 return __('Trusted IPv4 and IPv6 list.', 'wp-fail2ban');
+            default:
+                return apply_filters(__METHOD__, null, $define);
+        }
+    }
+
+    /**
+     * Helper: get description extended
+     *
+     * @since  5.1.0
+     *
+     * @param  string       $define     Constant name.
+     * @return string|null  Description.
+     */
+    public function getDescEx(string $define): ?string
+    {
+        switch ($define) {
             default:
                 return apply_filters(__METHOD__, null, $define);
         }

@@ -34,16 +34,18 @@ require_once __DIR__.'/feature/xmlrpc.php';
 /**
  * Helper.
  *
+ * @since  5.1.0        Add $lookupValue
  * @since  4.3.2.2      Don't pass by reference
  * @since  4.3.0
  *
  * @param  mixed        $key
  * @param  array        $ary
+ * @param  bool         $lookupValue    If false shortcut to null return, otherwise check array.
  * @return mixed|null   Array value if present, null otherwise.
  */
-function array_value($key, array $ary)
+function array_value($key, array $ary, bool $lookupValue = true)
 {
-    return (array_key_exists($key, $ary))
+    return ($lookupValue && array_key_exists($key, $ary))
         ? $ary[$key]
         : null;
 }
