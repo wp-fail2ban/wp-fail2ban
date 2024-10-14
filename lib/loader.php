@@ -158,6 +158,14 @@ class Config
                 'syslog',
                 'workaround',
                 'truncate_host']],
+        'WP_FAIL2BAN_SYSLOG_TAG_HOST' => [ // @since 5.3.0
+            'validate'  => 'boolval',
+            'unset'     => false,
+            'default'   => true,
+            'field'     => [
+                'syslog',
+                'workaround',
+                'tag_host']],
 
         /**
          * Block

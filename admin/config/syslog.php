@@ -50,6 +50,8 @@ class TabSyslog extends TabBase
         $this->__['workarounds-short-tag']      = __('Short Tag',       'wp-fail2ban');
         $this->__['workarounds-specify-host']   = __('Specify Host',    'wp-fail2ban');
         $this->__['workarounds-truncate_host']  = __('Truncate Host',   'wp-fail2ban');
+        $this->__['workarounds-tag_host']       = __('Host in Tag',     'wp-fail2ban');
+        $this->__['wp-fail2ban-journald']       = __('journald',        'wp-fail2ban');
         // phpcs:enable
 
         parent::__construct('syslog', 'syslog');
@@ -122,19 +124,23 @@ HTML;
                 sprintf(
                     /* translators: %s: <a href> internals */
                     __('"Short Tag" may not be enough, so this allows you to specify the hostname. See the <a %s>documentation</a> for more details.', 'wp-fail2ban'),
-                    'href="https://docs.wp-fail2ban.com/en/___WPF2BVER___/defines/constants/WP_FAIL2BAN_HTTP_HOST.html" target="_blank">'
+                    sprintf('href="https://docs.wp-fail2ban.com/en/%s/defines/constants/WP_FAIL2BAN_HTTP_HOST.html" target="_blank"', WP_FAIL2BAN_VER2)
                 )
             ]),
             $this->help_entry('workarounds-truncate_host', [
                 __('When all else fails, this allows you to truncate the hostname after a number of characters.', 'wp-fail2ban'),
                 __('<b>N.B.</b> This may be removed in a future release; it was broken prior to 4.3 and there were no bug reports, so it seems likely absolutely no-one is using it.', 'wp-fail2ban'),
                 $this->see_also(['WP_FAIL2BAN_TRUNCATE_HOST'])
+            ]),
+            $this->help_entry('workarounds-tag_host', [
+                __('Useful if you&lsquo;re using <tt>journald</tt>.', 'wp-fail2ban'),
+                $this->see_also(['WP_FAIL2BAN_SYSLOG_TAG_HOST'])
             ])
         ], [
             sprintf(
                 /* translators: %s: <a href> internals */
                 __('<tt>syslog</tt> was only <a %s>standardised</a> in 2009, so unfortunately there are still implementations that need some help.', 'wp-fail2ban'),
-                'href="https://tools.ietf.org/html/rfc5424" target="_blank">'
+                'href="https://tools.ietf.org/html/rfc5424" target="_blank"'
             ),
             __('By far the most common limitation is the length of the initial information fields; these options provide ways to shorten the data in those fields.', 'wp-fail2ban'),
         ]);
@@ -214,21 +220,22 @@ HTML;
     {
         $fmt = <<< HTML
 <fieldset>
-<label><input type="checkbox" disabled="disabled" %s> %s</label>
-<br>
-<label><input type="checkbox" disabled="disabled" %s> %s</label>
-<br>
-<label><input type="checkbox" disabled="disabled" %s> %s</label>
+<div><label><input type="checkbox" disabled="disabled" %s> %s</label></div>
+<div><label><input type="checkbox" disabled="disabled" %s> %s</label></div>
+<div><label><input type="checkbox" disabled="disabled" %s> %s</label></div>
+<div><label><input type="checkbox" disabled="disabled" %s> %s</label></div>
 </fieldset>
 HTML;
         printf(
             $fmt,
             checked(Config::get('WP_FAIL2BAN_SYSLOG_SHORT_TAG'), true, false),
-            __('Short Tag', 'wp-fail2ban'),
+            $this->__['workarounds-short-tag'],
             checked(Config::get('WP_FAIL2BAN_HTTP_HOST'), true, false),
-            __('Specify Host', 'wp-fail2ban'),
+            $this->__['workarounds-specify-host'],
             checked(Config::get('WP_FAIL2BAN_TRUNCATE_HOST'), true, false),
-            __('Truncate Host', 'wp-fail2ban')
+            $this->__['workarounds-truncate_host'],
+            checked(Config::get('WP_FAIL2BAN_SYSLOG_TAG_HOST'), true, false),
+            $this->__['workarounds-tag_host']
         );
     }
 }

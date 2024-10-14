@@ -5,7 +5,7 @@
  * @package wp-fail2ban
  * @since   5.0.0
  *
- * Auto-generated: 2024-01-27T19:14:13+00:00
+ * Auto-generated: 2024-02-05T19:33:17+00:00
  */
 namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 

@@ -103,12 +103,15 @@ abstract class Syslog
      */
     public static function open(string $log = 'WP_FAIL2BAN_AUTH_LOG'): bool
     {
-        $tag    = self::getTag();
-        $host   = self::getHost();
-
         $options    = Config::get('WP_FAIL2BAN_OPENLOG_OPTIONS');
         $facility   = Config::get($log);
-        $ident      = "$tag($host)";
+
+        $ident      = self::getTag();
+        if (Config::get('WP_FAIL2BAN_SYSLOG_TAG_HOST')) {
+            $host   = self::getHost();
+            $ident .= "($host)";
+        }
+
         if (null !== ($rv = apply_filters(__METHOD__, null, $ident, $options, $facility))) {
             return $rv;
         }

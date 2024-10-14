@@ -1,6 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
+declare (strict_types = 1);
 /**
  * WP fail2ban premium
  *
@@ -16,7 +16,6 @@ defined( 'ABSPATH' ) or exit;
  *
  * @since 4.0.0
  */
-
 if ( function_exists( __NAMESPACE__ . '\\wf_fs' ) ) {
     wf_fs()->set_basename( true, WP_FAIL2BAN_FILE );
     return;
@@ -26,10 +25,8 @@ if ( function_exists( __NAMESPACE__ . '\\wf_fs' ) ) {
      *
      * @since 4.0.0
      */
-    function wf_fs()
-    {
-        global  $wf_fs ;
-        
+    function wf_fs() {
+        global $wf_fs;
         if ( !isset( $wf_fs ) ) {
             // Activate multisite network integration.
             if ( !defined( 'WP_FS__PRODUCT_3072_MULTISITE' ) ) {
@@ -46,23 +43,22 @@ if ( function_exists( __NAMESPACE__ . '\\wf_fs' ) ) {
                 'has_addons'                     => true,
                 'has_paid_plans'                 => true,
                 'trial'                          => array(
-                'days'               => 14,
-                'is_require_payment' => true,
-            ),
+                    'days'               => 14,
+                    'is_require_payment' => true,
+                ),
                 'menu'                           => array(
-                'slug'    => 'wp-fail2ban-menu',
-                'contact' => !defined( 'WP_FAIL2BAN_FREE_ONLY' ) || false === WP_FAIL2BAN_FREE_ONLY,
-                'support' => true,
-                'network' => true,
-            ),
+                    'slug'    => 'wp-fail2ban-menu',
+                    'contact' => !defined( 'WP_FAIL2BAN_FREE_ONLY' ) || false === WP_FAIL2BAN_FREE_ONLY,
+                    'support' => true,
+                    'network' => true,
+                ),
                 'bundle_license_auto_activation' => true,
                 'is_live'                        => true,
             ) );
         }
-        
         return $wf_fs;
     }
-    
+
     // Init Freemius.
     $fs = wf_fs();
     // Set currency to GBP
@@ -79,20 +75,18 @@ if ( function_exists( __NAMESPACE__ . '\\wf_fs' ) ) {
     } );
     $fs->add_filter( 'show_delegation_option', '__return_false' );
     $fs->add_filter( 'enable_per_site_activation', '__return_false' );
-    
     if ( !$fs->is_paying() && defined( 'WP_FAIL2BAN_FREE_ONLY' ) && false !== WP_FAIL2BAN_FREE_ONLY ) {
         $fs->add_filter(
             'show_admin_notice',
             function ( $show, array $msg ) {
-            return 'promotion' != $msg['type'];
-        },
+                return 'promotion' != $msg['type'];
+            },
             WP_FS__DEFAULT_PRIORITY,
             2
         );
     } else {
         // TODO: $fs->add_filter('trial_promotion_message',
     }
-    
     $fs->override_i18n( array(
         'yee-haw' => __( 'Congratulations', 'wp-fail2ban' ),
     ) );

@@ -191,8 +191,8 @@ abstract class TabBase
      *
      * @param  string           $id
      * @param  array|string     $dl
-     * @param  string           $pre
-     * @param  string           $post
+     * @param  array|string     $pre
+     * @param  array|string     $post
      *
      * @return void
      */
