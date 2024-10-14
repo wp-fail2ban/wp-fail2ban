@@ -5185,6 +5185,9 @@
                      * Check if requested for manual blocking background sync.
                      */
                     if ( fs_request_has( 'background_sync' ) ) {
+                        self::require_pluggable_essentials();
+                        self::wp_cookie_constants();
+
                         $this->run_manual_sync();
                     }
                 }
@@ -7145,8 +7148,6 @@
          * @since  1.1.7.3
          */
         private function run_manual_sync() {
-            self::require_pluggable_essentials();
-
             if ( ! $this->is_user_admin() ) {
                 return;
             }
@@ -10236,8 +10237,8 @@
                     // Send uninstall event.
                     $this->send_installs_update( $params );
                 } else {
-                    // Send uninstall event.
-                    $this->send_install_update( $params );
+                    // Send uninstall event and handle the result.
+                    $this->sync_install( $params );
                 }
             }
 
@@ -10506,6 +10507,28 @@
             return isset( $this->_plugin->bundle_public_key ) ?
                 $this->_plugin->bundle_public_key :
                 null;
+        }
+
+        /**
+         * Get whether the SDK has been initiated in the context of a Bundle.
+         *
+         * This will return true, if `bundle_id` is present in the SDK init parameters.
+         *
+         * ```php
+         * $my_fs = fs_dynamic_init( array(
+         *     // ...
+         *     'bundle_id'         => 'XXXX', // Will return true since we have bundle id.
+         *     'bundle_public_key' => 'pk_XXXX',
+         * ) );
+         * ```
+         *
+         * @author Swashata Ghosh (@swashata)
+         * @since  2.5.0
+         *
+         * @return bool True if we are running in bundle context, false otherwise.
+         */
+        private function has_bundle_context() {
+            return ! is_null( $this->get_bundle_id() );
         }
 
         /**
@@ -12931,7 +12954,21 @@
                 } else if ( $is_whitelabeled_flag ) {
                     $is_whitelabeled = true;
                 } else {
-                    $addon_ids        = $this->get_updated_account_addons();
+                    if ( $this->is_registered() || $this->is_premium() ) {
+                        $addon_ids = $this->get_updated_account_addons();
+                    } else {
+                        $addons = self::get_all_addons();
+
+                        $plugin_addons = isset( $addons[ $this->_plugin->id ] ) ?
+                            $addons[ $this->_plugin->id ] :
+                            array();
+
+                        $addon_ids = array();
+                        foreach ( $plugin_addons as $addon ) {
+                            $addon_ids[] = $addon->id;
+                        }
+                    }
+
                     $installed_addons = $this->get_installed_addons();
                     foreach ( $installed_addons as $fs_addon ) {
                         $addon_ids[] = $fs_addon->get_id();
@@ -14810,14 +14847,36 @@
         }
 
         /**
+         * Get Plugin ID under which we will track affiliate application.
+         *
+         * This could either be the Bundle ID or the main plugin ID.
+         *
+         * @return number Bundle ID if developer has provided one, else the main plugin ID.
+         */
+        private function get_plugin_id_for_affiliate_terms() {
+            return $this->has_bundle_context() ?
+                $this->get_bundle_id() :
+                $this->_plugin_id;
+        }
+
+        /**
          * @author Leo Fajardo (@leorw)
          * @since  1.2.4
          */
         private function fetch_affiliate_terms() {
             if ( ! is_object( $this->plugin_affiliate_terms ) ) {
-                $plugins_api     = $this->get_api_plugin_scope();
+                /**
+                 * In case we have a bundle set in SDK configuration, we would like to use that for affiliates, not the main plugin.
+                 */
+                $plugins_api = $this->has_bundle_context() ?
+                    $this->get_api_bundle_scope() :
+                    $this->get_api_plugin_scope();
+
                 $affiliate_terms = $plugins_api->get( '/aff.json?type=affiliation', false );
 
+                /**
+                 * At this point, we intentionally don't fallback to the main plugin, because the developer has chosen to use bundle. So it makes sense the affiliate program should be in context to the bundle too.
+                 */
                 if ( ! $this->is_api_result_entity( $affiliate_terms ) ) {
                     return;
                 }
@@ -14835,8 +14894,10 @@
                 $application_data = $this->_storage->affiliate_application_data;
                 $flush            = ( ! isset( $application_data['status'] ) || 'pending' === $application_data['status'] );
 
+                $plugin_id_for_affiliate = $this->get_plugin_id_for_affiliate_terms();
+
                 $users_api = $this->get_api_user_scope();
-                $result    = $users_api->get( "/plugins/{$this->_plugin->id}/aff/{$this->plugin_affiliate_terms->id}/affiliates.json", $flush );
+                $result    = $users_api->get( "/plugins/{$plugin_id_for_affiliate}/aff/{$this->plugin_affiliate_terms->id}/affiliates.json", $flush );
                 if ( $this->is_api_result_object( $result, 'affiliates' ) ) {
                     if ( ! empty( $result->affiliates ) ) {
                         $affiliate = new FS_Affiliate( $result->affiliates[0] );
@@ -14936,15 +14997,17 @@
                             var_export( $next_page, true )
                     );
                 } else if ( $this->is_pending_activation() ) {
-                    self::shoot_ajax_failure( $this->get_text_inline( 'Account is pending activation.', 'account-is-pending-activation' ) );
+                    self::shoot_ajax_failure( $this->get_text_inline( 'Account is pending activation. Please check your email and click the link to activate your account and then submit the affiliate form again.', 'account-is-pending-activation' ) );
                 }
             }
 
             $this->fetch_affiliate_terms();
 
+            $plugin_id_for_affiliate = $this->get_plugin_id_for_affiliate_terms();
+
             $api    = $this->get_api_user_scope();
             $result = $api->call(
-                ( "/plugins/{$this->_plugin->id}/aff/{$this->plugin_affiliate_terms->id}/affiliates.json" ),
+                ( "/plugins/{$plugin_id_for_affiliate}/aff/{$this->plugin_affiliate_terms->id}/affiliates.json" ),
                 'post',
                 $affiliate
             );
@@ -16526,9 +16589,17 @@
          * @return bool
          */
         function is_product_settings_page() {
+            $page      = fs_request_get( 'page', '', 'get' );
+            $menu_slug = $this->_menu->get_slug();
+
+            if ( $page === $menu_slug ) {
+                return true;
+            }
+
             return fs_starts_with(
-                fs_request_get( 'page', '', 'get' ),
-                $this->_menu->get_slug()
+                // e.g., {$menu_slug}-account, {$menu_slug}-affiliation, etc.
+                $page,
+                ( $menu_slug . '-' )
             );
         }
 
@@ -16608,16 +16679,21 @@
          *
          * @param bool|string $topic
          * @param bool|string $message
+         * @param bool|string $summary Since 2.5.1.
          *
          * @return string
          */
-        function contact_url( $topic = false, $message = false ) {
+        function contact_url( $topic = false, $message = false, $summary = false ) {
             $params = array();
             if ( is_string( $topic ) ) {
                 $params['topic'] = $topic;
             }
             if ( is_string( $message ) ) {
                 $params['message'] = $message;
+            }
+
+            if ( is_string( $summary ) ) {
+                $params['summary'] = $summary;
             }
 
             if ( $this->is_addon() ) {
@@ -17926,12 +18002,13 @@
                 $install_ids[] = $install->id;
             }
 
-            $left   = count( $install_ids );
-            $offset = 0;
+            $items_per_request = 25;
+            $left              = count( $install_ids );
+            $offset            = 0;
 
             $installs = array();
             while ( $left > 0 ) {
-                $result = $this->get_api_user_scope()->get( "/plugins/{$this->_module_id}/installs.json?ids=" . implode( ',', array_slice( $install_ids, $offset, 25 ) ) );
+                $result = $this->get_api_user_scope()->get( "/plugins/{$this->_module_id}/installs.json?ids=" . implode( ',', array_slice( $install_ids, $offset, $items_per_request ) ) );
 
                 if ( ! $this->is_api_result_object( $result, 'installs' ) ) {
                     // @todo Handle API error.
@@ -17939,7 +18016,8 @@
 
                 $installs = array_merge( $installs, $result->installs );
 
-                $left -= 25;
+                $left   -= $items_per_request;
+                $offset += $items_per_request;
             }
 
             foreach ( $installs as &$install ) {
@@ -23234,7 +23312,26 @@
 
             fs_enqueue_local_style( 'fs_affiliation', '/admin/affiliation.css' );
 
-            $vars = array( 'id' => $this->_module_id );
+            $is_bundle_context = $this->has_bundle_context();
+
+            $plugin_title = $this->get_plugin_title();
+
+            if ( $is_bundle_context ) {
+                $plugin_title = $this->plugin_affiliate_terms->plugin_title;
+
+                // Add the suffix "Bundle" only if the word is not present in the title itself.
+                if ( false === mb_stripos( $plugin_title, fs_text_inline( 'Bundle', 'bundle' ) ) ) {
+                    $plugin_title = $this->apply_filters(
+                        'formatted_bundle_title',
+                        $plugin_title . ' ' . fs_text_inline( 'Bundle', 'bundle' )
+                    );
+                }
+            }
+
+            $vars = array(
+                'id'           => $this->_module_id,
+                'plugin_title' => $plugin_title,
+            );
             echo $this->apply_filters( "/forms/affiliation.php", fs_get_template( '/forms/affiliation.php', $vars ) );
         }
 

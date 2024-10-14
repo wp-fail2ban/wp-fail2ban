@@ -75,7 +75,7 @@ function about()
 
     $logo_box = [
         'title' => 'WP fail2ban',
-        'logo'  => plugins_url('assets/icon.svg', WP_FAIL2BAN_FILE),
+        'logo'  => plugins_url('assets/icon.png', WP_FAIL2BAN_FILE),
         'links' => [
             'Blog'   => "https://wp-fail2ban.com/blog/{$utm}",
 //            'Guide'     => "https://life-with.wp-fail2ban.com/{$utm}",

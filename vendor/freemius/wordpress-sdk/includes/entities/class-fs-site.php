@@ -190,7 +190,13 @@
                 // DesktopServer
                 fs_ends_with( $subdomain, '.dev.cc' ) ||
                 // Pressable
-                fs_ends_with( $subdomain, '.mystagingwebsite.com' )
+                fs_ends_with( $subdomain, '.mystagingwebsite.com' ) ||
+                // WPMU DEV
+                ( fs_ends_with( $subdomain, '.tempurl.host' ) || fs_ends_with( $subdomain, '.wpmudev.host' ) ) ||
+                // Vendasta
+                ( fs_ends_with( $subdomain, '.websitepro-staging.com' ) || fs_ends_with( $subdomain, '.websitepro.hosting' ) ) ||
+                // InstaWP
+                fs_ends_with( $subdomain, '.instawp.xyz' )
             );
         }
 
