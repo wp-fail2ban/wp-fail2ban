@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Constants
  *
@@ -74,6 +74,7 @@ define('WPF2B_EVENT_CLASS_PASSWORD',            0x00080000);
 define('WPF2B_EVENT_CLASS_REST',                0x00100000);    /** @since 4.1.0 */
 define('WPF2B_EVENT_CLASS_SPAM',                0x00200000);    /** @since 4.2.0 */
 define('WPF2B_EVENT_CLASS_BLOCK',               0x00400000);    /** @since 4.3.0 */
+define('WPF2B_EVENT_CLASS_OTHER',               0x00800000);    /** @since 4.4.0 */
 define('WPF2B_EVENT_TYPE_PLUGIN',               0x40000000);    /** @since 4.2.0 */
 define('WPF2B_EVENT_TYPE_TEST',                 0x80000000);    /** @since 4.2.0 */
 define('WPF2B_EVENT_SUCCESS',                   0x00000001);    /** @since 4.3.0 */
@@ -101,6 +102,13 @@ define('WPF2B_EVENT_AUTH_BLOCK_USERNAME_LOGIN', WPF2B_EVENT_CLASS_AUTH | WPF2B_E
 
 // @codeCoverageIgnore
 /**
+ * Country
+ */
+// @codeCoverageIgnoreStart
+define('WPF2B_EVENT_BLOCK_COUNTRY',             WPF2B_EVENT_CLASS_BLOCK | WPF2B_EVENT_A);
+
+// @codeCoverageIgnore
+/**
  * Comment
  */
 // @codeCoverageIgnoreStart
@@ -118,8 +126,10 @@ define('WPF2B_EVENT_COMMENT_PASSWORD',          WPF2B_EVENT_CLASS_COMMENT | WPF2
  * XML-RPC
  */
 // @codeCoverageIgnoreStart
+define('WPF2B_EVENT_XMLRPC_BLOCKED',            WPF2B_EVENT_CLASS_XMLRPC | WPF2B_EVENT_CLASS_BLOCK);
 define('WPF2B_EVENT_XMLRPC_PINGBACK',           WPF2B_EVENT_CLASS_XMLRPC | WPF2B_EVENT_SUCCESS | WPF2B_EVENT_A);
 define('WPF2B_EVENT_XMLRPC_PINGBACK_ERROR',     WPF2B_EVENT_CLASS_XMLRPC | WPF2B_EVENT_FAILURE | WPF2B_EVENT_A);
+define('WPF2B_EVENT_XMLRPC_PINGBACK_BOGUS',     WPF2B_EVENT_CLASS_XMLRPC | WPF2B_EVENT_FAILURE | WPF2B_EVENT_B);
 define('WPF2B_EVENT_XMLRPC_MULTI_AUTH_FAIL',    WPF2B_EVENT_CLASS_XMLRPC | WPF2B_EVENT_CLASS_AUTH | WPF2B_EVENT_FAILURE | WPF2B_EVENT_B);
 define('WPF2B_EVENT_XMLRPC_AUTH_OK',            WPF2B_EVENT_CLASS_XMLRPC | WPF2B_EVENT_CLASS_AUTH | WPF2B_EVENT_SUCCESS);
 define('WPF2B_EVENT_XMLRPC_AUTH_FAIL',          WPF2B_EVENT_CLASS_XMLRPC | WPF2B_EVENT_CLASS_AUTH | WPF2B_EVENT_FAILURE);
@@ -166,4 +176,6 @@ define('WPF2B_EVENT_XMLRPC_MULTI_AUTH_FAIL__',  WPF2B_EVENT_CLASS_XMLRPC | WPF2B
 define('WPF2B_EVENT_XMLRPC_AUTH_OK__',          WPF2B_EVENT_CLASS_XMLRPC | WPF2B_EVENT_CLASS_AUTH | 0x0008); /** @deprecated 4.3.0 */
 define('WPF2B_EVENT_XMLRPC_AUTH_FAIL__',        WPF2B_EVENT_CLASS_XMLRPC | WPF2B_EVENT_CLASS_AUTH | 0x0010); /** @deprecated 4.3.0 */
 // phpcs:enable
+
+define('WPF2B_FACILITY_LOG_AUTH', (defined('WP_FAIL2BAN_USE_AUTHPRIV') && true === WP_FAIL2BAN_USE_AUTHPRIV) ? LOG_AUTHPRIV : LOG_AUTH);
 

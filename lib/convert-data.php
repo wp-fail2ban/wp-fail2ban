@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Convertors
  *
  * @package wp-fail2ban
+ * @since   4.4.0   Require PHP 7.4
  * @since   4.3.0
  */
 namespace org\lecklider\charles\wordpress\wp_fail2ban;
@@ -21,7 +22,7 @@ abstract class ConvertData
      *
      * @var array Map priority value to name.
      */
-    public static $Priority2Name = [
+    const PRIORITY2NAME = [
         LOG_CRIT    => 'critical',
         LOG_ERR     => 'error',
         LOG_WARNING => 'warning',
@@ -33,7 +34,7 @@ abstract class ConvertData
     /**
      * @var string[] Map Event ID to Slug.
      */
-    public static $Event2Slug = array(
+    const EVENT2SLUG = [
         0x00000000                            => 'deactivated',
         WPF2B_EVENT_AUTH_OK                   => 'auth_ok',
         WPF2B_EVENT_AUTH_FAIL                 => 'auth_fail',
@@ -57,12 +58,12 @@ abstract class ConvertData
         WPF2B_EVENT_REST_AUTH_OK              => 'rest_auth_ok',
         WPF2B_EVENT_REST_AUTH_FAIL            => 'rest_auth_fail',
         0xFFFFFFFF                            => 'activated',
-    );
+    ];
 
     /**
      * @var int[] Map Event Slug to ID.
      */
-    public static $Slug2Event = array(
+    const SLUG2EVENT = array(
         'deactivated'             => 0x00000000,
         'auth_ok'                 => WPF2B_EVENT_AUTH_OK,
         'auth_fail'               => WPF2B_EVENT_AUTH_FAIL,
@@ -90,54 +91,94 @@ abstract class ConvertData
     /**
      * @var int[] Map syslog facility name to value.
      */
-    public static $FacilityName2Value = array(
-        'LOG_AUTH'        => LOG_AUTH,
-        'LOG_AUTHPRIV'    => LOG_AUTHPRIV,
-        'LOG_CRON'        => LOG_CRON,
-        'LOG_DAEMON'      => LOG_DAEMON,
-        'LOG_KERN'        => LOG_KERN,
-        'LOG_LOCAL0'      => LOG_LOCAL0,
-        'LOG_LOCAL1'      => LOG_LOCAL1,
-        'LOG_LOCAL2'      => LOG_LOCAL2,
-        'LOG_LOCAL3'      => LOG_LOCAL3,
-        'LOG_LOCAL4'      => LOG_LOCAL4,
-        'LOG_LOCAL5'      => LOG_LOCAL5,
-        'LOG_LOCAL6'      => LOG_LOCAL6,
-        'LOG_LOCAL7'      => LOG_LOCAL7,
-        'LOG_LPR'         => LOG_LPR,
-        'LOG_MAIL'        => LOG_MAIL,
-        'LOG_NEWS'        => LOG_NEWS,
-        'LOG_SYSLOG'      => LOG_SYSLOG,
-        'LOG_USER'        => LOG_USER,
-        'LOG_UUCP'        => LOG_UUCP,
-    );
+    protected static $FacilityName2Value = [];
 
     /**
      * Convert: Syslog Priority value to slug.
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add type hint, return type
+     * @since  4.3.0
      *
      * @param  int          $val    Syslog priority value.
      * @return string|null          Syslog priority slug.
      */
-    public static function intToSyslogPrioritySlug($val)
+    public static function intToSyslogPrioritySlug(int $val): ?string
     {
-        return array_value($val, self::$Priority2Name);
+        return array_value($val, ConvertData::PRIORITY2NAME);
     }
 
     /**
      * Convert: Syslog Priority value to name.
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add type hint, return type
+     * @since  4.3.0
      *
      * @param  int          $val    Syslog priority value.
      * @return string|null          Syslog priority slug.
      */
-    public static function intToSyslogPriorityName($val)
+    public static function intToSyslogPriorityName(int $val): ?string
     {
         return (is_null($name = self::intToSyslogPrioritySlug($val)))
             ? null
             : ucfirst($name);
+    }
+
+    /**
+     * Helper: Return array of facilities => values.
+     *
+     * Makes Windows happier.
+     *
+     * @since  4.4.0    Add return type
+     * @since  4.3.0.10
+     *
+     * @return array
+     *
+     * @codeCoverageIgnore
+     */
+    public static function getFacilityNames2Values(): array
+    {
+        if (empty(self::$FacilityName2Value)) {
+            self::$FacilityName2Value = [
+                'LOG_AUTH'        => LOG_AUTH,
+                'LOG_AUTHPRIV'    => LOG_AUTHPRIV,
+                'LOG_CRON'        => LOG_CRON,
+                'LOG_DAEMON'      => LOG_DAEMON,
+                'LOG_KERN'        => LOG_KERN
+            ];
+            if (defined('PHP_WINDOWS_VERSION_BUILD')) {
+                self::$FacilityName2Value += [
+                    'LOG_LOCAL0'      => 128,
+                    'LOG_LOCAL1'      => 136,
+                    'LOG_LOCAL2'      => 144,
+                    'LOG_LOCAL3'      => 152,
+                    'LOG_LOCAL4'      => 160,
+                    'LOG_LOCAL5'      => 168,
+                    'LOG_LOCAL6'      => 176,
+                    'LOG_LOCAL7'      => 184
+                ];
+            } else {
+                self::$FacilityName2Value += [
+                    'LOG_LOCAL0'      => LOG_LOCAL0,
+                    'LOG_LOCAL1'      => LOG_LOCAL1,
+                    'LOG_LOCAL2'      => LOG_LOCAL2,
+                    'LOG_LOCAL3'      => LOG_LOCAL3,
+                    'LOG_LOCAL4'      => LOG_LOCAL4,
+                    'LOG_LOCAL5'      => LOG_LOCAL5,
+                    'LOG_LOCAL6'      => LOG_LOCAL6,
+                    'LOG_LOCAL7'      => LOG_LOCAL7
+                ];
+            }
+            self::$FacilityName2Value += [
+                'LOG_LPR'         => LOG_LPR,
+                'LOG_MAIL'        => LOG_MAIL,
+                'LOG_NEWS'        => LOG_NEWS,
+                'LOG_SYSLOG'      => LOG_SYSLOG,
+                'LOG_USER'        => LOG_USER,
+                'LOG_UUCP'        => LOG_UUCP,
+            ];
+        }
+
+        return self::$FacilityName2Value;
     }
 }
 

@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Settings - Plugins
  *
  * @package wp-fail2ban
+ * @since   4.4.0   Require PHP 7.4
  * @since   4.2.0
  */
 namespace    org\lecklider\charles\wordpress\wp_fail2ban;
@@ -17,6 +18,13 @@ defined('ABSPATH') or exit;
 class TabPlugins extends TabLoggingBase
 {
     /**
+     * Settings page slug
+     *
+     * @since 4.3.2.1
+     */
+    const SETTINGS_PAGE = 'wp-fail2ban-plugins';
+
+    /**
      * {@inheritDoc}
      */
     public function __construct()
@@ -27,37 +35,51 @@ class TabPlugins extends TabLoggingBase
     /**
      * {@inheritDoc}
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add return type
+     * @since  4.0.0
+     *
+     * @return void
      */
-    public function admin_init()
+    public function admin_init(): void
     {
+        do_action(__METHOD__.'.before');
+
         // phpcs:disable Generic.Functions.FunctionCallArgumentSpacing
-        add_settings_section('wp-fail2ban-plugins', __('Event Class Facilities', 'wp-fail2ban'), [$this, 'sectionLoggingEventClasses'],      'wp-fail2ban-plugins');
-        add_settings_field('plugins-log-auth',      __('Authentication',         'wp-fail2ban'), [$this, 'auth'],     'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
-        add_settings_field('plugins-log-block',     __('Block',                  'wp-fail2ban'), [$this, 'block'],    'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
-        add_settings_field('plugins-log-comment',   __('Comment',                'wp-fail2ban'), [$this, 'comment'],  'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
-        add_settings_field('plugins-log-password',  __('Password',               'wp-fail2ban'), [$this, 'password'], 'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
-        add_settings_field('plugins-log-rest',      __('REST',                   'wp-fail2ban'), [$this, 'rest'],     'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
-        add_settings_field('plugins-log-spam',      __('Spam',                   'wp-fail2ban'), [$this, 'spam'],     'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
-        add_settings_field('plugins-log-xmlrpc',    __('XML-RPC',                'wp-fail2ban'), [$this, 'xmlrpc'],   'wp-fail2ban-plugins', 'wp-fail2ban-plugins');
+        add_settings_section('wp-fail2ban-plugins', __('Event Class Facilities', 'wp-fail2ban'), [$this, 'sectionLoggingEventClasses'], self::SETTINGS_PAGE);
+        add_settings_field('plugins-log-auth',      __('Authentication',         'wp-fail2ban'), [$this, 'auth'],                       self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
+        add_settings_field('plugins-log-block',     __('Block',                  'wp-fail2ban'), [$this, 'block'],                      self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
+        add_settings_field('plugins-log-comment',   __('Comment',                'wp-fail2ban'), [$this, 'comment'],                    self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
+        add_settings_field('plugins-log-password',  __('Password',               'wp-fail2ban'), [$this, 'password'],                   self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
+        add_settings_field('plugins-log-rest',      __('REST',                   'wp-fail2ban'), [$this, 'rest'],                       self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
+        add_settings_field('plugins-log-spam',      __('Spam',                   'wp-fail2ban'), [$this, 'spam'],                       self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
+        add_settings_field('plugins-log-xmlrpc',    __('XML-RPC',                'wp-fail2ban'), [$this, 'xmlrpc'],                     self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
+        add_settings_field('plugins-log-other',     __('Other',                  'wp-fail2ban'), [$this, 'other'],                      self::SETTINGS_PAGE, 'wp-fail2ban-plugins');
         // phpcs:enable
+
+        do_action(__METHOD__.'.after');
     }
 
     /**
      * {@inheritDoc}
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add return type
+     * @since  4.3.0
+     *
+     * @return void
      */
-    public function current_screen()
+    public function current_screen(): void
     {
     }
 
     /**
      * Section summary.
      *
-     * @since 4.2.0
+     * @since  4.4.0    Add return type
+     * @since  4.2.0
+     *
+     * @return void
      */
-    public function sectionLoggingEventClasses()
+    public function sectionLoggingEventClasses(): void
     {
         echo __('Facilities to use for plugin-generated messages. The defaults follow the Core defaults.', 'wp-fail2ban');
     }
@@ -65,9 +87,12 @@ class TabPlugins extends TabLoggingBase
     /**
      * Auth
      *
-     * @since 4.2.0
+     * @since  4.4.0    Add return type
+     * @since  4.2.0
+     *
+     * @return void
      */
-    public function auth()
+    public function auth(): void
     {
         $this->log('WP_FAIL2BAN_PLUGIN_LOG_AUTH', 'WP_FAIL2BAN_PLUGIN_AUTH_LOG');
     }
@@ -75,9 +100,12 @@ class TabPlugins extends TabLoggingBase
     /**
      * Block
      *
-     * @since   4.3.0.9 Backport from 4.3.4.0
+     * @since  4.4.0    Add return type
+     * @since  4.3.0.9  Backport from 4.3.4.0
+     *
+     * @return void
      */
-    public function block()
+    public function block(): void
     {
         $this->log('WP_FAIL2BAN_PLUGIN_LOG_BLOCK', 'WP_FAIL2BAN_PLUGIN_BLOCK_LOG');
     }
@@ -85,9 +113,12 @@ class TabPlugins extends TabLoggingBase
     /**
      * Comment
      *
-     * @since 4.2.0
+     * @since  4.4.0    Add return type
+     * @since  4.2.0
+     *
+     * @return void
      */
-    public function comment()
+    public function comment(): void
     {
         $this->log('WP_FAIL2BAN_PLUGIN_LOG_COMMENT', 'WP_FAIL2BAN_PLUGIN_COMMENT_LOG');
     }
@@ -95,9 +126,12 @@ class TabPlugins extends TabLoggingBase
     /**
      * Password
      *
-     * @since 4.2.0
+     * @since  4.4.0    Add return type
+     * @since  4.2.0
+     *
+     * @return void
      */
-    public function password()
+    public function password(): void
     {
         $this->log('WP_FAIL2BAN_PLUGIN_LOG_PASSWORD', 'WP_FAIL2BAN_PLUGIN_PASSWORD_LOG');
     }
@@ -105,9 +139,12 @@ class TabPlugins extends TabLoggingBase
     /**
      * REST
      *
-     * @since 4.2.0
+     * @since  4.4.0    Add return type
+     * @since  4.2.0
+     *
+     * @return void
      */
-    public function rest()
+    public function rest(): void
     {
         $this->log('WP_FAIL2BAN_PLUGIN_LOG_REST', 'WP_FAIL2BAN_PLUGIN_REST_LOG');
     }
@@ -115,9 +152,12 @@ class TabPlugins extends TabLoggingBase
     /**
      * Spam
      *
-     * @since 4.2.0
+     * @since  4.4.0    Add return type
+     * @since  4.2.0
+     *
+     * @return void
      */
-    public function spam()
+    public function spam(): void
     {
         $this->log('WP_FAIL2BAN_PLUGIN_LOG_SPAM', 'WP_FAIL2BAN_PLUGIN_SPAM_LOG');
     }
@@ -125,11 +165,26 @@ class TabPlugins extends TabLoggingBase
     /**
      * XML-RPC
      *
-     * @since 4.2.0
+     * @since  4.4.0    Add return type
+     * @since  4.2.0
+     *
+     * @return void
      */
-    public function xmlrpc()
+    public function xmlrpc(): void
     {
         $this->log('WP_FAIL2BAN_PLUGIN_LOG_XMLRPC', 'WP_FAIL2BAN_PLUGIN_XMLRPC_LOG');
+    }
+
+    /**
+     * Other
+     *
+     * @since  4.4.0
+     *
+     * @return void
+     */
+    public function other(): void
+    {
+        $this->log('WP_FAIL2BAN_PLUGIN_LOG_OTHER', 'WP_FAIL2BAN_PLUGIN_OTHER_LOG');
     }
 }
 

@@ -1329,7 +1329,7 @@
                                 </div>
                             </div>
                         <?php endforeach ?>
-                        </div>
+                      </div>
                     <?php endif ?>
                 <?php endif ?>
                 <div>

@@ -1,0 +1,13 @@
+# Apache 2.2
+<IfModule !authz_core_module>
+	Order Deny,Allow
+	Deny from all
+</IfModule>
+
+# Apache 2.4+
+<IfModule authz_core_module>
+	<RequireAll>
+		Require all denied
+	</RequireAll>
+</IfModule>
+

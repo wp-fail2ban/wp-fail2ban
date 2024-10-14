@@ -1,151 +1,152 @@
-<?php
-
+<?php declare(strict_types=1);
 /**
  * About
  *
  * @package wp-fail2ban
  * @since   4.2.0
  */
-namespace org\lecklider\charles\wordpress\wp_fail2ban;
+namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 
-defined( 'ABSPATH' ) or exit;
+defined('ABSPATH') or exit;
+
 /**
  * Pull in extra "about" information
  *
- * @since 4.3.0
+ * @since  4.3.0
  *
  * @return string
  */
 function _get_extra_about()
 {
     $extra = '';
+
     /**
      * Don't make a remote call if the user hasn't opted in
      */
-    
-    if ( !wf_fs()->is_tracking_prohibited() ) {
-        $extra = get_site_transient( 'wp_fail2ban_extra_about' );
-        
-        if ( false === apply_filters( 'wp_fail2ban_extra_about_transient', $extra ) ) {
-            $url = apply_filters( 'wp_fail2ban_extra_about_url', 'https://wp-fail2ban.com/extra-about/?version=' . WP_FAIL2BAN_VER );
-            
-            if ( !is_wp_error( $rv = wp_remote_get( $url ) ) ) {
+    if (!wf_fs()->is_tracking_prohibited()) {
+        $extra = get_site_transient('wp_fail2ban_extra_about');
+        if (false === apply_filters('wp_fail2ban_extra_about_transient', $extra)) {
+            $url = apply_filters('wp_fail2ban_extra_about_url', 'https://wp-fail2ban.com/extra-about/?version='.WP_FAIL2BAN_VER);
+            if (!is_wp_error($rv = wp_remote_get($url))) {
                 /**
                  * Try not to fetch more than once per day
                  */
-                set_site_transient( 'wp_fail2ban_extra_about', $rv['body'], DAY_IN_SECONDS );
+                set_site_transient('wp_fail2ban_extra_about', $rv['body'], DAY_IN_SECONDS);
+
                 $extra = $rv['body'];
             }
-        
         }
-    
     }
-    
+
     return $extra;
+}
+
+/**
+ * Helper to provide wrapper
+ *
+ * @since  4.3.0.10
+ *
+ * @return void
+ */
+function welcome()
+{
+    ?>
+<div class="wrap" id="wp-fail2ban">
+  <h1 class="wp-inline-header">&nbsp;</h1>
+    <?php about(); ?>
+</div>
+    <?php
 }
 
 /**
  * About content
  *
- * @since 4.2.0
+ * @since  4.2.0
  *
- * @param bool  $hide_title
+ * @return void
  */
-function about( $hide_title = false )
+function about()
 {
-    $wp_f2b_ver = substr( WP_FAIL2BAN_VER, 0, strrpos( WP_FAIL2BAN_VER, '.' ) );
+    global $wpdb;
+
+    $wp_f2b_ver = WP_FAIL2BAN_VER_SHORT;
     $extra = _get_extra_about();
-    $utm = '?utm_source=about&utm_medium=about&utm_campaign=' . WP_FAIL2BAN_VER;
-    ?>
-<div class="wrap">
-  <style>
-    div.inside ul {
-      list-style: disc;
-      padding-left: 2em;
+    $utm = '?utm_source=about&utm_medium=about&utm_campaign='.WP_FAIL2BAN_VER;
+
+    $logo_box = [
+        'title' => 'WP fail2ban',
+        'logo'  => plugins_url('assets/icon.svg', WP_FAIL2BAN_FILE),
+        'links' => [
+            'Blog'   => "https://wp-fail2ban.com/blog/{$utm}",
+//            'Guide'     => "https://life-with.wp-fail2ban.com/{$utm}",
+            'Reference' => "https://docs.wp-fail2ban.com/en/{$wp_f2b_ver}/{$utm}",
+            'Support'   => "https://forums.invis.net/c/wp-fail2ban/support/{$utm}"
+        ]
+    ];
+
+    if (wf_fs()->can_use_premium_code()) {
+        $table = $wpdb->base_prefix.'fail2ban_log';
+        $db_table = ($table == $wpdb->get_var("SHOW TABLES LIKE '$table'"))
+            ? sprintf('<p>OK: %d entries.</p>', $wpdb->get_var("SELECT COUNT(*) FROM `$table`;"))
+            : __('<p>MISSING - ACTION REQUIRED.</p><p>Be sure to <b>backup your database <u>BEFORE</u></b> clicking <a href="?page=wpf2b-settings&action=force-activation">here</a> to re-initialise.</p>', 'wp-fail2ban');
     }
-    h2#4-3-0 {
-      font-size: 18px !important;
+
+    if (defined('WP_FAIL2BAN_ADDON_BLOCKLIST_FILE')) {
+        $addon_blocklist = '<p>Active.</p>';
+    } elseif (file_exists(WP_PLUGIN_DIR.'/wpf2b-addon-blocklist/addon.php') ||
+              file_exists(WP_PLUGIN_DIR.'/wp-fail2ban-addon-blocklist/addon.php'))
+    {
+        $addon_blocklist = '<p>Inactive.</p>';
+    } else {
+        $addon_blocklist = '<p>Not installed.</p>';
     }
-  </style>
-    <?php 
-    if ( !$hide_title ) {
-        ?>
-  <h1>WP fail2ban</h1>
-    <?php 
+
+    if (defined('WP_FAIL2BAN_ADDON_CLOUDFLARE_FILE')) {
+        $addon_cloudflare = '<p>Active.</p>';
+    } elseif (file_exists(WP_PLUGIN_DIR.'/wp-fail2ban-addon-cloudflare/addon.php') ||
+              file_exists(WP_PLUGIN_DIR.'/wp-fail2ban-addon-cloudflare/addon.php'))
+    {
+        $addon_cloudflare = '<p>Inactive.</p>';
+    } else {
+        $addon_cloudflare = '<p>Not installed.</p>';
     }
+
     ?>
   <div id="poststuff">
     <div id="post-body" class="metabox-holder columns-2">
       <div id="post-body-content">
         <div class="meta-box-sortables ui-sortable">
-          <?php 
-    echo  $extra ;
-    ?>
-          <div class="postbox">
-            <h2 id="4-3-0" style="font-size: 18px">Version 4.3.0</h2>
+          <?=$extra?>
+          <div class="postbox" id="4-4-0">
+            <h2>Version <?=WP_FAIL2BAN_VER_SHORT?></h2>
             <div class="inside">
-              <ul>
-                <li>Add new dashboard widget: last 5 <tt>syslog</tt> messages.</li>
-                <li>Add full <a href="https://wp-fail2ban.com/features/multisite-networks/<?php 
-    echo  $utm ;
-    ?>" rel="noopener" target="_blank">multisite support</a>.</li>
-                <li>Add <a href="https://wp-fail2ban.com/features/block-username-logins/<?php 
-    echo  $utm ;
-    ?>" rel="noopener" target="_blank">username login blocking</a> (force login with email).</li>
-                <li>Add <a href="https://wp-fail2ban.com/features/empty-username-logging/<?php 
-    echo  $utm ;
-    ?>" rel="noopener" target="_blank">separate logging</a> for login attempts with an empty username.</li>
-                <li>Improve <a href="https://wp-fail2ban.com/features/block-user-enumeration/<?php 
-    echo  $utm ;
-    ?>" rel="noopener" target="_blank">user enumeration blocking</a> compatibility with the WordPress block editor (Gutenberg).</li>
-                <li>Bump the minimum PHP version to 5.6.</li>
-              </ul>
+              <section class="premium">
+
+              </section>
+              <hr>
+              <section>
+    <?php readme(WP_FAIL2BAN_VER_SHORT, WP_FAIL2BAN_DIR.'/readme.txt'); ?>
+              </section>
             </div>
           </div>
         </div>
       </div>
       <div id="postbox-container-1" class="postbox-container">
         <div class="meta-box-sortables">
-          <div class="postbox">
-            <h3>Getting Started</h3>
+          <?php logo_box($logo_box); ?>
+          <div class="postbox status">
             <div class="inside">
-              <ol>
-                <li><a href="https://docs.wp-fail2ban.com/en/<?php 
-    echo  $wp_f2b_ver ;
-    ?>/installation.html<?php 
-    echo  $utm ;
-    ?>" rel="noopener" target="docs.wp-fail2ban.com">Installation</a></li>
-                <li><a href="https://docs.wp-fail2ban.com/en/<?php 
-    echo  $wp_f2b_ver ;
-    ?>/configuration.html<?php 
-    echo  $utm ;
-    ?>" rel="noopener" target="docs.wp-fail2ban.com">Configuration</a></li>
-              </ol>
-            </div>
-          </div>
-          <div class="postbox">
-            <h3>Getting Help</h3>
-            <div class="inside">
-              <ul>
-        <?php 
-    
-    if ( wf_fs()->is_trial() ) {
-        ?>
-                <li><a href="https://forums.invis.net/c/wp-fail2ban-premium/support-trial/<?php 
-        echo  $utm ;
-        ?>" rel="noopener" target="_blank">Trial Support Forum</a></li>
-        <?php 
-    } elseif ( wf_fs()->is_free_plan() ) {
-        ?>
-                <li><a href="https://forums.invis.net/c/wp-fail2ban/support/<?php 
-        echo  $utm ;
-        ?>" rel="noopener" target="_blank">Free Support Forum</a></li>
-        <?php 
-    }
-    
-    ?>
-        <?php 
-    ?>
+              <h3>Status</h3>
+              <dl>
+                <?php if (wf_fs()->can_use_premium_code()): ?>
+                <dt><?=__('Database table', 'wp-fail2ban')?></dt>
+                <dd><?=$db_table?></dd>
+                <?php endif; ?>
+                <dt><?=__('Blocklist Add-on', 'wp-fail2ban')?></dt>
+                <dd><?=$addon_blocklist?></dd>
+                <dt><?=__('Cloudflare Add-on', 'wp-fail2ban')?></dt>
+                <dd><?=$addon_cloudflare?></dd>
+              </dl>
             </div>
           </div>
         </div>
@@ -153,6 +154,31 @@ function about( $hide_title = false )
     </div>
     &nbsp;
   </div>
-</div>
-    <?php 
+    <?php
 }
+
+/**
+ * Helper - logo box
+ *
+ * @since  4.4.0    Add type hints, return type
+ * @since  4.3.2.2
+ *
+ * @return void
+ */
+function logo_box(array $args): void
+{
+    ?>
+          <div class="postbox alt">
+            <img src="<?=$args['logo']?>"?>
+            <h1><?=$args['title']?></h1>
+            <div class="links">
+              <ul>
+    <?php foreach ($args['links'] as $name => $url): ?>
+                <li><a href="<?=$url?>" rel="noopener" target="_blank"><?=$name?></a></li>
+    <?php endforeach; ?>
+              </ul>
+            </div>
+          </div>
+    <?php
+}
+

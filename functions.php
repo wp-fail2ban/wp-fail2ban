@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WP fail2ban main file
  *
  * @package wp-fail2ban
+ * @since   4.4.0   Require PHP 7.4
  * @since   4.0.0
  */
 namespace org\lecklider\charles\wordpress\wp_fail2ban;
@@ -12,9 +13,10 @@ defined('ABSPATH') or exit;
 require_once __DIR__.'/lib/constants.php'; // @wpf2b exclude[lite]
 require_once __DIR__.'/lib/convert-data.php'; // @wpf2b exclude[lite]
 
-require_once __DIR__.'/lib/defaults.php';
 require_once __DIR__.'/lib/activation.php';
+require_once __DIR__.'/lib/compat.php';
 require_once __DIR__.'/lib/loader.php';
+require_once __DIR__.'/lib/syslog.php';
 
 require_once __DIR__.'/core.php';
 require_once __DIR__.'/feature/comments.php';
@@ -28,7 +30,8 @@ require_once __DIR__.'/feature/xmlrpc.php';
 /**
  * Helper.
  *
- * @since 4.3.0
+ * @since  4.3.2.2      Don't pass by reference
+ * @since  4.3.0
  *
  * @param  mixed        $key
  * @param  array        $ary
@@ -42,134 +45,38 @@ function array_value($key, array $ary)
 }
 
 /**
- * Wrapper for \openlog
- *
- * @since 3.5.0 Refactored for unit testing
- *
- * @param string $log
- */
-function openlog($log = 'WP_FAIL2BAN_AUTH_LOG')
-{
-    $tag    = (defined('WP_FAIL2BAN_SYSLOG_SHORT_TAG') && true === WP_FAIL2BAN_SYSLOG_SHORT_TAG)
-                ? 'wp' // @codeCoverageIgnore
-                : 'wordpress';
-    $host   = (array_key_exists('WP_FAIL2BAN_HTTP_HOST', $_ENV))
-                ? $_ENV['WP_FAIL2BAN_HTTP_HOST'] // @codeCoverageIgnore
-                : $_SERVER['HTTP_HOST'];
-    if (is_multisite() && !SUBDOMAIN_INSTALL) {
-        /**
-         * @todo Test me!
-         */
-        // @codeCoverageIgnoreStart
-        if (!is_main_site()) {
-            $blog = get_blog_details(get_current_blog_id(), false);
-            $host .= '/'.trim($blog->path, '/');
-        } // @codeCoverageIgnoreEnd
-    }
-    /**
-     * Some varieties of syslogd have difficulty if $host is too long
-     * @since 3.5.0
-     */
-    if (defined('WP_FAIL2BAN_TRUNCATE_HOST') && 1 < intval(WP_FAIL2BAN_TRUNCATE_HOST)) {
-        $host = substr($host, 0, intval(WP_FAIL2BAN_TRUNCATE_HOST));
-    }
-    /**
-     * Refactor for unit testing.
-     * @since 4.3.0
-     */
-    $options    = (defined('WP_FAIL2BAN_OPENLOG_OPTIONS'))
-        ? WP_FAIL2BAN_OPENLOG_OPTIONS // @codeCoverageIgnore
-        : null;
-    $ident      = "$tag($host)";
-    if (true !== apply_filters(__FUNCTION__, true, $ident, $options, constant($log))) {
-        return true; // @codeCoverageIgnore
-    } elseif (false === \openlog($ident, $options, constant($log))) {
-        error_log('WPf2b: Cannot open syslog', 0); // @codeCoverageIgnore
-    } elseif (defined('WP_FAIL2BAN_TRACE')) {
-        error_log('WPf2b: Opened syslog', 0); // @codeCoverageIgnore
-    } else {
-        return true;
-    }
-} // @codeCoverageIgnore
-
-/**
- * Wrapper for \syslog
- *
- * @since 3.5.0
- *
- * @param int           $level
- * @param string        $msg
- * @param string|null   $remote_addr
- */
-function syslog($level, $msg, $remote_addr = null)
-{
-    if (true === apply_filters(__FUNCTION__, true, $level, $msg, $remote_addr)) {
-        $msg .= ' from ';
-        $msg .= (is_null($remote_addr))
-                    ? remote_addr()
-                    : $remote_addr;
-
-        if (false === \syslog($level, $msg)) {
-            error_log("WPf2b: Cannot write to syslog: '{$msg}'", 0); // @codeCoverageIgnore
-        } elseif (defined('WP_FAIL2BAN_TRACE')) {
-            error_log("WPf2b: Wrote to syslog: '{$msg}'", 0); // @codeCoverageIgnore
-        }
-    }
-
-    if (defined('PHPUNIT_COMPOSER_INSTALL')) {
-        echo "$level|$msg";
-    }
-
-    /**
-     * @since 4.3.0
-     */
-    if (!defined('WP_FAIL2BAN_DISABLE_LAST_LOG') || true !== WP_FAIL2BAN_DISABLE_LAST_LOG) {
-        if (!is_array($last_messages = get_site_option('wp-fail2ban-messages', []))) {
-            $last_messages = [];
-        }
-        $message = [
-            'dt' => gmdate('Y-m-d H:i:s'),
-            'lvl' => ConvertData::intToSyslogPriorityName($level),
-            'msg' => $msg
-        ];
-        array_unshift($last_messages, $message);
-        while (5 < count($last_messages)) {
-            array_pop($last_messages); // @codeCoverageIgnore
-        }
-        update_site_option('wp-fail2ban-messages', $last_messages);
-    }
-}
-
-/**
- * Wrapper for \closelog
- *
- * @since 4.3.0
- */
-function closelog()
-{
-    if (true === apply_filters(__FUNCTION__, true)) {
-        \closelog();
-    }
-}
-
-/**
  * Graceful immediate exit
  *
- * @since 4.3.0 Remove JSON support
- * @since 4.0.5 Add JSON support
- * @since 3.5.0 Refactored for unit testing
- *
- * @param bool  $is_json
+ * @since  4.4.0    Add return type
+ * @since  4.3.0    Remove JSON support
+ * @since  4.0.5    Add JSON support
+ * @since  3.5.0    Refactored for unit testing
  *
  * @SuppressWarnings(PHPMD.ExitExpression)
  */
-function bail()
+function bail(): bool
 {
     if (false === apply_filters(__FUNCTION__, true)) {
         return false; // @codeCoverageIgnore
     }
 
-    \wp_die('Forbidden', 'Forbidden', array('exit' => false, 'response' => 403));
+    $execution_method = '\wp_die';
+
+    /**
+     * @since 4.3.1
+     */
+    if (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) {
+        global $wp_xmlrpc_server;
+
+        /**
+         * If the XML-RPC server doesn't exist the headers aren't set - work around
+         */
+        if (!is_object($wp_xmlrpc_server)) {
+            $execution_method = '\_default_wp_die_handler';
+        }
+    }
+
+    $execution_method('Forbidden', 'Forbidden', array('exit' => false, 'response' => 403));
 
     if (defined('PHPUNIT_COMPOSER_INSTALL')) {
         return false; // for testing
@@ -178,18 +85,52 @@ function bail()
     }
 }
 
+/**
+ * Helper: check if IP is in list of ranges
+ *
+ * @since  4.4.0    Add return type
+ * @since  4.3.1
+ *
+ * @param  int|string   $ip     IP
+ * @param  array        $ranges
+ *
+ * @return bool
+ */
+function ip_in_range($ip, array $ranges): bool
+{
+    if (is_string($ip)) {
+        $ip = ip2long($ip);
+    }
+    foreach ($ranges as $range) {
+        if ('#' == $range[0]) {
+            continue;
+        } elseif (2 == count($cidr = explode('/', $range))) {
+            $net = ip2long($cidr[0]);
+            $mask = ~ ( pow(2, (32 - $cidr[1])) - 1 );
+        } else {
+            $net = ip2long($range);
+            $mask = -1;
+        }
+        if ($net == ($ip & $mask)) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /**
  * Compute remote IP address
  *
- * @since   4.3.0.9 Backport fix for warning for empty proxy list (h/t @stevegrunwell)
+ * @since  4.4.0    Add return type
+ * @since  4.3.2.1  Backport fix for warning for empty proxy list (h/t @stevegrunwell)
  *
  * @return string
  *
  * @todo Test me!
  * @codeCoverageIgnore
  */
-function remote_addr()
+function remote_addr(): ?string
 {
     static $remote_addr = null;
 
@@ -197,9 +138,14 @@ function remote_addr()
      * @since 4.0.0
      */
     if (is_null($remote_addr)) {
-        if (defined('WP_FAIL2BAN_PROXIES') && !empty(WP_FAIL2BAN_PROXIES)) {
-            if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
-                $ip = ip2long($_SERVER['REMOTE_ADDR']);
+        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+            $ip = ip2long($_SERVER['REMOTE_ADDR']);
+            $proxies = [];
+
+            /**
+             * User-defined proxies, typically upstream nginx
+             */
+            if (defined('WP_FAIL2BAN_PROXIES') && !empty(WP_FAIL2BAN_PROXIES)) {
                 /**
                  * PHP 7 lets you define an array
                  * @since 3.5.4
@@ -207,22 +153,14 @@ function remote_addr()
                 $proxies = (is_array(WP_FAIL2BAN_PROXIES))
                             ? WP_FAIL2BAN_PROXIES
                             : explode(',', WP_FAIL2BAN_PROXIES);
-                foreach ($proxies as $proxy) {
-                    if ('#' == $proxy[0]) {
-                        continue;
-                    } elseif (2 == count($cidr = explode('/', $proxy))) {
-                        $net = ip2long($cidr[0]);
-                        $mask = ~ ( pow(2, (32 - $cidr[1])) - 1 );
-                    } else {
-                        $net = ip2long($proxy);
-                        $mask = -1;
-                    }
-                    if ($net == ($ip & $mask)) {
-                        return (false === ($len = strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',')))
-                            ? $_SERVER['HTTP_X_FORWARDED_FOR']
-                            : substr($_SERVER['HTTP_X_FORWARDED_FOR'], 0, $len);
-                    }
-                }
+            }
+
+            $proxies = apply_filters(__METHOD__, $proxies);
+
+            if (ip_in_range($ip, $proxies)) {
+                return (false === ($len = strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',')))
+                    ? $_SERVER['HTTP_X_FORWARDED_FOR']
+                    : substr($_SERVER['HTTP_X_FORWARDED_FOR'], 0, $len);
             }
         }
 

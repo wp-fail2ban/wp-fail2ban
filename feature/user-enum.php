@@ -1,39 +1,38 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * User enumeration
  *
  * @package wp-fail2ban
+ * @since   4.4.0   Require PHP 7.4
  * @since   4.0.0
  */
-namespace org\lecklider\charles\wordpress\wp_fail2ban\feature;
+namespace    org\lecklider\charles\wordpress\wp_fail2ban\feature;
+
+use          org\lecklider\charles\wordpress\wp_fail2ban\Syslog;
 
 use function org\lecklider\charles\wordpress\wp_fail2ban\array_value;
 use function org\lecklider\charles\wordpress\wp_fail2ban\bail;
-use function org\lecklider\charles\wordpress\wp_fail2ban\openlog;
-use function org\lecklider\charles\wordpress\wp_fail2ban\syslog;
-use function org\lecklider\charles\wordpress\wp_fail2ban\closelog;
 
 defined('ABSPATH') or exit;
 
 /**
  * Common enumeration handling
  *
- * @since 4.3.0 Remove JSON support
- * @since 4.1.0 Add JSON support
- * @since 4.0.0
+ * @since  4.4.0    Add return type
+ * @since  4.3.4.0  Refactor to use Syslog::single
+ * @since  4.3.0    Remove JSON support
+ * @since  4.1.0    Add JSON support
+ * @since  4.0.0
  *
- * @param bool  $is_json
+ * @return bool
  *
- * @return \WP_Error
+ * @codeCoverageIgnore
  *
  * @wp-f2b-hard Blocked user enumeration attempt
  */
-function _log_bail_user_enum()
+function _log_bail_user_enum(): bool
 {
-    if (openlog()) {
-        syslog(LOG_NOTICE, 'Blocked user enumeration attempt');
-        closelog();
-    }
+    Syslog::single(LOG_NOTICE, 'Blocked user enumeration attempt');
 
     do_action(__FUNCTION__);
 
@@ -45,18 +44,19 @@ function _log_bail_user_enum()
  *
  * @see \WP::parse_request()
  *
- * @since 4.3.0.9   Backport from 4.3.4.0
- * @since 4.3.0.6   Ignore `author` if it's the current user
- * @since 4.3.0     Refactored to make XDebug happy; h/t @dinghy
+ * @since  4.4.0    Add type hint
+ * @since  4.3.2.1  Backport from 4.3.4.0
+ * @since  4.3.0.6  Ignore `author` if it's the current user
+ * @since  4.3.0    Refactored to make XDebug happy; h/t @dinghy
  *                  Changed cap to 'edit_others_posts'
- * @since 3.5.0     Refactored for unit testing
- * @since 2.1.0
+ * @since  3.5.0    Refactored for unit testing
+ * @since  2.1.0
  *
  * @param \WP   $query
  *
- * @return \WP
+ * @return \WP|bool
  */
-function parse_request($query)
+function parse_request(\WP $query)
 {
     /**
      * Is there an author in the query?
@@ -65,15 +65,15 @@ function parse_request($query)
         return $query;
 
     /**
-     * Does the user have enough privileges this doesn't matter?
-     */
-    } elseif (current_user_can('edit_others_posts')) {
-        return $query;
-
-    /**
      * Are they asking about themselves?
      */
     } elseif (get_current_user_id() == intval($author)) {
+        return $query;
+
+    /**
+     * Does the user have enough privileges this doesn't matter?
+     */
+    } elseif (current_user_can('edit_others_posts')) {
         return $query;
 
     /**
@@ -104,33 +104,25 @@ function parse_request($query)
  *
  * @see \WP_REST_Users_Controller::get_items()
  *
- * @since 4.3.0 Change to 'edit_others_posts'
- * @since 4.0.0
+ * @since  4.4.0    Add return type
+ * @since  4.3.4.0  Refactor to use Syslog::single
+ * @since  4.3.0    Change to 'edit_others_posts'
+ * @since  4.0.0
  *
- * @param array             $prepared_args
- * @param \WP_REST_Request  $request
+ * @param  array            $prepared_args
+ * @param  \WP_REST_Request $request
  *
  * @return array|\WP_Error
  *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
-function rest_user_query($prepared_args, $request)
+function rest_user_query(array $prepared_args, \WP_REST_Request $request)
 {
     /**
      * ClassicPress and pre-WP 5.4: this is all that's needed
      */
     if (current_user_can('edit_others_posts')) {
         return $prepared_args;
-    }
-
-    /**
-     * ClassicPress or pre-5.4 Wordpress - bail
-     */
-    if (function_exists('classicpress_version') ||
-        version_compare(get_bloginfo('version'), '5.4', '<'))
-    {
-        return _log_bail_user_enum();
-    }
 
     /**
      * >= 5.x WordPress tries to pre-load the list of Authors,
@@ -139,16 +131,19 @@ function rest_user_query($prepared_args, $request)
      * Returning 403 seems not to break anything, but we don't
      * want to trigger fail2ban.
      */
-    if (is_user_logged_in() &&
-        array_key_exists('who', $prepared_args) &&
-        'authors' == $prepared_args['who'])
+    } elseif (is_user_logged_in() &&
+              array_key_exists('who', $prepared_args) &&
+              'authors' == $prepared_args['who'])
     {
-        if (openlog()) {
-            syslog(LOG_DEBUG, 'Blocked authors enumeration');
-            closelog();
-        }
+        Syslog::single(LOG_DEBUG, 'Blocked authors enumeration');
 
         return bail();
+
+    /**
+     * TODO: is there some other esoteric case to handle?
+     */
+    } else {
+        // noop
     }
 
     return _log_bail_user_enum();
@@ -159,19 +154,20 @@ function rest_user_query($prepared_args, $request)
  *
  * @see \get_oembed_response_data()
  *
- * @since 4.2.7
+ * @since  4.4.0    Add type hints, return type
+ * @since  4.2.7
  *
- * @param array   $data   The response data.
- * @param WP_Post $post   The post object.
- * @param int     $width  The requested width.
- * @param int     $height The calculated height.
+ * @param  array    $data   The response data.
+ * @param  WP_Post  $post   The post object.
+ * @param  int      $width  The requested width.
+ * @param  int      $height The calculated height.
  *
  * @return array
  *
  * @codeCoverageIgnore
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
-function oembed_response_data($data, $post, $width, $height)
+function oembed_response_data(array $data, \WP_Post $post, int $width, int $height): array
 {
     unset($data['author_name']);
     unset($data['author_url']);

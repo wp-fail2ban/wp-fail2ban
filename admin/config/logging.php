@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Settings - Logging
  *
  * @package wp-fail2ban
+ * @since   4.4.0   Require PHP 7.4
  * @since   4.0.0
  */
 namespace    org\lecklider\charles\wordpress\wp_fail2ban;
@@ -16,6 +17,26 @@ defined('ABSPATH') or exit;
  */
 class TabLogging extends TabLoggingBase
 {
+    /**
+     * Settings page slug
+     *
+     * @since 4.3.2.1
+     */
+    const SETTINGS_PAGE = 'wp-fail2ban-logging';
+
+    /**
+     * Override Docs link
+     *
+     * @since 4.3.2.1
+     */
+    const HELP_LINK_DOCS = 'https://life-with.wp-fail2ban.com/core/configuration/settings/logging/';
+    /**
+     * Override Reference link
+     *
+     * @since 4.3.2.1
+     */
+    const HELP_LINK_REFERENCE = 'https://docs.wp-fail2ban.com/en/'.WP_FAIL2BAN_VER_SHORT.'/defines/logging.html';
+
     /**
      * {@inheritDoc}
      */
@@ -36,77 +57,83 @@ class TabLogging extends TabLoggingBase
     /**
      * {@inheritDoc}
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add return type
+     * @since  4.0.0
+     *
+     * @return void
      */
-    public function admin_init()
+    public function admin_init(): void
     {
+        do_action(__METHOD__.'.before');
+
         // phpcs:disable Generic.Functions.FunctionCallArgumentSpacing
-        add_settings_section('wp-fail2ban-logging',         $this->__['what-where'],        [$this, 'sectionWhatWhere'],'wp-fail2ban-logging');
-        add_settings_field('logging-log-authentication',    $this->__['authentication'],    [$this, 'authentication'],  'wp-fail2ban-logging', 'wp-fail2ban-logging');
-        add_settings_field('logging-log-comments',          $this->__['comments'],          [$this, 'comments'],        'wp-fail2ban-logging', 'wp-fail2ban-logging');
-        add_settings_field('logging-log-spam',              $this->__['spam'],              [$this, 'spam'],            'wp-fail2ban-logging', 'wp-fail2ban-logging');
-        add_settings_field('logging-log-password-request',  $this->__['password-request'],  [$this, 'passwordRequest'], 'wp-fail2ban-logging', 'wp-fail2ban-logging');
-        add_settings_field('logging-log-pingbacks',         $this->__['pingbacks'],         [$this, 'pingbacks'],       'wp-fail2ban-logging', 'wp-fail2ban-logging');
+        add_settings_section('wp-fail2ban-logging',         $this->__['what-where'],        [$this, 'sectionWhatWhere'],    self::SETTINGS_PAGE);
+        add_settings_field('logging-log-authentication',    $this->__['authentication'],    [$this, 'authentication'],      self::SETTINGS_PAGE,    'wp-fail2ban-logging');
+        add_settings_field('logging-log-comments',          $this->__['comments'],          [$this, 'comments'],            self::SETTINGS_PAGE,    'wp-fail2ban-logging');
+        add_settings_field('logging-log-spam',              $this->__['spam'],              [$this, 'spam'],                self::SETTINGS_PAGE,    'wp-fail2ban-logging');
+        add_settings_field('logging-log-password-request',  $this->__['password-request'],  [$this, 'passwordRequest'],     self::SETTINGS_PAGE,    'wp-fail2ban-logging');
+        add_settings_field('logging-log-pingbacks',         $this->__['pingbacks'],         [$this, 'pingbacks'],           self::SETTINGS_PAGE,    'wp-fail2ban-logging');
         // phpcs:enable
+
+        do_action(__METHOD__.'.after');
     }
 
     /**
      * {@inheritDoc}
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add return type
+     * @since  4.3.3.0  Refactor
+     * @since  4.3.0
+     *
+     * @return void
      */
-    public function current_screen()
+    public function current_screen(): void
     {
-        $fmt = <<<___FMT___
-<dl><style>dt{font-weight:bold;}</style>
-  <dt>%s</dt><dd>%s</dd>
-  <dt>%s</dt><dd>%s</dd>
-  <dt>%s</dt><dd>%s</dd>
-  <dt>%s</dt><dd>%s</dd>
-  <dt>%s</dt><dd>%s</dd>
-</dl>
-___FMT___;
-        get_current_screen()->add_help_tab([
-            'id'      => 'what-where',
-            'title'   => $this->__['what-where'],
-            'content' => sprintf(
-                $fmt,
-                $this->__['authentication'],
+        $this->add_help_tab('what-where', [
+            $this->help_entry('authentication', [
                 $this->see_also([
                     'WP_FAIL2BAN_AUTH_LOG'
-                ], false),
-                $this->__['comments'],
+                ], false)
+            ]),
+            $this->help_entry('comments', [
                 $this->see_also([
                     'WP_FAIL2BAN_LOG_COMMENTS',
                     'WP_FAIL2BAN_LOG_COMMENTS_EXTRA',
                     'WP_FAIL2BAN_COMMENT_EXTRA_LOG'
-                ], false),
-                $this->__['spam'],
+                ], false)
+            ]),
+            $this->help_entry('spam', [
                 $this->see_also([
                     'WP_FAIL2BAN_LOG_SPAM',
                     'WP_FAIL2BAN_SPAM_LOG'
-                ], false),
-                $this->__['password-request'],
+                ], false)
+            ]),
+            $this->help_entry('password-request', [
                 $this->see_also([
                     'WP_FAIL2BAN_LOG_PASSWORD_REQUEST',
                     'WP_FAIL2BAN_PASSWORD_REQUEST_LOG'
-                ], false),
-                $this->__['pingbacks'],
+                ], false)
+            ]),
+            $this->help_entry('pingbacks', [
                 $this->see_also([
                     'WP_FAIL2BAN_LOG_PINGBACKS',
                     'WP_FAIL2BAN_PINGBACK_LOG'
                 ], false)
-            )
+            ])
         ]);
+
         parent::current_screen();
     }
 
     /**
      * Section summary.
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add return type
+     * @since  4.0.0
+     *
+     * @return void
      */
-    public function sectionWhatWhere()
+    public function sectionWhatWhere(): void
     {
         // noop
     }
@@ -114,9 +141,12 @@ ___FMT___;
     /**
      * Authentication.
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add return type
+     * @since  4.0.0
+     *
+     * @return void
      */
-    public function authentication()
+    public function authentication(): void
     {
         printf(
             '<label>%s: %s</label><p class="description">%s</p>',
@@ -129,9 +159,12 @@ ___FMT___;
     /**
      * Comments.
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add return type
+     * @since  4.0.0
+     *
+     * @return void
      */
-    public function comments()
+    public function comments(): void
     {
         add_filter('wp_fail2ban_log_WP_FAIL2BAN_LOG_COMMENTS', [$this, 'commentsExtra'], 10, 3);
 
@@ -145,11 +178,14 @@ ___FMT___;
     /**
      * Comments extra helper - checked.
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add type hint, return type
+     * @since  4.0.0
      *
-     * @param int   $value  Value to check
+     * @param  int      $value  Value to check
+     *
+     * @return string
      */
-    protected function commentExtraChecked($value)
+    protected function commentExtraChecked(int $value): string
     {
         return checked($value == ($value & Config::get('WP_FAIL2BAN_LOG_COMMENTS_EXTRA')), true, false);
     }
@@ -157,9 +193,12 @@ ___FMT___;
     /**
      * Comments extra helper - disabled.
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add return type
+     * @since  4.0.0
+     *
+     * @return string
      */
-    protected function commentExtraDisabled()
+    protected function commentExtraDisabled(): string
     {
         return 'disabled="disabled';
     }
@@ -167,19 +206,20 @@ ___FMT___;
     /**
      * Comments extra.
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add type hints, return type
+     * @since  4.0.0
      *
-     * @param string $html          HTML prefixed to output
-     * @param string $define_name   Not used
-     * @param string $define_log    Not used
+     * @param  string   $html           HTML prefixed to output
+     * @param  string   $define_name    Not used
+     * @param  string   $define_log     Not used
      *
      * @return string
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function commentsExtra($html, $define_name, $define_log)
+    public function commentsExtra(string $html, string $define_name, string $define_log): string
     {
-        $fmt = <<< ___HTML___
+        $fmt = <<< HTML
 <table>
   <tr>
     <th>%s</th>
@@ -198,7 +238,7 @@ ___FMT___;
     <td>%s</td>
   </tr>
 </table>
-___HTML___;
+HTML;
 
         return $html.sprintf(
             $fmt,
@@ -221,9 +261,12 @@ ___HTML___;
     /**
      * Password request
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add return type
+     * @since  4.0.0
+     *
+     * @return void
      */
-    public function passwordRequest()
+    public function passwordRequest(): void
     {
         $this->log(
             'WP_FAIL2BAN_LOG_PASSWORD_REQUEST',
@@ -234,9 +277,12 @@ ___HTML___;
     /**
      * Pingbacks
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add return type
+     * @since  4.0.0
+     *
+     * @return void
      */
-    public function pingbacks()
+    public function pingbacks(): void
     {
         $this->log(
             'WP_FAIL2BAN_LOG_PINGBACKS',
@@ -247,9 +293,12 @@ ___HTML___;
     /**
      * Spam
      *
-     * @since 4.0.0
+     * @since  4.4.0    Add return type
+     * @since  4.0.0
+     *
+     * @return void
      */
-    public function spam()
+    public function spam(): void
     {
         $this->log(
             'WP_FAIL2BAN_LOG_SPAM',

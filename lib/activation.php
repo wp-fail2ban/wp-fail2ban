@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WP fail2ban activation
  *
@@ -22,10 +22,10 @@ defined('ABSPATH') or exit;
                     false === ($path = realpath($mu_file)))
                 {
                     $h3 = __('A broken symbolic link was found in <tt>mu-plugins</tt>:');
-                    $error_msg .= <<<__ERROR__
+                    $error_msg .= <<< HTML
 <h3>{$h3}</h3>
 <p><tt>{$mu_file}</tt></p>
-__ERROR__;
+HTML;
                 } elseif (WP_FAIL2BAN_FILE == $path) {
                     // OK, we're linking to ourself
                 } else {
@@ -33,7 +33,7 @@ __ERROR__;
                     $mu_file = substr($mu_file, strlen(WPMU_PLUGIN_DIR)-1);
 
                     $h3 = __('A conflicting symbolic link was found in <tt>mu-plugins</tt>:');
-                    $error_msg .= <<<__ERROR__
+                    $error_msg .= <<< HTML
 <h3>{$h3}</h3>
 <style>
 table { text-align: center; }
@@ -55,7 +55,7 @@ span.tt { font-weight: bold; }
     <td colspan="3"></td>
   </tr>
 </table>
-__ERROR__;
+HTML;
                 }
 
             } else {
@@ -63,10 +63,10 @@ __ERROR__;
                 $mu_file = substr($mu_file, strlen(WPMU_PLUGIN_DIR)-1);
 
                 $h3 = __('A conflicting file was found in <tt>mu-plugins</tt>:');
-                $error_msg .= <<<__ERROR__
+                $error_msg .= <<< HTML
 <h3>{$h3}</h3>
 <p><tt>{$mu_file}</tt></p>
-__ERROR__;
+HTML;
             }
             $error_msg .= sprintf(
                 __('<p>Please see the <a href="%s" target="_blank">documentation</a> for how to configure %s for <tt>mu-plugins</tt>.</p>'),

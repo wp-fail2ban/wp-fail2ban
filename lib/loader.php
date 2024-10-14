@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Loader
  *
  * @package wp-fail2ban
+ * @since   4.4.0   Require PHP 7.4
  * @since   4.2.0
  */
 namespace org\lecklider\charles\wordpress\wp_fail2ban;
@@ -22,330 +23,405 @@ if (defined('PHPUNIT_COMPOSER_INSTALL')) {
 class Config
 {
     /**
+     * Standard config
+     *
+     * @since  4.3.2.1  Moved from inline array.
+     */
+    const CONFIG = [
+        'WP_FAIL2BAN_AUTH_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => true,
+            'default'   => WPF2B_FACILITY_LOG_AUTH,
+            'field'     => [
+                'logging',
+                'authentication',
+                'facility']],
+        'WP_FAIL2BAN_LOG_COMMENTS' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'comments',
+                'enabled']],
+        'WP_FAIL2BAN_LOG_COMMENTS_EXTRA' => [
+            'validate'  => 'intval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'comments',
+                'extra']],
+        'WP_FAIL2BAN_COMMENT_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => LOG_USER,
+            'field'     => [
+                'logging',
+                'comments',
+                'facility']],
+        'WP_FAIL2BAN_COMMENT_EXTRA_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => WPF2B_FACILITY_LOG_AUTH,
+            'field'     => [
+                'logging',
+                'comments-extra',
+                'facility']],
+        'WP_FAIL2BAN_LOG_PASSWORD_REQUEST' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'password-request',
+                'enabled']],
+        'WP_FAIL2BAN_PASSWORD_REQUEST_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => LOG_USER,
+            'field'     => [
+                'logging',
+                'password-request',
+                'facility']],
+        'WP_FAIL2BAN_LOG_PINGBACKS' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'pingback',
+                'enabled']],
+        'WP_FAIL2BAN_PINGBACK_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => LOG_USER,
+            'field'     => [
+                'logging',
+                'pingback',
+                'facility']],
+        'WP_FAIL2BAN_LOG_SPAM' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'spam',
+                'enabled']],
+        'WP_FAIL2BAN_SPAM_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => WPF2B_FACILITY_LOG_AUTH,
+            'field'     => [
+                'logging',
+                'spam',
+                'facility']],
+
+        /**
+         * syslog
+         */
+        'WP_FAIL2BAN_OPENLOG_OPTIONS' => [
+            'validate'  => 'intval',
+            'unset'     => true,
+            'default'   => LOG_PID|LOG_NDELAY,
+            'field'     => [
+                'syslog',
+                'connection']],
+        'WP_FAIL2BAN_SYSLOG_SHORT_TAG' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'syslog',
+                'workaround',
+                'short_tag']],
+        'WP_FAIL2BAN_HTTP_HOST' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'syslog',
+                'workaround',
+                'http_host']],
+        'WP_FAIL2BAN_TRUNCATE_HOST' => [
+            'validate'  => 'intval',
+            'unset'     => true,
+            'field'     => [
+                'syslog',
+                'workaround',
+                'truncate_host']],
+
+        /**
+         * Block
+         */
+        'WP_FAIL2BAN_BLOCK_USER_ENUMERATION' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'block',
+                'user_enumeration']],
+        'WP_FAIL2BAN_BLOCKED_USERS' => [
+            'validate'  => 'strval',
+            'unset'     => true,
+            'field'     => [
+                'block',
+                'users']],
+        'WP_FAIL2BAN_BLOCK_USERNAME_LOGIN' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'block',
+                'usernames']],
+
+        /**
+         * Plugins
+         */
+        'WP_FAIL2BAN_PLUGIN_LOG_AUTH' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'plugins',
+                'auth',
+                'enabled']],
+        'WP_FAIL2BAN_PLUGIN_LOG_BLOCK' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'plugins',
+                'block',
+                'enabled']],
+        'WP_FAIL2BAN_PLUGIN_LOG_COMMENT' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'plugins',
+                'comment',
+                'enabled']],
+        'WP_FAIL2BAN_PLUGIN_LOG_PASSWORD' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'plugins',
+                'password',
+                'enabled']],
+        'WP_FAIL2BAN_PLUGIN_LOG_REST' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'plugins',
+                'rest',
+                'enabled']],
+        'WP_FAIL2BAN_PLUGIN_LOG_SPAM' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'plugins',
+                'spam',
+                'enabled']],
+        'WP_FAIL2BAN_PLUGIN_LOG_XMLRPC' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'plugins',
+                'xmlrpc',
+                'enabled']],
+        'WP_FAIL2BAN_PLUGIN_LOG_OTHER' => [
+            'validate'  => 'boolval',
+            'unset'     => true,
+            'field'     => [
+                'logging',
+                'plugins',
+                'other',
+                'enabled']],
+        'WP_FAIL2BAN_PLUGIN_AUTH_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => WPF2B_FACILITY_LOG_AUTH,
+            'field'     => [
+                'logging',
+                'plugins',
+                'auth',
+                'facility']],
+        'WP_FAIL2BAN_PLUGIN_BLOCK_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => LOG_USER,
+            'field'     => [
+                'logging',
+                'plugins',
+                'block',
+                'facility']],
+        'WP_FAIL2BAN_PLUGIN_COMMENT_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => LOG_USER,
+            'field'     => [
+                'logging',
+                'plugins',
+                'comment',
+                'facility']],
+        'WP_FAIL2BAN_PLUGIN_PASSWORD_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => LOG_USER,
+            'field'     => [
+                'logging',
+                'plugins',
+                'password',
+                'facility']],
+        'WP_FAIL2BAN_PLUGIN_REST_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => LOG_USER,
+            'field'     => [
+                'logging',
+                'plugins',
+                'rest',
+                'facility']],
+        'WP_FAIL2BAN_PLUGIN_SPAM_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => WPF2B_FACILITY_LOG_AUTH,
+            'field'     => [
+                'logging',
+                'plugins',
+                'spam',
+                'facility']],
+        'WP_FAIL2BAN_PLUGIN_XMLRPC_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => LOG_USER,
+            'field'     => [
+                'logging',
+                'plugins',
+                'xmlrpc',
+                'facility']],
+        'WP_FAIL2BAN_PLUGIN_OTHER_LOG' => [
+            'validate'  => 'intval',
+            'unset'     => false,
+            'default'   => LOG_USER,
+            'field'     => [
+                'logging',
+                'plugins',
+                'other',
+                'facility']],
+
+        'WP_FAIL2BAN_PROXIES' => [
+            'validate'  => __CLASS__.'::validate_ips',
+            'unset'     => true,
+            'field'     => [
+                'remote-ip',
+                'proxies']],
+
+        /**
+         * Misc
+         */
+        'WP_FAIL2BAN_DISABLE_LAST_LOG' => [
+            'validate'  => 'boolval',
+            'unset'     => false,
+            'field'     => [
+                'misc',
+                'last-log',
+                'disabled']],
+    ];
+
+    /**
      * @var array Settings
      * @since 4.3.0
+     * @todo Set type to ?array
      */
     protected static $settings = null;
     /**
      * @var Config Instance.
      * @since 4.3.0
+     * @todo Set type to ?Config
      */
     protected static $instance = null;
 
     /**
+     * @var Cache defines
+     * @since 4.3.3
+     * @todo Set type to array
+     */
+    protected static $cache = [];
+
+    /**
      * Construct
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add return type
+     * @since  4.3.0
      *
-     * @param array $config Existing config options
+     * @param  array    $config Existing config options
+     *
+     * @return Config|null
      */
-    public static function load(array $config = [])
+    public static function load(array $config = []): ?Config
     {
+        global $wp_fail2ban;
+
         if (is_null(self::$instance)) {
-            global $wp_fail2ban;
-
-            init_defaults();
-
             $class = get_called_class();
             self::$instance = new $class();
 
-            $wp_fail2ban['config'] = apply_filters(
-                __METHOD__.'.config',
-                array_merge(
-                    $config,
-                    array(
-                        'WP_FAIL2BAN_AUTH_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'authentication',
-                                'facility')),
-                        'WP_FAIL2BAN_LOG_COMMENTS' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'comments',
-                                'enabled')),
-                        'WP_FAIL2BAN_LOG_COMMENTS_EXTRA' => array(
-                            'validate'  => 'intval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'comments',
-                                'extra')),
-                        'WP_FAIL2BAN_COMMENT_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'comments',
-                                'facility')),
-                        'WP_FAIL2BAN_COMMENT_EXTRA_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'comments-extra',
-                                'facility')),
-                        'WP_FAIL2BAN_LOG_PASSWORD_REQUEST' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'password-request',
-                                'enabled')),
-                        'WP_FAIL2BAN_PASSWORD_REQUEST_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'password-request',
-                                'facility')),
-                        'WP_FAIL2BAN_LOG_PINGBACKS' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'pingback',
-                                'enabled')),
-                        'WP_FAIL2BAN_PINGBACK_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'pingback',
-                                'facility')),
-                        'WP_FAIL2BAN_LOG_SPAM' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'spam',
-                                'enabled')),
-                        'WP_FAIL2BAN_SPAM_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'spam',
-                                'facility')),
-
-                        /**
-                         * syslog
-                         */
-                        'WP_FAIL2BAN_OPENLOG_OPTIONS' => array(
-                            'validate'  => 'intval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'syslog',
-                                'connection')),
-                        'WP_FAIL2BAN_SYSLOG_SHORT_TAG' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'syslog',
-                                'workaround',
-                                'short_tag')),
-                        'WP_FAIL2BAN_HTTP_HOST' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'syslog',
-                                'workaround',
-                                'http_host')),
-                        'WP_FAIL2BAN_TRUNCATE_HOST' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'syslog',
-                                'workaround',
-                                'truncate_host')),
-
-                        /**
-                         * Block
-                         */
-                        'WP_FAIL2BAN_BLOCK_USER_ENUMERATION' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'block',
-                                'user_enumeration')),
-                        'WP_FAIL2BAN_BLOCKED_USERS' => array(
-                            'validate'  => 'strval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'block',
-                                'users')),
-                        'WP_FAIL2BAN_BLOCK_USERNAME_LOGIN' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'block',
-                                'usernames')),
-
-                        /**
-                         * Plugins
-                         */
-                        'WP_FAIL2BAN_PLUGIN_LOG_AUTH' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'auth',
-                                'enabled')),
-                        'WP_FAIL2BAN_PLUGIN_LOG_BLOCK' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'block',
-                                'enabled')),
-                        'WP_FAIL2BAN_PLUGIN_LOG_COMMENT' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'comment',
-                                'enabled')),
-                        'WP_FAIL2BAN_PLUGIN_LOG_PASSWORD' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'password',
-                                'enabled')),
-                        'WP_FAIL2BAN_PLUGIN_LOG_REST' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'rest',
-                                'enabled')),
-                        'WP_FAIL2BAN_PLUGIN_LOG_SPAM' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'spam',
-                                'enabled')),
-                        'WP_FAIL2BAN_PLUGIN_LOG_XMLRPC' => array(
-                            'validate'  => 'boolval',
-                            'unset'     => true,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'xmlrpc',
-                                'enabled')),
-                        'WP_FAIL2BAN_PLUGIN_AUTH_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'auth',
-                                'facility')),
-                        'WP_FAIL2BAN_PLUGIN_BLOCK_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'block',
-                                'facility')),
-                        'WP_FAIL2BAN_PLUGIN_COMMENT_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'comment',
-                                'facility')),
-                        'WP_FAIL2BAN_PLUGIN_PASSWORD_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'password',
-                                'facility')),
-                        'WP_FAIL2BAN_PLUGIN_REST_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'rest',
-                                'facility')),
-                        'WP_FAIL2BAN_PLUGIN_SPAM_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'spam',
-                                'facility')),
-                        'WP_FAIL2BAN_PLUGIN_XMLRPC_LOG' => array(
-                            'validate'  => 'intval',
-                            'unset'     => false,
-                            'field'     => array(
-                                'logging',
-                                'plugins',
-                                'xmlrpc',
-                                'facility')),
-
-                        'WP_FAIL2BAN_PROXIES' => array(
-                            'validate'  => __CLASS__.'::validate_ips',
-                            'unset'     => true,
-                            'field'     => array(
-                                'remote-ip',
-                                'proxies')),
-                    )
-                )
-            );
+            $wp_fail2ban['config'] = apply_filters(__METHOD__.'.config', array_merge($config, self::CONFIG));
 
             static::init();
+
+        } elseif (!empty($config)) {
+            $wp_fail2ban['config'] = array_merge($wp_fail2ban['config'], $config);
         }
+        return self::$instance;
+    }
+
+    /**
+     * Helper: for testing
+     *
+     * @since  4.4.0
+     *
+     * @return void
+     */
+    protected static function unload(): void
+    {
+        global $wp_fail2ban;
+
+        self::$instance = null;
+        unset($wp_fail2ban['config']);
+    }
+
+    /**
+     * Helper: for testing
+     *
+     * @since  4.4.0
+     *
+     * @return bool
+     */
+    protected static function is_loaded(): bool
+    {
+        return (self::$instance instanceof Config);
     }
 
     /**
      * Static initialiser
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add return type
+     * @since  4.3.0
+     *
+     * @return void
      */
-    protected static function init()
+    protected static function init(): void
     {
-        global $wp_fail2ban;
-
-        self::$settings = array();
-
-        foreach ($wp_fail2ban['config'] as $define => $args) {
-            if ($wp_fail2ban['config'][$define]['ndef'] = !defined($define)) {
-                if (defined("DEFAULT_{$define}")) {
-                    define($define, $args['validate'](constant("DEFAULT_{$define}")));
-                } else {
-                    // bah
-                    define($define, call_user_func($args['validate'], false));
-                }
-            }
-        }
+        self::$settings = [];
     }
 
     /**
      * Validate IP list.
      *
-     * @since 4.3.0 Refactored
-     * @since 4.0.0
+     * @since  4.4.0    Add return type
+     * @since  4.3.0    Refactored
+     * @since  4.0.0
      *
      * @param  array|string $value
-     * @return string
+     * @return array|string
      */
     public static function validate_ips($value)
     {
@@ -356,21 +432,25 @@ class Config
      * Pretend to validate IPs.
      *
      * @see premium\Config\validateIPs()
+     *
+     * @param  array|string $value
+     * @return array|string
      */
     public function validateIPs($value)
     {
-        return (false === $value) ? '' : $value;
+        return (false === $value) ? [] : $value;
     }
 
     /**
      * Helper: filtered get_site_option('wp-fail2ban')
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add return type
+     * @since  4.3.0
      *
      * @param  bool $filter
      * @return array
      */
-    public static function settings($filter = true)
+    public static function settings($filter = true): array
     {
         return self::$instance->getSettings($filter);
     }
@@ -378,14 +458,15 @@ class Config
     /**
      * Helper: filtered get_site_option('wp-fail2ban')
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add return type
+     * @since  4.3.0
      *
      * @param  bool $filter
      * @return array
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getSettings($filter = true)
+    public function getSettings(bool $filter = true): array
     {
         return self::$settings;
     }
@@ -394,30 +475,31 @@ class Config
     /**
      * Helper: default value
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add type hint, refactor for 7.4
+     * @since  4.3.4.0  Refactor
+     * @since  4.3.0
      *
      * @param  string   $define
      * @return mixed
      */
-    public static function get_default($define)
+    public static function get_default(string $define)
     {
-        $const = "DEFAULT_{$define}";
+        global $wp_fail2ban;
 
-        return (defined($const))
-            ? constant($const)
-            : null;
+        return $wp_fail2ban['config'][$define]['default'] ?? null;
     }
     // phpcs:enable
 
     /**
      * Help:er: is defined?
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add type hint, return type
+     * @since  4.3.0
      *
      * @param  string   $define     Constant name
      * @return bool                 Is defined?
      */
-    public static function def($define)
+    public static function def(string $define): bool
     {
         return !self::ndef($define);
     }
@@ -425,33 +507,60 @@ class Config
     /**
      * Helper: is not defined?
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add type hint, return type
+     * @since  4.3.0
      *
      * @param  string   $define     Constant name
      * @return bool                 Is not defined?
      */
-    public static function ndef($define)
+    public static function ndef(string $define): bool
     {
         return self::$instance->getNdef($define);
     }
 
-    public function getNdef($define)
+    /**
+     * Helper: is not defined?
+     *
+     * @since  4.4.0    Add type hint, return type, refactor for 7.4
+     * @since  4.3.3    Refactored for lazy-loading
+     * @since  4.3.0
+     *
+     * @param  string   $define     Constant name
+     * @return bool                 Is NOT defined?
+     */
+    public function getNdef(string $define): bool
     {
         global $wp_fail2ban;
 
-        return @$wp_fail2ban['config'][$define]['ndef'];
+        $def = &$wp_fail2ban['config'][$define];
+        return $def['ndef'] ?? ($def['ndef'] = !defined($define));
+    }
+
+    /**
+     * Magic helper
+     *
+     * @since  4.4.0    Add type hint
+     *
+     * @return mixed|null
+     *
+     * @codeCoverageIgnore
+     */
+    public function __get(string $define) // : ?mixed
+    {
+        return self::$instance->getter($define);
     }
 
     /**
      * Helper: get value
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add type hints
+     * @since  4.3.0
      *
      * @param  string   $define     Constant name
      * @param  array    $settings   Premium: settings to use
      * @return mixed                Constant value
      */
-    public static function get($define, array $settings = null)
+    public static function get(string $define, array $settings = null)
     {
         return self::$instance->getter($define, $settings);
     }
@@ -459,33 +568,101 @@ class Config
     /**
      * Helper: get value
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add type hints, return type
+     * @since  4.3.3    Refactored for lazy-loading
+     * @since  4.3.0
      *
      * @param  string   $define     Constant name
      * @param  array    $settings   Premium: settings to use
+     *
+     * @throws \UnexpectedValueException
+     *
      * @return mixed                Constant value
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getter($define, array $settings = null)
+    public function getter(string $define, array $settings = null)
     {
-        return (defined($define)) ? constant($define) : null;
+        if (!isset(self::$cache[$define])) {
+            global $wp_fail2ban;
+
+            assert(array_key_exists($define, $wp_fail2ban['config']));
+            $def = &$wp_fail2ban['config'][$define];
+            assert(is_array($def));
+
+            if (!array_key_exists('validate', $def)) {
+                throw new \UnexpectedValueException($define);
+
+            } elseif (!($def['ndef'] = !defined($define))) { // defined($define)
+                self::$cache[$define] = $def['validate'](constant($define));
+
+            } else {
+                self::$cache[$define] = (isset($def['default']))
+                    ? $def['validate']($def['default'])
+                    : call_user_func($def['validate'], false);
+                define($define, self::$cache[$define]);
+            }
+        }
+
+        return self::$cache[$define];
+    }
+
+    /**
+     * Helper: set value
+     *
+     * @since  4.4.0    Add return type
+     * @since  4.3.2.2
+     *
+     * @param  string   $define     Constant name
+     * @param  mixed    $value      Value to set
+     * @param  array    $settings   Premium: settings to use
+     * @return bool
+     */
+    public static function set(string $define, $value, array &$settings = null): bool
+    {
+        return self::$instance->setter($define, $value, $settings);
+    }
+
+    /**
+     * Helper: set value
+     *
+     * @since  4.4.0    Add return type
+     * @since  4.3.2.2
+     *
+     * @param  string   $define     Constant name
+     * @param  mixed    $value      Value to set
+     * @param  array    $settings   Premium: settings to use
+     * @return bool
+     */
+    public function setter(string $define, $value, array &$settings = null): bool
+    {
+        return true;
     }
 
     /**
      * Helper: get description
      *
-     * @since 4.3.0
+     * @since  4.4.0    Add type hint, return type
+     * @since  4.3.0
      *
      * @param  string       $define Constant name.
      * @return string|null  Description.
      */
-    public static function desc($define)
+    public static function desc(string $define): ?string
     {
         return self::$instance->getDesc($define);
     }
 
-    public function getDesc($define)
+    /**
+     * Helper: get description
+     *
+     * @since  4.4.0    Add return type
+     * @since  4.3.0
+     *
+     * @param  string       $define     Constant name.
+     * @return string|null  Description.
+     */
+    public function getDesc(string $define): ?string
     {
         switch ($define) {
             case 'WP_FAIL2BAN_AUTH_LOG':
@@ -499,7 +676,7 @@ class Config
             case 'WP_FAIL2BAN_PROXIES':
                 return __('Trusted IPv4 list.', 'wp-fail2ban');
             default:
-                return null;
+                return apply_filters(__METHOD__, null, $define);
         }
     }
 }
