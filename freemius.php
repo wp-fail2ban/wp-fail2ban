@@ -88,9 +88,9 @@ if ( function_exists( __NAMESPACE__ . '\\wf_fs' ) ) {
         /** Just in case... */
         return 'https://forums.invis.net/c/wp-fail2ban/';
     } );
-    wf_fs()->add_filter( 'show_delegation_option', false );
+    wf_fs()->add_filter( 'show_delegation_option', '__return_false' );
     // Signal that SDK was initiated.
     do_action( 'wf_fs_loaded' );
-    require_once 'functions.php';
-    require_once 'init.php';
+    require_once __DIR__ . '/functions.php';
+    require_once __DIR__ . '/init.php';
 }

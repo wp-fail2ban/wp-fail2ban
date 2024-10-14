@@ -68,6 +68,7 @@ function wp_login($user_login, $user)
 /**
  * Hook: wp_login_failed
  *
+ * @since 4.3.0.5   Handle empty username
  * @since 4.3.0     Add action
  * @since 4.2.4     Add message filter
  * @since 4.2.0     Change username check
@@ -86,23 +87,31 @@ function wp_login($user_login, $user)
  */
 function wp_login_failed($username)
 {
-    global $wp_xmlrpc_server;
+    $username = trim($username);
 
-    if (defined('REST_REQUEST')) {
-        $msg    = 'REST a';
-        $filter = '::REST';
-    } elseif ($wp_xmlrpc_server) {
-        $msg    = 'XML-RPC a';
-        $filter = '::XML-RPC';
+    if (empty($username)) {
+        $msg    = 'Empty username';
+        $filter = '::empty';
+
     } else {
-        $msg    = 'A';
-        $filter = '';
+        global $wp_xmlrpc_server;
+
+        if (defined('REST_REQUEST')) {
+            $msg    = 'REST a';
+            $filter = '::REST';
+        } elseif ($wp_xmlrpc_server) {
+            $msg    = 'XML-RPC a';
+            $filter = '::XML-RPC';
+        } else {
+            $msg    = 'A';
+            $filter = '';
+        }
+
+        $msg .= (wp_cache_get($username, 'useremail') || wp_cache_get(sanitize_user($username), 'userlogins'))
+                ? "uthentication failure for {$username}"
+                : "uthentication attempt for unknown user {$username}";
     }
 
-    $username = trim($username);
-    $msg .= (wp_cache_get($username, 'useremail') || wp_cache_get(sanitize_user($username), 'userlogins'))
-            ? "uthentication failure for {$username}"
-            : "uthentication attempt for unknown user {$username}";
     $msg  = apply_filters("wp_fail2ban::wp_login_failed{$filter}", $msg);
 
     if (openlog()) {

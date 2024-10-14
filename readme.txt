@@ -6,7 +6,7 @@ Plugin URI: https://wp-fail2ban.com/?utm_source=wordpress.org&utm_medium=readme&
 Tags: fail2ban, login, security, syslog, brute force, protection, classicpress
 Requires at least: 4.2
 Tested up to: 5.4.2
-Stable tag: 4.3.0.4
+Stable tag: 4.3.0.5
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -77,6 +77,11 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 1. Edit `wp-config.php` to suit your needs - see [Configuration](https://docs.wp-fail2ban.com/en/4.3/configuration.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.3.0).
 
 == Changelog ==
+
+= 4.3.0.5 =
+* Fix empty username detection for multisite.
+* Fix harmless warning when activating new multisite install.
+* Fix esoteric edge-case where `wp-load.php` is loaded via a script run from the CLI in a directory with a `functions.php` file.
 
 = 4.3.0.4 "Columbo" =
 * Add new dashboard widget: last 5 `syslog` messages.
@@ -250,6 +255,9 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 4.3.0.5 =
+This is a bugfix release. You do not need to update your filters from 4.3.0.
 
 = 4.3.0.4 =
 To take advantage of the new features you will need up update your `fail2ban` filters; existing filters will continue to work as before. Premium users: Please backup your database before upgrading.

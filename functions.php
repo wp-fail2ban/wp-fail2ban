@@ -9,21 +9,21 @@ namespace org\lecklider\charles\wordpress\wp_fail2ban;
 
 defined('ABSPATH') or exit;
 
-require_once 'lib/constants.php'; // @wpf2b exclude[lite]
-require_once 'lib/convert-data.php'; // @wpf2b exclude[lite]
+require_once __DIR__.'/lib/constants.php'; // @wpf2b exclude[lite]
+require_once __DIR__.'/lib/convert-data.php'; // @wpf2b exclude[lite]
 
-require_once 'lib/defaults.php';
-require_once 'lib/activation.php';
-require_once 'lib/loader.php';
+require_once __DIR__.'/lib/defaults.php';
+require_once __DIR__.'/lib/activation.php';
+require_once __DIR__.'/lib/loader.php';
 
-require_once 'core.php';
-require_once 'feature/comments.php';
-require_once 'feature/password.php';
-require_once 'feature/plugins.php';
-require_once 'feature/spam.php';
-require_once 'feature/user-enum.php';
-require_once 'feature/user.php';
-require_once 'feature/xmlrpc.php';
+require_once __DIR__.'/core.php';
+require_once __DIR__.'/feature/comments.php';
+require_once __DIR__.'/feature/password.php';
+require_once __DIR__.'/feature/plugins.php';
+require_once __DIR__.'/feature/spam.php';
+require_once __DIR__.'/feature/user-enum.php';
+require_once __DIR__.'/feature/user.php';
+require_once __DIR__.'/feature/xmlrpc.php';
 
 /**
  * Helper.
