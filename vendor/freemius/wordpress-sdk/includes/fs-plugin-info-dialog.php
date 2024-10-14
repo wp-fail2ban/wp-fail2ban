@@ -54,24 +54,6 @@
          */
         private $status;
 
-        /**
-         * The default currency of the plugin or addon.
-         *
-         * @author @invisnet
-         *
-         * @var string
-         */
-        private $default_currency;
-
-        /**
-         * The currency symbol for the default currency.
-         *
-         * @author @invisnet
-         *
-         * @var string
-         */
-        private $currency_symbol;
-
         function __construct( Freemius $fs ) {
             $this->_fs = $fs;
 
@@ -137,10 +119,6 @@
             $has_free_plan = false;
             $has_paid_plan = false;
 
-            // Get the default currency in case it's not usd.
-            $this->default_currency = $this->_fs->apply_filters( 'default_currency', 'usd' );
-            $this->currency_symbol  = FS_Pricing::currency_symbol( $this->default_currency );
-
             // Load add-on pricing.
             $has_pricing  = false;
             $has_features = false;
@@ -149,7 +127,7 @@
             $result = $this->_fs->get_api_plugin_scope()->get( $this->_fs->add_show_pending( "/addons/{$selected_addon->id}/pricing.json?type=visible" ) );
 
             if ( ! isset( $result->error ) ) {
-                $plans = array_reverse( $result->plans );
+                $plans = $result->plans;
 
                 if ( is_array( $plans ) ) {
                     for ( $i = 0, $len = count( $plans ); $i < $len; $i ++ ) {
@@ -172,11 +150,12 @@
                             foreach ( $pricing as $prices ) {
                                 $prices = new FS_Pricing( $prices );
 
-                                if ( $this->default_currency !== $prices->currency ) {
+                                if ( ! $prices->is_usd() ) {
                                     /**
-                                     * Skip pricings not in the default currency.
+                                     * Skip non-USD pricing.
                                      *
-                                     * @author invisnet
+                                     * @author Leo Fajardo (@leorw)
+                                     * @since 2.3.1
                                      */
                                     continue;
                                 }
@@ -364,9 +343,8 @@
 
                 if ( $has_features ) {
                     $view_vars                  = array(
-                        'plans'           => $plans,
-                        'plugin'          => $selected_addon,
-                        'currency_symbol' => $this->currency_symbol
+                        'plans'  => $plans,
+                        'plugin' => $selected_addon,
                     );
                     $data->sections['features'] = fs_get_template( '/plugin-info/features.php', $view_vars );
                 }
@@ -444,7 +422,7 @@
                 $price_tag = $pricing->lifetime_price;
             }
 
-            return $this->currency_symbol . $price_tag;
+            return '$' . $price_tag;
         }
 
         /**
@@ -1213,7 +1191,7 @@
                                                     }
 
                                                     if (!multipleLicenses && 1 == pricing.licenses) {
-                                                        return '<?php echo $this->currency_symbol ?>' + pricing.price + priceCycle;
+                                                        return '$' + pricing.price + priceCycle;
                                                     }
 
                                                     return _formatLicensesTitle(pricing) + ' - <var class="fs-price">$' + pricing.price + priceCycle + '</var>';
