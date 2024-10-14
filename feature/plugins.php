@@ -118,14 +118,15 @@ function register_messages(string $plugin_slug, array $msgs): void
  */
 function register_message(string $plugin_slug, array $msg): void
 {
+    global $wp_fail2ban;
+
     if (!is_registered_plugin($plugin_slug)) {
         throw new \InvalidArgumentException('plugin not registered');
     }
 
     $args = [];
 
-    if (null === apply_filters(__FUNCTION__.'::get', null, $plugin_slug, $msg)) {
-        global $wp_fail2ban;
+    if (null === ($args = apply_filters(__FUNCTION__.'::get', null, $plugin_slug, $msg))) {
         $event_classes = [
             'auth'      => WPF2B_EVENT_CLASS_AUTH,
             'comment'   => WPF2B_EVENT_CLASS_COMMENT,

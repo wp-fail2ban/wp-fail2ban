@@ -51,7 +51,6 @@ class TabSyslog extends TabBase
         $this->__['workarounds-specify-host']   = __('Specify Host',    'wp-fail2ban');
         $this->__['workarounds-truncate_host']  = __('Truncate Host',   'wp-fail2ban');
         $this->__['workarounds-tag_host']       = __('Host in Tag',     'wp-fail2ban');
-        $this->__['wp-fail2ban-journald']       = __('journald',        'wp-fail2ban');
         // phpcs:enable
 
         parent::__construct('syslog', 'syslog');
