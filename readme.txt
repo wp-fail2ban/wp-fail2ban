@@ -5,8 +5,8 @@ Author URI: https://invis.net/?utm_source=wordpress.org&utm_medium=readme&utm_ca
 Plugin URI: https://wp-fail2ban.com/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.3.0
 Tags: fail2ban, login, security, syslog, brute force, protection, classicpress
 Requires at least: 4.2
-Tested up to: 5.5
-Stable tag: 4.3.0.7
+Tested up to: 5.6
+Stable tag: 4.3.0.8
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -77,6 +77,9 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 1. Edit `wp-config.php` to suit your needs - see [Configuration](https://docs.wp-fail2ban.com/en/4.3/configuration.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.3.0).
 
 == Changelog ==
+
+= 4.3.0.8 =
+* Workaround issue with user enumeration blocking being triggered by Gutenberg pre-loading Author list. (h/t @brrrrrrrt) [WordPress only]
 
 = 4.3.0.7 =
 * Finish refactoring to allow inclusion of constants in `wp-config.php` (h/t @iCounsellor).
@@ -262,6 +265,9 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 4.3.0.8 =
+This is a bugfix (workaround) release. You do not need to update your filters from 4.3.0.
 
 = 4.3.0.7 =
 This is a bugfix release. You do not need to update your filters from 4.3.0. Premium users: Please update your MaxMind database.

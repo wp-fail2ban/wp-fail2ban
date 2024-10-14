@@ -84,11 +84,42 @@ function parse_request($query)
  */
 function rest_user_query($prepared_args, $request)
 {
-    if (!current_user_can('edit_others_posts')) {
+    /**
+     * ClassicPress and pre-WP 5.4: this is all that's needed
+     */
+    if (current_user_can('edit_others_posts')) {
+        return $prepared_args;
+    }
+
+    /**
+     * ClassicPress or pre-5.4 Wordpress - bail
+     */
+    if (function_exists('classicpress_version') ||
+        version_compare(get_bloginfo('version'), '5.4', '<'))
+    {
         return _log_bail_user_enum();
     }
 
-    return $prepared_args;
+    /**
+     * >= 5.x WordPress tries to pre-load the list of Authors,
+     * regardless of the current user's role or capabilities.
+     *
+     * Returning 403 seems not to break anything, but we don't
+     * want to trigger fail2ban.
+     */
+    if (is_user_logged_in() &&
+        array_key_exists('who', $prepared_args) &&
+        'authors' == $prepared_args['who'])
+    {
+        if (openlog()) {
+            syslog(LOG_DEBUG, 'Blocked authors enumeration');
+            closelog();
+        }
+
+        return bail();
+    }
+
+    return _log_bail_user_enum();
 }
 
 /**
