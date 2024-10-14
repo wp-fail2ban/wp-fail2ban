@@ -191,6 +191,11 @@ function init(): void
     }
 
     /**
+     * @since 4.4.0.9
+     */
+    add_filter('auto_update_plugin', __NAMESPACE__.'\auto_update_plugin', 10, 2);
+
+    /**
      * @since 4.4.0.8 Add our tests to Site Health
      */
     add_filter('site_status_tests', __NAMESPACE__.'\SiteHealth::get_tests');

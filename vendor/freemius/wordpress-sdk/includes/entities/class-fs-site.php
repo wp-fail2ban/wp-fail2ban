@@ -10,6 +10,9 @@
         exit;
     }
 
+    /**
+     * @property int $blog_id
+     */
     class FS_Site extends FS_Scope_Entity {
         /**
          * @var number
@@ -82,6 +85,8 @@
          * @author Leo Fajardo (@leorw)
          *
          * @since  1.2.1.5
+         * @deprecated Since 2.5.1
+         * @todo Remove after a few releases.
          *
          * @var bool
          */
@@ -225,31 +230,25 @@
         }
 
         /**
-         * @author Vova Feldman (@svovaf)
-         * @since  2.0.0
-         *
-         * @return bool
-         */
-        function is_tracking_allowed() {
-            return ( true !== $this->is_disconnected );
-        }
-
-        /**
-         * @author Vova Feldman (@svovaf)
-         * @since  2.0.0
-         *
-         * @return bool
-         */
-        function is_tracking_prohibited() {
-            return ! $this->is_tracking_allowed();
-        }
-
-        /**
          * @author Edgar Melkonyan
          *
          * @return bool
          */
         function is_beta() {
             return ( isset( $this->is_beta ) && true === $this->is_beta );
+        }
+
+        /**
+         * @author Leo Fajardo (@leorw)
+         * @since 2.5.1
+         *
+         * @param string $site_url
+         *
+         * @return bool
+         */
+        function is_clone( $site_url ) {
+            $clone_install_url = trailingslashit( fs_strip_url_protocol( $this->url ) );
+
+            return ( $clone_install_url !== $site_url );
         }
     }

@@ -5,7 +5,7 @@ Plugin URI: https://wp-fail2ban.com/?utm_source=wordpress.org&utm_medium=readme&
 Tags: fail2ban, login, security, syslog, brute force, protection, classicpress
 Requires at least: 4.2
 Tested up to: 6.1
-Stable tag: 4.4.0.8
+Stable tag: 4.4.0.9
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -25,49 +25,55 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 
 = Features =
 
-* **Failed Login Attempts**
-  The very first feature of *WPf2b*: logging failed login attempts so the IP can be banned. Just as useful today as it was then.
-  
-* **Block User Enumeration**
-  One of the most common precursors to a password-guessing brute force attack is [user enumeration](https://wp-fail2ban.com/features/block-user-enumeration/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0). *WPf2b* can block it, stopping the attack before it starts.
+* **Allow Pingbacks with XML-RPC Blocked** [Premium only]
+  Pingbacks might be a relic of a bygone age, but they're still nice to have. *Wf2b* can now allow Pingsbacks while blocking other XML-RPC requests.
+
+* **Block XML-RPC Requests** [Premium only]
+  Allow access for Jetpack and other trusted IPs while blocking everything else; introduces a new "hard" filter.
+
+* **Block Countries** [Premium only]
+  Nothing but attacks from some countries? Block them!
+
+* **Multisite Support**
+  Version 4.3 introduced [proper support for multisite networks](https://wp-fail2ban.com/features/multisite-networks/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0).
 
 * **Block username logins**
-  Sometimes it's not possible to block user enumeration (for example, if your theme provides Author profiles). *WPf2b* can require users to login with their email address instead of their username.
+  Sometimes it's not possible to block user enumeration (for example, if your theme provides Author profiles). Version 4.3 added support for requiring the use of email addresses for login.
 
-* **Blocking Users**
-  Anther of the older *WPf2b* features: the login process can be aborted for specified usernames.
-  Say a bot collected your site's usernames before you blocked user enumeration. Once you've changed all the usernames, add the old ones to the list; anything using them will trigger a "hard" fail.
-
-* **Empty Username Login Attempts**
-  Some bots will try to login without a username; harmless, but annoying. These attempts are logged as a "soft" fail so the more persistent bots will be banned.
-
-* **Spam**
-  *WPf2b* will log a spammer's IP address as a "hard" fail when their comment is marked as spam.
-
-* **Attempted Comments**
-  Some spam bots try to comment on everything, even things that aren't there. *WPf2b* detects these and logs them as a "hard" fail.
-
-* **Pingbacks**
-  Pingbacks are a great feature, but they can be abused to attack the rest of the WWW. Rather than disable them completely, *WPf2b* effectively rate-limits potential attackers by logging the IP address as a "soft" fail.
-
-* **Block XML-RPC Requests** [Premium]
-  The only reason most sites need XML-RPC (other than Pingbacks) is for Jetpack; *WPf2b* Premium can block XML-RPC while allowing Jetpack and/or Pingbacks.
-
-* **Block Countries** [Premium]
-  Sometimes you just need a bigger hammer - if you're seeing nothing but attacks from some countries, block them!
-
-* **Cloudflare and Proxy Servers**
-  *WPf2b* will work with [Cloudflare](https://wp-fail2ban.com/features/cloudflare-and-proxy-servers/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0).
-  You can also configure your own list of trusted proxies.
+* **Filter for Empty Username Login Attempts**
+  Some bots will try to login without a username. Version 4.3 logs these attempts and provides an "extra" filter to match them.
 
 * **syslog Dashboard Widget**
-  Ever wondered what's being logged? The dashboard widget shows the last 5 messages; the Premium version keeps a full history to help you analyse and prevent attacks.
+  Ever wondered what's being logged? The new dashboard widget shows the last 5 messages; the Premium version keeps a full history to help you analyse and prevent attacks.
+
+* **Support for 3rd-party Plugins**
+  Version 4.2 introduced a simple API for authors to integrate their plugins with *WPf2b*, with 2 *experimental* add-ons:
+  * [Contact Form 7](https://wordpress.org/plugins/wp-fail2ban-addon-contact-form-7/)
+  * [Gravity Forms](https://wordpress.org/plugins/wp-fail2ban-addon-gravity-forms/)
+
+* **CloudFlare and Proxy Servers**
+  *WPf2b* can be configured to work with [CloudFlare and other proxy servers](https://wp-fail2ban.com/features/cloudflare-and-proxy-servers/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0).
+
+* **Comments**
+  *WPf2b* can log comments (see [`WP_FAIL2BAN_LOG_COMMENTS`](https://docs.wp-fail2ban.com/en/4.4/defines.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0#wp-fail2ban-log-comments)) and attempted comments (see [`WP_FAIL2BAN_LOG_COMMENTS_EXTRA`](https://docs.wp-fail2ban.com/en/4.3/defines.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0#wp-fail2ban-log-comments-extra)).
+
+* **Pingbacks**
+  *WPf2b* logs failed pingbacks, and can log all pingbacks. For an overview see [`WP_FAIL2BAN_LOG_PINGBACKS`](https://docs.wp-fail2ban.com/en/4.4/defines.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0#wp-fail2ban-log-pingbacks).
+
+* **Spam**
+  *WPf2b* can log comments marked as spam. See [`WP_FAIL2BAN_LOG_SPAM`](https://docs.wp-fail2ban.com/en/4.4/defines.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0#wp-fail2ban-log-spam).
+
+* **Block User Enumeration**
+  *WPf2b* can [block user enumeration](https://wp-fail2ban.com/features/block-user-enumeration/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0).
+
+* **Work-Arounds for Broken syslogd**
+  *WPf2b* can be configured to work around most syslogd weirdness. For an overview see [`WP_FAIL2BAN_SYSLOG_SHORT_TAG`](https://docs.wp-fail2ban.com/en/4.4/defines.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0#wp-fail2ban-syslog-short-tag) and [`WP_FAIL2BAN_HTTP_HOST`](https://docs.wp-fail2ban.com/en/4.3/defines.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0#wp-fail2ban-http-host).
+
+* **Blocking Users**
+  *WPf2b* can be configured to short-cut the login process when the username matches a regex. For an overview see [`WP_FAIL2BAN_BLOCKED_USERS`](https://docs.wp-fail2ban.com/en/4.4/defines.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0#wp-fail2ban-blocked-users).
 
 * **`mu-plugins` Support**
-  *WPf2b* can easily be configured as a "must-use plugin" - see [Configuration](https://docs.wp-fail2ban.com/en/4.4/configuration.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0#mu-plugins-support).
-
-* **API to Extend *WPf2b***
-  If your plugin can detect behaviour which should be blocked, why reinvent the wheel?
+  *WPf2b* can easily be configured as a must-use plugin - see [Configuration](https://docs.wp-fail2ban.com/en/4.4/configuration.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0#mu-plugins-support).
 
 == Installation ==
 
@@ -76,6 +82,10 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 1. Edit `wp-config.php` to suit your needs - see [Configuration](https://docs.wp-fail2ban.com/en/4.4/configuration.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.4.0).
 
 == Changelog ==
+
+= 4.4.0.9 =
+* Preparation for v5: prevent auto-updating across major release.
+* Update Freemius library.
 
 = 4.4.0.8 =
 * Backport fix for `mu-plugins` activation.
@@ -332,6 +342,9 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 4.4.0.9 =
+This is a minor release. You do not need to update your filters from 4.4.0.
 
 = 4.4.0.8 =
 This is a bugfix release. You do not need to update your filters from 4.4.0.
