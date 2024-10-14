@@ -16,6 +16,7 @@ require_once __DIR__.'/lib/convert-data.php'; // @wpf2b exclude[lite]
 require_once __DIR__.'/lib/activation.php';
 require_once __DIR__.'/lib/compat.php';
 require_once __DIR__.'/lib/loader.php';
+require_once __DIR__.'/lib/site-health.php';
 require_once __DIR__.'/lib/syslog.php';
 
 require_once __DIR__.'/core.php';

@@ -41,7 +41,7 @@
 		$first_name = $current_user->nickname;
 	}
 
-	$site_url     = get_site_url();
+	$site_url     = Freemius::get_unfiltered_site_url();
 	$protocol_pos = strpos( $site_url, '://' );
 	if ( false !== $protocol_pos ) {
 		$site_url = substr( $site_url, $protocol_pos + 3 );
@@ -824,7 +824,6 @@
 								url     : $this.find( '.url' ).val(),
 								title   : $this.find( '.title' ).val(),
 								language: $this.find( '.language' ).val(),
-								charset : $this.find( '.charset' ).val(),
 								blog_id : $this.find( '.blog-id' ).find( 'span' ).text()
 							};
 
@@ -852,7 +851,7 @@
 					 * @since 1.2.1.5
 					 */
 					$.ajax({
-						url    : ajaxurl,
+						url    : <?php echo Freemius::ajax_url() ?>,
 						method : 'POST',
 						data   : data,
 						success: function (result) {
@@ -1037,7 +1036,7 @@
                         $primaryCta.html('<?php fs_esc_js_echo_inline( 'Please wait', 'please-wait', $slug ) ?>...');
 
                         $.ajax({
-                            url    : ajaxurl,
+                            url    : <?php echo Freemius::ajax_url() ?>,
                             method : 'POST',
                             data   : {
                                 action     : '<?php echo $fs->get_ajax_action( 'fetch_is_marketing_required_flag_value' ) ?>',

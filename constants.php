@@ -12,7 +12,7 @@ namespace org\lecklider\charles\wordpress\wp_fail2ban;
 // @codeCoverageIgnoreStart
 
 if (!defined('WP_FAIL2BAN_VER')) {
-    define('WP_FAIL2BAN_VER', '4.4.0.6');
+    define('WP_FAIL2BAN_VER', '4.4.0.8');
 }
 if (!defined('WP_FAIL2BAN_VER_SHORT')) {
     define('WP_FAIL2BAN_VER_SHORT', '4.4');

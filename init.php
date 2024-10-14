@@ -189,6 +189,11 @@ function init(): void
     if (defined('WP_ADMIN') && WP_ADMIN) {
         require_once __DIR__.'/admin/admin.php'; // @codeCoverageIgnore
     }
+
+    /**
+     * @since 4.4.0.8 Add our tests to Site Health
+     */
+    add_filter('site_status_tests', __NAMESPACE__.'\SiteHealth::get_tests');
 }
 add_action('init', __NAMESPACE__.'\init');
 

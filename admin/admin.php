@@ -300,6 +300,7 @@ function admin_menu_fix(): void
 /**
  * Add Settings link on Plugins page
  *
+ * @since  4.4.0.8  Activate "normal" plugin if running as MU
  * @since  4.4.0.3  Allow $plugin_data to be null despite spec
  * @since  4.4.0    Add type hints, return type
  * @since  4.2.0
@@ -320,6 +321,29 @@ function plugin_action_links(array $actions, string $plugin_file, ?array $plugin
     if (preg_match("|$plugin_file\$|", WP_FAIL2BAN_FILE) &&
         (!is_multisite() || is_network_admin()))
     {
+        foreach (get_mu_plugins() as $plugin => $data) {
+            if (0 === strpos($data['Name'], 'WP fail2ban')) {
+                // MU plugin
+                //
+                // * Make sure the "normal" plugin is activated
+                // * Remove "Deactivate" and "Delete" links
+                $plugin = plugin_basename(WP_FAIL2BAN_FILE);
+
+                if (array_key_exists($plugin, get_plugins()) && !is_plugin_active($plugin)) {
+                    activate_plugin(
+                        $plugin,
+                        '',     // don't redirect anywhere
+                        false,
+                        true    // don't call activation hooks
+                    );
+                }
+
+                unset($actions['deactivate']);
+                unset($actions['delete']);
+                break;
+            }
+        }
+
         // No settings tabs for ClassicPress + Free
         if (function_exists('\add_security_page') &&
             !wf_fs()->can_use_premium_code())
@@ -327,9 +351,10 @@ function plugin_action_links(array $actions, string $plugin_file, ?array $plugin
             return $actions;
         }
 
-        if (!wf_fs()->can_use_premium_code() ||
+        if (!wf_fs()->is_activation_mode() &&
+            (!wf_fs()->can_use_premium_code() ||
             ((is_multisite() && wf_fs()->is_plan_or_trial('silver')) ||
-            (!is_multisite() && wf_fs()->is_plan_or_trial('bronze'))))
+            (!is_multisite() && wf_fs()->is_plan_or_trial('bronze')))))
         {
             $settings = sprintf(
                 '<a href="%s?page=wpf2b-settings&tab=about" title="%s">%s</a>',

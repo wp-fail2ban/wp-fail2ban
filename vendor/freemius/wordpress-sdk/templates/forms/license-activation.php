@@ -369,7 +369,7 @@ HTML;
                 $activateLicenseButton.html( '<?php fs_esc_js_echo_inline( 'Please wait', 'please-wait', $slug ) ?>...' );
 
                 $.ajax( {
-                    url    : ajaxurl,
+                    url    : <?php echo Freemius::ajax_url() ?>,
                     method : 'POST',
                     data   : {
                         action     : '<?php echo $fs->get_ajax_action( 'fetch_is_marketing_required_flag_value' ) ?>',
@@ -617,7 +617,6 @@ HTML;
                                 url     : $this.find( '.url' ).val(),
                                 title   : $this.find( '.title' ).val(),
                                 language: $this.find( '.language' ).val(),
-                                charset : $this.find( '.charset' ).val(),
                                 blog_id : $this.find( '.blog-id' ).find( 'span' ).text()
                             };
 
@@ -635,7 +634,7 @@ HTML;
                 }
 
 				$.ajax({
-					url: ajaxurl,
+					url: <?php echo Freemius::ajax_url() ?>,
 					method: 'POST',
                     data: data,
 					beforeSend: function () {

@@ -28,6 +28,7 @@ defined('ABSPATH') or exit;
 HTML;
                 } elseif (WP_FAIL2BAN_FILE == $path) {
                     // OK, we're linking to ourself
+                    break;
                 } else {
                     $mu_file = str_replace('/', '/<wbr>', $mu_file);
                     $mu_file = substr($mu_file, strlen(WPMU_PLUGIN_DIR)-1);

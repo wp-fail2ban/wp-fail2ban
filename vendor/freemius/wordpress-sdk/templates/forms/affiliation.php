@@ -72,7 +72,7 @@
         $current_user  = Freemius::_get_current_wp_user();
         $full_name     = trim( $current_user->user_firstname . ' ' . $current_user->user_lastname );
         $email_address = $current_user->user_email;
-        $domain        = fs_strip_url_protocol( get_site_url() );
+        $domain        = Freemius::get_unfiltered_site_url( null, true );
     }
 
     $affiliate_tracking = 30;
@@ -366,7 +366,7 @@
                     }
 
                     $.ajax({
-                        url       : ajaxurl,
+                        url       : <?php echo Freemius::ajax_url() ?>,
                         method    : 'POST',
                         data      : {
                             action   : '<?php echo $fs->get_ajax_action( 'submit_affiliate_application' ) ?>',
