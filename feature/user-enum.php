@@ -45,9 +45,10 @@ function _log_bail_user_enum()
  *
  * @see \WP::parse_request()
  *
- * @since 4.3.0 Refactored to make XDebug happy; h/t @dinghy
- *              Changed cap to 'edit_others_posts'
- * @since 3.5.0 Refactored for unit testing
+ * @since 4.3.0.6   Ignore `author` if it's the current user
+ * @since 4.3.0     Refactored to make XDebug happy; h/t @dinghy
+ *                  Changed cap to 'edit_others_posts'
+ * @since 3.5.0     Refactored for unit testing
  * @since 2.1.0
  *
  * @param \WP   $query
@@ -56,7 +57,10 @@ function _log_bail_user_enum()
  */
 function parse_request($query)
 {
-    if (!current_user_can('edit_others_posts') && intval(array_value('author', $query->query_vars))) {
+    if (!current_user_can('edit_others_posts') &&
+        !is_null($author = array_value('author', $query->query_vars)) &&
+        get_current_user_id() != intval($author))
+    {
         _log_bail_user_enum();
     }
 

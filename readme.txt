@@ -5,8 +5,8 @@ Author URI: https://invis.net/?utm_source=wordpress.org&utm_medium=readme&utm_ca
 Plugin URI: https://wp-fail2ban.com/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.3.0
 Tags: fail2ban, login, security, syslog, brute force, protection, classicpress
 Requires at least: 4.2
-Tested up to: 5.4.2
-Stable tag: 4.3.0.5
+Tested up to: 5.5
+Stable tag: 4.3.0.6
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -77,6 +77,9 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 1. Edit `wp-config.php` to suit your needs - see [Configuration](https://docs.wp-fail2ban.com/en/4.3/configuration.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-4.3.0).
 
 == Changelog ==
+
+= 4.3.0.6 =
+* Fix Forbidden error on Posts page for roles below Editor when user enum blocking enabled. [WordPress only]
 
 = 4.3.0.5 =
 * Fix empty username detection for multisite.
@@ -255,6 +258,9 @@ Write a myriad of WordPress events to syslog for integration with fail2ban.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 4.3.0.6 =
+This is a bugfix release. You do not need to update your filters from 4.3.0.
 
 = 4.3.0.5 =
 This is a bugfix release. You do not need to update your filters from 4.3.0.
