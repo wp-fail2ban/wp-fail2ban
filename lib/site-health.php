@@ -327,7 +327,8 @@ class SiteHealth
             'obsolete' => false,
             'custom' => false,
             'unknown' => false,
-            'partial' => false
+            'partial' => false,
+            'old' => false
         ];
         static $failures = false;
 
@@ -362,7 +363,8 @@ class SiteHealth
                             switch ($this->check_filter_needs_update($ver, $filter, $reasons)) {
                                 case true:
                                     $failures[$filter] = [
-                                        'status' => 'obsolete',
+                                        'status'  => 'obsolete',
+                                        'file'    => $filter_file,
                                         'version' => $ver,
                                         'reasons' => $reasons
                                     ];
@@ -370,7 +372,8 @@ class SiteHealth
                                     break;
                                 case null:
                                     $failures[$filter] = [
-                                        'status' => 'old',
+                                        'status'  => 'old',
+                                        'file'    => $filter_file,
                                         'version' => $ver
                                     ];
                                     $status['old'] = true;
@@ -382,7 +385,8 @@ class SiteHealth
 
                         } else {
                             $failures[$filter] = [
-                                'status' => 'custom',
+                                'status'  => 'custom',
+                                'file'    => $filter_file,
                                 'version' => null
                             ];
                             $status['custom'] = true;
@@ -391,7 +395,8 @@ class SiteHealth
                     // Exists, but can't get contents
                     } elseif (is_file($filter_file)) {
                         $failures[$filter] = [
-                            'status' => 'unknown',
+                            'status'  => 'unknown',
+                            'file'    => $filter_file,
                             'version' => null
                         ];
                         $status['unknown'] = true;
@@ -399,7 +404,8 @@ class SiteHealth
                     // Does not exist
                     } else {
                         $failures[$filter] = [
-                            'status' => 'missing',
+                            'status'  => 'missing',
+                            'file'    => $filter_file,
                             'version' => null
                         ];
                         $status['partial'] = true;
@@ -600,7 +606,7 @@ class SiteHealth
                         $output .= '<li><span class="dashicons dashicons-warning" style="color: #dc3232"></span> '.sprintf(
                             /* translators: %s: The filter name. */
                             __('%s is <strong>obsolete</strong> (version %s)', 'wp-fail2ban'),
-                            "<code>wordpress-{$filter}.conf</code>",
+                            "<code>{$failure['file']}</code>",
                             $failure['version']
                         );
                         if (count($failure['reasons'] ?? [])) {
@@ -689,7 +695,7 @@ class SiteHealth
                         $output .= '<li><span class="dashicons dashicons-flag" style="color: #f56e28"></span> '.sprintf(
                             /* translators: %s: The filter file name. */
                             __('%s has been modified.', 'wp-fail2ban'),
-                            "<code>wordpress-{$filter}.conf</code>",
+                            "<code>{$failure['file']}</code>",
                         ).'</li>';
                         break;
                 }
@@ -757,7 +763,7 @@ class SiteHealth
                         $output .= '<li><span class="dashicons dashicons-flag" style="color: #dc3232"></span> '.sprintf(
                             /* translators: %s: The filter file name. */
                             __('%s is missing.', 'wp-fail2ban'),
-                            "<code>wordpress-{$filter}.conf</code>",
+                            "<code>{$failure['file']}</code>",
                         ).'</li>';
                         break;
                 }

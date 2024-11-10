@@ -5,7 +5,7 @@
  * @package wp-fail2ban
  * @since   5.0.0
  *
- * Auto-generated: 2024-10-17T13:19:04+01:00
+ * Auto-generated: 2024-11-09T15:20:31+00:00
  */
 namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 
@@ -62,10 +62,6 @@ define('WP_FAIL2BAN_HASHES', array (
   array (
     'hard' => '4.3.0-RC4',
   ),
-  '8fedc4dfbe20dcf30359ccbae9db2ae2aa7b37c4' => 
-  array (
-    'extra' => '5.3.1',
-  ),
   '5b90e7058aa56ee54957c971d4b5d917de8b2882' => 
   array (
     'hard' => '5.3.1',
@@ -73,6 +69,10 @@ define('WP_FAIL2BAN_HASHES', array (
   'c5f93371ce056506ddaf755944e3be9e06ea9b1c' => 
   array (
     'soft' => '5.3.1',
+  ),
+  '8fedc4dfbe20dcf30359ccbae9db2ae2aa7b37c4' => 
+  array (
+    'extra' => '5.3.1',
   ),
   'd9eeb997ea45f6d23506933b4dc7a28bb2b54500' => 
   array (
@@ -206,6 +206,10 @@ define('WP_FAIL2BAN_HASHES', array (
   array (
     'soft' => '5.0.1',
   ),
+  'e2d36bfeabf636e52be06441a7f52d001d5e86c2' => 
+  array (
+    'extra' => '5.3.2',
+  ),
   '6473d634d98096125de14c8287b4fb899a53f6cc' => 
   array (
     'soft' => '5.3.2',
@@ -213,10 +217,6 @@ define('WP_FAIL2BAN_HASHES', array (
   '2b2cf42f55894ba4794c1a4d529d36725701c33b' => 
   array (
     'hard' => '5.3.2',
-  ),
-  'e2d36bfeabf636e52be06441a7f52d001d5e86c2' => 
-  array (
-    'extra' => '5.3.2',
   ),
   '216c826f0741fe25f323091310b6ed6a28dddda9' => 
   array (
@@ -601,6 +601,18 @@ define('WP_FAIL2BAN_HASHES', array (
   '7fa037ac447116e3e7bb6824acb32fe1a22173c8' => 
   array (
     'soft' => '5.0.0',
+  ),
+  'bdb9b0d115f0376726f78782e20f3410fad7ac32' => 
+  array (
+    'extra' => '5.3.3',
+  ),
+  '2c489f1ecc8208567baaf9b8162bb5f96ef830e6' => 
+  array (
+    'soft' => '5.3.3',
+  ),
+  '5009f56ff52045061f240b54933ac0346b3960e5' => 
+  array (
+    'hard' => '5.3.3',
   ),
   '9a6d3fd22ef692cb86593ada0342eff839d1561a' => 
   array (

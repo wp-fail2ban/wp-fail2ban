@@ -90,6 +90,16 @@ if ( function_exists( __NAMESPACE__ . '\\wf_fs' ) ) {
     $fs->override_i18n( array(
         'yee-haw' => __( 'Congratulations', 'wp-fail2ban' ),
     ) );
+    $fs->add_filter( 'templates/pricing.php', function ( $template ) {
+        $style = <<<CSS
+<style>
+    #fs_pricing_app div.fs-selected-pricing-license-quantity {
+        visibility: hidden;
+    }
+</style>
+CSS;
+        return $style . $template;
+    } );
     // Signal that SDK was initiated.
     do_action( 'wf_fs_loaded' );
     require_once __DIR__ . '/functions.php';

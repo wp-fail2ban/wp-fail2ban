@@ -452,9 +452,9 @@ class Config
      * @since  4.0.0
      *
      * @param  array|string $value
-     * @return array|string
+     * @return array
      */
-    public static function validate_ips($value)
+    public static function validate_ips($value): array
     {
         return self::$instance->validateIPs($value);
     }
