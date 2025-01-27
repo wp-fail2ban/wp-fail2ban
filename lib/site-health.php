@@ -156,7 +156,7 @@ class SiteHealth
             'label'     => self::PREFIX.sprintf(__('%s is deprecated', 'wp-fail2ban'), 'WP_FAIL2BAN_LOG_COMMENTS_EXTRA'),
             'status'    => 'critical',
             'badge'     => [
-                'label' => __('Security'),
+                'label' => __('Security', 'wp-fail2ban'),
                 'color' => 'blue'
             ],
             'description'   => sprintf(
@@ -200,7 +200,7 @@ class SiteHealth
             'label'     => self::PREFIX.sprintf(__('%s is deprecated', 'wp-fail2ban'), 'WP_FAIL2BAN_COMMENTS_EXTRA_LOG'),
             'status'    => 'critical',
             'badge'     => [
-                'label' => __('Security'),
+                'label' => __('Security', 'wp-fail2ban'),
                 'color' => 'blue'
             ],
             'description'   => sprintf(
@@ -439,7 +439,7 @@ class SiteHealth
             'label'     => __('fail2ban is running', 'wp-fail2ban'),
             'status'    => 'good',
             'badge'     => [
-                'label' => __('Security'),
+                'label' => __('Security', 'wp-fail2ban'),
                 'color' => 'blue'
             ],
             'description'   => sprintf('<p>%s</p>', __('<tt>fail2ban</tt> is running.', 'wp-fail2ban')),
@@ -554,7 +554,7 @@ class SiteHealth
             'label'     => __('The filters are up to date', 'wp-fail2ban'),
             'status'    => 'good',
             'badge'     => [
-                'label' => __('Security'),
+                'label' => __('Security', 'wp-fail2ban'),
                 'color' => 'blue'
             ],
             'description'   => sprintf('<p>%s</p>', __('You are using the latest <em>WP fail2ban</em> filters.', 'wp-fail2ban')),
@@ -662,7 +662,7 @@ class SiteHealth
             'label'     => __('The filters have not been modified', 'wp-fail2ban'),
             'status'    => 'good',
             'badge'     => [
-                'label' => __('Security'),
+                'label' => __('Security', 'wp-fail2ban'),
                 'color' => 'blue'
             ],
             'description'   => sprintf('<p>%s</p>', __('The standard <em>WP fail2ban</em> filters are installed.', 'wp-fail2ban')),
@@ -730,7 +730,7 @@ class SiteHealth
             'label'     => __('The filters are all present', 'wp-fail2ban'),
             'status'    => 'good',
             'badge'     => [
-                'label' => __('Security'),
+                'label' => __('Security', 'wp-fail2ban'),
                 'color' => 'blue'
             ],
             'description'   => sprintf('<p>%s</p>', __('All the <em>WP fail2ban</em> filters are installed.', 'wp-fail2ban')),

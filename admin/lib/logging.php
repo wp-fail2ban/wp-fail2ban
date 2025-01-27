@@ -39,7 +39,7 @@ abstract class TabLoggingBase extends TabBase
                 $facility,
                 selected($value, $facility, false),
                 $name,
-                ($facility == $default) ? __(' (default)') : ''
+                ($facility == $default) ? __(' (default)', 'wp-fail2ban') : ''
             );
         }
         $str .= '</select>';

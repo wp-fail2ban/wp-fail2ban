@@ -158,9 +158,6 @@ abstract class Syslog
             }
         }
 
-        if (defined('PHPUNIT_COMPOSER_INSTALL')) {
-            echo "$level|$msg";
-        }
 
         self::updateLastMessages($level, $msg);
 

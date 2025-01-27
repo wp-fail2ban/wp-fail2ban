@@ -1,0 +1,15 @@
+[GNUmakefile]
+indent_style = tab
+indent_size = 8
+
+[.gitattributes]
+indent_style = tab
+indent_size = 8
+
+[*.json]
+indent_style = space
+indent_size = 2
+
+[*.php]
+indent_style = space
+indent_size = 4

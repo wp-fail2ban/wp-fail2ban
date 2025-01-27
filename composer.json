@@ -1,0 +1,16 @@
+{
+  "name": "wp-fail2ban/wp-fail2ban",
+  "type": "wordpress-plugin",
+  "authors": [
+    {
+      "name": "Charles Lecklider",
+      "email": "wordpress@invis.net",
+      "homepage": "https://invis.net/",
+      "role": "Author"
+    }
+  ],
+  "require": {
+    "php": ">=7.4.0",
+    "composer/installers": "~1.0"
+  }
+}

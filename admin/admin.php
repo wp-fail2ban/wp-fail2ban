@@ -8,6 +8,8 @@
  */
 namespace org\lecklider\charles\wordpress\wp_fail2ban;
 
+use WP_fail2ban\Lib\Badges\BadgeManager;
+
 defined('ABSPATH') or exit;
 
 require_once __DIR__.'/config.php';
@@ -123,7 +125,7 @@ function readme(string $ver, string $file): void
                     $li = preg_replace('/^(Fix|Deprecate )/', '<span style="color:red">$1</span>', $li);
                     $li = preg_replace('/^(Update )/', '<span style="color:purple">$1</span>', $li);
                     $li = preg_replace('/^(Site Health|WAF: )/', '<span style="color:blue">$1</span>', $li);
-                    $li = str_replace('[Premium only]', '<span style="color: grey; font-style: italic; font-weight: bold">Premium only</span>', $li);
+                    $li = preg_replace('/\[((Canonical|Premium) only)\]/', '<span style="color: grey; font-style: italic; font-weight: bold">$1</span>', $li);
                     if (!$inSubList && strlen($matches[1])) {
                         echo '<ul>';
                         $inSubList = true;
@@ -153,6 +155,7 @@ function readme(string $ver, string $file): void
 /**
  * Helper: Security and Settings menu
  *
+ * @since  5.4.0    Drop security page
  * @since  4.4.0    Add return type
  * @since  4.3.0
  *
@@ -162,26 +165,7 @@ function readme(string $ver, string $file): void
  */
 function _security_settings(string $capability = 'manage_options'): void
 {
-    if (function_exists('\add_security_page')) {
-        if ($hook = add_security_page(
-            'WP fail2ban',
-            'WP fail2ban',
-            plugin_basename(WP_FAIL2BAN_DIR),
-            __NAMESPACE__.'\security'
-        )) {
-            add_action("load-$hook", function () {
-                wp_enqueue_style('wpf2b-admin', plugins_url('css/admin.css', __FILE__));
-                apply_filters('wp_fail2ban_init_tabs', false);
-                TabBase::setDefaultTab('logging');
-                TabBase::getActiveTab()->current_screen();
-            });
-            if (class_exists(__NAMESPACE__.'\premium\WPf2b')) {
-                _settings('about', $capability);
-            }
-        }
-    } else {
-        _settings(apply_filters(__METHOD__.'.page', 'logging'), $capability);
-    }
+    _settings(apply_filters(__METHOD__.'.page', 'logging'), $capability);
 }
 
 /**
@@ -292,6 +276,7 @@ function _network_admin_menu(): void
 /**
  * Fix first submenu name.
  *
+ * @since  5.4.0    Handle incomplete submenu
  * @since  4.4.0    Add return type
  * @since  4.3.0
  *
@@ -301,7 +286,7 @@ function admin_menu_fix(): void
 {
     global $submenu;
 
-    if (isset($submenu['wp-fail2ban-menu']) && 'WP fail2ban' == @$submenu['wp-fail2ban-menu'][0][0]) {
+    if ('WP fail2ban' == ($submenu['wp-fail2ban-menu'][0][0] ?? '')) {
         $submenu['wp-fail2ban-menu'][0][0] = __('Welcome', 'wp-fail2ban');
     }
 
@@ -355,13 +340,6 @@ function plugin_action_links(array $actions, string $plugin_file, ?array $plugin
                 unset($actions['delete']);
                 break;
             }
-        }
-
-        // No settings tabs for ClassicPress + Free
-        if (function_exists('\add_security_page') &&
-            !wf_fs()->can_use_premium_code())
-        {
-            return $actions;
         }
 
         if (!wf_fs()->is_activation_mode() &&
@@ -429,3 +407,24 @@ function admin_head_dashboard(): void
 }
 add_action('admin_head-index.php', __NAMESPACE__.'\admin_head_dashboard', 9999);
 
+/**
+ * Add badges to plugin listing
+ *
+ * @since  5.4.0
+ *
+ * @return void
+ */
+function admin_init(): void
+{
+    require_once WP_FAIL2BAN_DIR.'/vendor/wp-fail2ban/lib-badges/src/BadgeManager.php';
+
+    BadgeManager::init([
+        'plugin_file' => WP_FAIL2BAN_FILE,
+        'canonical'   => true, // @wpf2b-canonical-only
+        'lts'         => true,
+        'show'        => [
+            'non-canonical' => false
+        ]
+    ]);
+}
+add_action('admin_init', __NAMESPACE__.'\admin_init');

@@ -1,0 +1,6 @@
+{
+  "name": "lib-badges",
+  "version": "1.4.0",
+  "description": "A PHP library for generating badges and shields",
+  "private": true
+} 

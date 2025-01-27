@@ -186,8 +186,8 @@ HTML;
             $fmt,
             checked($options & LOG_CONS,   LOG_CONS,   false),
             checked($options & LOG_PERROR, LOG_PERROR, false),
-            checked($options & LOG_PID,    LOG_PID,    false), __('default'),
-            checked($options & LOG_NDELAY, LOG_NDELAY, false), __('default'),
+            checked($options & LOG_PID,    LOG_PID,    false), __('default', 'wp-fail2ban'),
+            checked($options & LOG_NDELAY, LOG_NDELAY, false), __('default', 'wp-fail2ban'),
             checked($options & LOG_ODELAY, LOG_ODELAY, false)
         );
         // phpcs:enable

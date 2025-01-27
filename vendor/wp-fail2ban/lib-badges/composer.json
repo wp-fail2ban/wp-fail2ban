@@ -1,0 +1,60 @@
+{
+  "name": "wp-fail2ban/lib-badges",
+  "description": "Badges library for WP fail2ban",
+  "license": "AGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Charles Lecklider",
+      "email": "wordpress@invis.net",
+      "homepage": "https://invis.net/",
+      "role": "Developer"
+    }
+  ],
+  "require": {},
+  "require-dev": {
+    "phpunit/phpunit": "9.*",
+    "phpstan/phpstan": "@stable",
+    "szepeviktor/phpstan-wordpress": "@stable",
+    "phpstan/extension-installer": "@stable",
+    "phpstan/phpstan-mockery": "@stable",
+    "phpstan/phpstan-deprecation-rules": "@stable",
+    "phpstan/phpstan-phpunit": "@stable",
+    "php-stubs/wordpress-tests-stubs": "@stable",
+    "swissspidy/phpstan-no-private": "@stable",
+    "mockery/mockery": "@stable",
+    "10up/wp_mock": "@stable",
+    "phpstan/phpstan-strict-rules": "@stable",
+    "pronamic/wp-documentor": "@stable",
+    "squizlabs/php_codesniffer": "@stable",
+    "brianium/paratest": "@stable",
+    "dealerdirect/phpcodesniffer-composer-installer": "@stable",
+    "phpcompatibility/php-compatibility": "@stable",
+    "freemius/wordpress-sdk": "@stable",
+    "friendsofphp/php-cs-fixer": "@stable",
+    "mcaskill/composer-exclude-files": "@stable"
+  },
+  "autoload": {
+    "psr-4": {
+      "WP_fail2ban\\Lib\\Badges\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "WP_fail2ban\\Lib\\Badges\\Test\\": "test"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "symfony/flex": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "phpstan/extension-installer": true,
+      "mcaskill/composer-exclude-files": true,
+      "roots/wordpress-core-installer": true
+    }
+  },
+  "extra": {
+    "exclude-from-files": [
+      "freemius/wordpress-sdk/start.php"
+    ]
+  }
+}

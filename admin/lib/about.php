@@ -105,7 +105,7 @@ function getAddonInfo(string $name, string $prefix, string $free, string $premiu
         $html .= sprintf(
             '<a href="https://%s.com/?utm_source=extra-about" target="_blank">%s</a>',
             $free,
-            __('More Info') // use WP translation
+            __('More Info', 'wp-fail2ban')
         );
         $url = network_admin_url('update.php?action=install-plugin&plugin='.$free);
         $url = wp_nonce_url($url, 'install-plugin_'.$free);
@@ -113,7 +113,7 @@ function getAddonInfo(string $name, string $prefix, string $free, string $premiu
         $html .= sprintf(
             '<a class="button button-small" href="%s">%s</a>',
             $url,
-            __('Install Now') // use WP translation
+            __('Install Now', 'wp-fail2ban')
         );
         $html .= '</p>';
     }
@@ -135,7 +135,7 @@ function getBlocklistInfo(): string
         'WP_FAIL2BAN_ADDON_BLOCKLIST',
         'wpf2b-addon-blocklist',
         'wp-fail2ban-addon-blocklist',
-        __('A collaborative preemptive blocklist.', 'wp-fail2ban')
+        __('A collaborative preemptive blocklist &mdash; block attackers <em>before</em> they attack.', 'wp-fail2ban')
     );
 }
 
@@ -195,7 +195,7 @@ function getDbInfo(): string
         $fmt = <<<HTML
 <p><span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s:</span> %s</p>
 HTML;
-        $html =sprintf($fmt, __('OK'), strip_tags($results['description']));
+        $html =sprintf($fmt, __('OK', 'wp-fail2ban'), strip_tags($results['description']));
 
     } else {
         $fmt = <<<HTML
@@ -231,9 +231,9 @@ function getCloudflareInfo(): string
             if (0 < ($lu = Config::get('WP_FAIL2BAN_EX_PROXY_CLOUDFLARE_IPS_UPDATED'))) {
                 $tz = new \DateTimeZone(wp_timezone_string());
                 $dt = new \DateTimeImmutable("@{$lu}", $tz);
-                $lu = sprintf('<span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s:</span> %s', __('OK'), $dt->format('Y/m/d H:i:s O'));
+                $lu = sprintf('<span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s:</span> %s', __('OK', 'wp-fail2ban'), $dt->format('Y/m/d H:i:s O'));
             } else {
-                $lu = sprintf('<span class="wpf2b-error"><em>%s</em></span>', __('Last update unknown', 'wp-fail2bam'));
+                $lu = sprintf('<span class="wpf2b-error"><em>%s</em></span>', __('Last update unknown', 'wp-fail2ban'));
             }
 
             // There's space for 2 columns of CIDR IPv4 addresses, so first filter by length
@@ -360,14 +360,14 @@ function about(): void
                     switch ($obs['status']) {
                         case 'good':
                             // OK
-                            li('ok', 'yes', __('Up to date.', 'wp-fail2ban'));
+                            li('ok', 'yes-alt', __('Up to date.', 'wp-fail2ban'));
                             break;
                         case 'recommended':
                             li('warning', 'warning', __('Status unknown.', 'wp-fail2ban'));
                             $run_site_health = true;
                             break;
                         case 'critical':
-                            li('error', 'no', __('Obsolete filter(s) found.', 'wp-fail2ban'));
+                            li('error', 'dismiss', __('Obsolete filter(s) found.', 'wp-fail2ban'));
                             $run_site_health = true;
                             break;
                         case 'old':
@@ -380,7 +380,7 @@ function about(): void
                         // obj already failed
                     } elseif ('good' == $mod['status']) {
                         // OK
-                        li('ok', 'yes', __('Not modified.', 'wp-fail2ban'));
+                        li('ok', 'yes-alt', __('Not modified.', 'wp-fail2ban'));
                     } else {
                         li('warning', 'warning', __('Modified filter(s) found.', 'wp-fail2ban'));
                         $run_site_health = true;
@@ -392,9 +392,9 @@ function about(): void
                         // obj already failed
                     } elseif ('good' == $mis['status']) {
                         // OK
-                        li('ok', 'yes', __('All filters present.', 'wp-fail2ban'));
+                        li('ok', 'yes-alt', __('All filters present.', 'wp-fail2ban'));
                     } else {
-                        li('error', 'no', __('Incomplete.', 'wp-fail2ban'));
+                        li('error', 'dismiss', __('Incomplete.', 'wp-fail2ban'));
                         $run_site_health = true;
                     }
 

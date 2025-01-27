@@ -23,7 +23,7 @@ defined('ABSPATH') or exit;
                 if (false === ($link = readlink($mu_file)) ||
                     false === ($path = realpath($mu_file)))
                 {
-                    $h3 = __('A broken symbolic link was found in <tt>mu-plugins</tt>:');
+                    $h3 = __('A broken symbolic link was found in <tt>mu-plugins</tt>:', 'wp-fail2ban');
                     $error_msg .= <<< HTML
 <h3>{$h3}</h3>
 <p><tt>{$mu_file}</tt></p>
@@ -35,7 +35,7 @@ HTML;
                     $mu_file = str_replace('/', '/<wbr>', $mu_file);
                     $mu_file = substr($mu_file, strlen(WPMU_PLUGIN_DIR)-1);
 
-                    $h3 = __('A conflicting symbolic link was found in <tt>mu-plugins</tt>:');
+                    $h3 = __('A conflicting symbolic link was found in <tt>mu-plugins</tt>:', 'wp-fail2ban');
                     $error_msg .= <<< HTML
 <h3>{$h3}</h3>
 <style>
@@ -65,7 +65,7 @@ HTML;
                 $mu_file = str_replace('/', '/<wbr>', $mu_file);
                 $mu_file = substr($mu_file, strlen(WPMU_PLUGIN_DIR)-1);
 
-                $h3 = __('A conflicting file was found in <tt>mu-plugins</tt>:');
+                $h3 = __('A conflicting file was found in <tt>mu-plugins</tt>:', 'wp-fail2ban');
                 $error_msg .= <<< HTML
 <h3>{$h3}</h3>
 <p><tt>{$mu_file}</tt></p>
@@ -86,7 +86,7 @@ HTML;
                 '<p>%s</p>',
                 sprintf(
                     /* translators: %s: <a href> internals */
-                    __('Click <a %s>here</a> to return to the plugins page.'),
+                    __('Click <a %s>here</a> to return to the plugins page.', 'wp-fail2ban'),
                     sprintf(
                         'href="%s"',
                         admin_url('plugins.php')

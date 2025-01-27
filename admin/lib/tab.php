@@ -106,7 +106,7 @@ abstract class TabBase
     public function current_screen(): void
     {
         get_current_screen()->set_help_sidebar(
-            '<p><strong>' . __('For more information:') . '</strong></p>' .
+            '<p><strong>' . __('For more information:', 'wp-fail2ban') . '</strong></p>' .
             sprintf('<p><a href="%s" rel="noopener" target="_blank">%s</a></p>', static::HELP_LINK_DOCS, __('Documentation', 'wp-fail2ban')).
             sprintf('<p><a href="%s" rel="noopener" target="_blank">%s</a></p>', static::HELP_LINK_REFERENCE, __('Reference', 'wp-fail2ban')).
             sprintf('<p><a href="%s" rel="noopener" target="_blank">%s</a></p>', static::HELP_LINK_SUPPORT, __('Support', 'wp-fail2ban'))
@@ -325,6 +325,8 @@ abstract class TabBase
      * @since  4.3.0
      *
      * @return void
+     *
+     * phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
      */
     protected function render_buttons(): void
     {

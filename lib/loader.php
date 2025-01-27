@@ -354,6 +354,12 @@ class Config
                 'site-health',
                 'filters',
                 'disabled']],
+        'WP_FAIL2BAN_USING_COMPOSER' => [
+            'validate'  => 'boolval',
+            'unset'     => false,
+            'field'     => [
+                'misc',
+                'using-composer']],
     ];
 
     /**
