@@ -4,8 +4,13 @@
  *
  * Manages the display of badges in WordPress plugin listings.
  *
- * @package wp-fail2ban-lib-badges
- * @since   1.0.0
+ * @package    wp-fail2ban\lib\badges
+ * @author     Charles Lecklider
+ * @link       https://src.wp-fail2ban.com/src/lib/badges/
+ * @category   WordPress
+ * @license    AGPL-3.0-or-later
+ * @copyright  2025- Charles Lecklider
+ * @since      1.0.0
  */
 
 namespace WP_fail2ban\Lib\Badges;
@@ -14,7 +19,7 @@ use WP_fail2ban\Lib\Badges\Badge\LTSBadge;
 use WP_fail2ban\Lib\Badges\Badge\CanonicalBadge;
 use WP_fail2ban\Lib\Badges\Badge\NonCanonicalBadge;
 
-defined('ABSPATH') or exit;
+defined('ABSPATH') or exit; // @codeCoverageIgnore
 
 /**
  * Manages badge display in WordPress plugin listings
@@ -30,18 +35,17 @@ defined('ABSPATH') or exit;
  * }
  *
  * The BadgeConfig type defines the configuration options for badge display:
- * - lts: When true, displays the Long Term Support (LTS) badge
- * - canonical: When true, displays the Canonical version badge
- * - free: When true, displays the Free/Non-canonical version badge
+ * - plugin_file: Path to the plugin file relative to the plugins directory (required)
+ * - lts: When true, displays the Long Term Support (LTS) badge (optional)
+ * - canonical: When true, displays the Canonical version badge (optional)
+ * - free: When true, displays the Free/Non-canonical version badge (optional)
  * - show: An array of options to control the display of badges:
  *   - non-canonical: When true, displays the Free/Non-canonical version badge
- *
- * All fields are optional and default to false when not specified.
  * 
- * @property-read bool $canonical 
- * @property-read bool $free 
- * @property-read bool $lts 
- * @property-read bool $premium 
+ * @property-read string $plugin_file The path to the plugin file relative to the plugins directory
+ * @property-read bool $lts Whether the plugin is LTS
+ * @property-read bool $canonical Whether the plugin is canonical
+ * @property-read bool $free Whether the plugin is free
  */
 class BadgeManager
 {
@@ -101,18 +105,18 @@ class BadgeManager
         $links = [];
 
         if ($this->config['lts'] ?? false) {
-            $badge = new LTSBadge();
+            $badge = new LTSBadge($this);
             $links[] = $badge->render();
         }
 
         if ($this->config['canonical'] ?? false) {
-            $badge = new CanonicalBadge();
+            $badge = new CanonicalBadge($this);
             $links[] = $badge->render();
         }
 
         if ($this->config['free'] ?? false) {
             if ($this->config['show']['non-canonical'] ?? true) {
-                $badge = new NonCanonicalBadge();
+                $badge = new NonCanonicalBadge($this);
                 $links[] = $badge->render();
             }
         }
@@ -154,14 +158,14 @@ class BadgeManager
     public function __get($name)
     {
         switch ($name) {
+            case 'plugin_file':
+                return $this->config['plugin_file'];
             case 'canonical':
                 return $this->isCanonical();
             case 'free':
                 return $this->isFree();
             case 'lts':
                 return $this->isLts();
-            case 'premium':
-                return $this->isPremium();
             default:
                 return null;
         }
@@ -204,18 +208,5 @@ class BadgeManager
     public function isLts(): bool
     {
         return $this->config['lts'] ?? false;
-    }
-
-    /**
-     * Checks if the plugin is premium
-     * 
-     * @api
-     * @since  1.3.0
-     * @throws void
-     * @return bool True if the plugin is premium, false otherwise
-     */
-    public function isPremium(): bool
-    {
-        return $this->config['premium'] ?? false;
     }
 }

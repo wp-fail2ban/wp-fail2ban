@@ -94,7 +94,7 @@ if (function_exists(__NAMESPACE__.'\wf_fs')) {
     }
 
     $fs->override_i18n(array(
-        'yee-haw' => __('Congratulations', 'wp-fail2ban'),
+        'yee-haw' => 'Congratulations'
     ));
 
     $fs->add_filter('templates/pricing.php', function ($template) {

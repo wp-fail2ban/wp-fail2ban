@@ -5,12 +5,24 @@
  * Provides core functionality for rendering styled badge links in the WordPress admin.
  * Handles HTML generation, styling, and proper escaping of badge content.
  *
- * @package wp-fail2ban-lib-badges
- * @since   1.0.0
+ * @package    wp-fail2ban\lib\badges
+ * @author     Charles Lecklider
+ * @link       https://src.wp-fail2ban.com/src/lib/badges/
+ * @category   WordPress
+ * @license    AGPL-3.0-or-later
+ * @copyright  2025- Charles Lecklider
+ * @since      1.0.0
  */
 
 namespace WP_fail2ban\Lib\Badges\Badge;
 
+use WP_fail2ban\Lib\Badges\BadgeManager;
+
+/**
+ * Abstract base class for badge implementation
+ * 
+ * @since  1.0.0
+ */
 abstract class AbstractBadge
 {
     /** 
@@ -18,18 +30,23 @@ abstract class AbstractBadge
      * @since 1.0.0 
      */
     protected string $color;
-    
-    /** 
-     * @var string The text to display in the badge
-     * @since 1.0.0 
+
+    /**
+     * @var BadgeManager The badge manager instance
+     * @since 1.5.0
      */
-    protected string $text;
-    
-    /** 
-     * @var string The tooltip text for the badge
-     * @since 1.0.0 
+    protected BadgeManager $manager;
+
+    /**
+     * Initialize the badge
+     *
+     * @param BadgeManager $manager The badge manager instance
+     * @since 1.5.0
      */
-    protected string $title;
+    public function __construct(BadgeManager $manager)
+    {
+        $this->manager = $manager;
+    }
 
     /**
      * Renders the badge as HTML
@@ -43,7 +60,7 @@ abstract class AbstractBadge
      */
     public function render(): string
     {
-        return $this->createLink('', $this->title, $this->getStyle(), $this->text);
+        return $this->createLink('', $this->getTitle(), $this->getStyle(), $this->getText());
     }
 
     /**
@@ -60,10 +77,11 @@ abstract class AbstractBadge
     protected function getStyle(array $extra_styles = []): string
     {
         $standard_styles = [
-            'border' => "1px solid {$this->color}",
-            'color' => $this->color,
-            'font-size' => '80%',
-            'padding' => '1px 3px'
+            'border'          => "1px solid {$this->color}",
+            'color'           => $this->color,
+            'font-size'       => '80%',
+            'padding'         => '1px 3px',
+            'text-decoration' => 'none',
         ];
 
         $styles = [];
@@ -74,6 +92,10 @@ abstract class AbstractBadge
 
         return implode('; ', $styles);
     }
+
+    abstract protected function getText(): string;
+
+    abstract protected function getTitle(): string;
 
     /**
      * Creates an HTML link with the badge styling
