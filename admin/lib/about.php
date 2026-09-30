@@ -305,7 +305,7 @@ function about(): void
             'Blog'   => "https://wp-fail2ban.com/blog/{$utm}",
 //            'Guide'     => "https://life-with.wp-fail2ban.com/{$utm}",
             'Reference' => "https://docs.wp-fail2ban.com/en/{$wp_f2b_ver}/{$utm}",
-            'Support'   => "https://forums.invis.net/c/wp-fail2ban/support/{$utm}"
+            'Support'   => "https://wp-fail2ban.com/support/{$utm}"
         ]
     ];
 

@@ -54,7 +54,7 @@ if (function_exists(__NAMESPACE__.'\wf_fs')) {
                 'menu'                => array(
                     'slug'           => 'wp-fail2ban-menu',
                     'contact'        => (!defined('WP_FAIL2BAN_FREE_ONLY') || false === WP_FAIL2BAN_FREE_ONLY),
-                    'support'        => true,
+                    'support'        => false,
                     'network'        => true,
                 ),
                 'bundle_id'           => 16269,
@@ -75,11 +75,6 @@ if (function_exists(__NAMESPACE__.'\wf_fs')) {
     // Set custom icon
     $fs->add_filter('plugin_icon', function () {
         return __DIR__.'/assets/icon.png';
-    });
-
-    // Set forum URL
-    $fs->add_filter('support_forum_url', function () {
-        return 'https://forums.invis.net/c/wp-fail2ban/';
     });
 
     $fs->add_filter('show_delegation_option', '__return_false');
