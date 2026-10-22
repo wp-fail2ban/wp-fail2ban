@@ -93,6 +93,7 @@ if (function_exists(__NAMESPACE__.'\wf_fs')) {
     ));
 
     $fs->add_filter('templates/pricing.php', function ($template) {
+        // phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed -- Static CSS template.
         $style = <<< HTML
 <style>
     #fs_pricing_app div.fs-selected-pricing-license-quantity {

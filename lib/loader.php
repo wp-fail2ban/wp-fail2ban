@@ -15,6 +15,8 @@ if (defined('PHPUNIT_COMPOSER_INSTALL')) {
     exit;
 }
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Plugin Check strips leading "wp_" from the slug and wrongly rejects the "wp_fail2ban" prefix.
+
 /**
  * Config
  *
@@ -681,8 +683,9 @@ class Config
             $def = &$wp_fail2ban['config'][$define];
             assert(is_array($def));
 
+            // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound,WordPress.NamingConventions.PrefixAllGlobals.VariableConstantNameFound -- $define is a WP_FAIL2BAN_* constant name; Plugin Check strips leading "wp_".
             if (!array_key_exists('validate', $def)) {
-                throw new \UnexpectedValueException($define);
+                throw new \UnexpectedValueException(esc_html($define));
 
             } elseif (!($def['ndef'] = !defined($define))) { // defined($define)
                 self::$cache[$define] = $def['validate'](apply_filters($define, constant($define)));
@@ -695,6 +698,7 @@ class Config
                     define($define, self::$cache[$define]); // @codeCoverageIgnore
                 }
             }
+            // phpcs:enable
         }
 
         return self::$cache[$define];

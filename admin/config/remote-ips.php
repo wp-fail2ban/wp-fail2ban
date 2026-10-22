@@ -83,6 +83,7 @@ class TabRemoteIPs extends TabBase
      */
     public function current_screen(): void
     {
+        // phpcs:disable PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- False positive
         $this->add_help_tab('wp-fail2ban-proxies', [
             $this->help_entry('remote-ips-proxies', [
                 sprintf(
@@ -95,6 +96,7 @@ class TabRemoteIPs extends TabBase
                 $this->doc_link('WP_FAIL2BAN_PROXIES')
             ])
         ]);
+        // phpcs:enable
 
         parent::current_screen();
     }
@@ -144,6 +146,18 @@ class TabRemoteIPs extends TabBase
         return (is_array($proxies))
             ? join("\n", $proxies)
             : join("\n", array_map('trim', explode(',', $proxies)));
+    }
+
+    /**
+     * Render sidebar content
+     *
+     * @since  5.5.0
+     *
+     * @return void
+     */
+    public function render_sidebar(): void
+    {
+        echo '<h3>Remote IPs with Premium</h3><p>Keep Cloudflare\'s trusted proxy ranges up to date automatically, and add an ignore list for addresses that should bypass WP fail2ban processing.</p>';
     }
 }
 

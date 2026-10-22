@@ -8,7 +8,10 @@
  */
 namespace org\lecklider\charles\wordpress\wp_fail2ban;
 
-if (!defined('ABSPATH') || (defined('WP_FAIL2BAN_DISABLE_LAST_LOG') && false === WP_FAIL2BAN_DISABLE_LAST_LOG)) {
+if (!defined('ABSPATH')) {
+    exit;
+}
+if (defined('WP_FAIL2BAN_DISABLE_LAST_LOG') && false === WP_FAIL2BAN_DISABLE_LAST_LOG) {
     return;
 }
 
@@ -24,12 +27,14 @@ function dashboard_widget_last_messages(): void
 {
     $messages = dashboard_widget_last_messages_data();
 
+    // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- __() is a static translated string.
     printf(
         '<table><thead><tr><th class="dt">%s</th><th>%s</th><th>%s</th></tr></thead><tbody>',
         __('Date/Time', 'wp-fail2ban'),
         __('Priority', 'wp-fail2ban'),
         __('Message', 'wp-fail2ban')
     );
+    // phpcs:enable
     if (count($messages)) {
         $alt = true;
         foreach ($messages as $message) {
@@ -45,6 +50,7 @@ function dashboard_widget_last_messages(): void
         }
 
     } else {
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- __() is a static translated string.
         printf('<tr><td colspan="3"><em>%s</em></td></tr>', __('No messages found.', 'wp-fail2ban'));
     }
     echo '</tbody>';
@@ -67,6 +73,7 @@ function dashboard_widget_last_messages(): void
             );
         }
     }
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Generated HTML
     echo "<tfoot>{$tfoot}</tfoot>";
 
     echo '</table>';
@@ -138,7 +145,7 @@ function wp_dashboard_setup(): void
     {
         wp_add_dashboard_widget(
             'wp_fail2ban_last_messages',
-            __('<span>[<i>WPf2b</i>] Last 5 Messages</span>', 'wp-fail2ban'),
+            '<span>[<i>WPf2b</i>] '.esc_html__('Last 5 Messages', 'wp-fail2ban').'</span>',
             __NAMESPACE__.'\dashboard_widget_last_messages'
         );
         wp_enqueue_style('wp-fail2ban-last-messages', plugins_url('css/widgets.css', __FILE__));

@@ -41,7 +41,7 @@ abstract class Syslog
     {
         $host   = (array_key_exists('WP_FAIL2BAN_HTTP_HOST', $_ENV))
                     ? $_ENV['WP_FAIL2BAN_HTTP_HOST'] // @codeCoverageIgnore
-                    : $_SERVER['HTTP_HOST'];
+                    : ($_SERVER['HTTP_HOST'] ?? '');
 
         if (is_multisite() && !SUBDOMAIN_INSTALL) {
             if (!is_main_site()) {

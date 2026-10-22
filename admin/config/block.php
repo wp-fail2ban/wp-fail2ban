@@ -174,5 +174,17 @@ class TabBlock extends TabBase
     {
         $this->checkbox('WP_FAIL2BAN_BLOCK_USERNAME_LOGIN');
     }
+
+    /**
+     * Render sidebar content
+     *
+     * @since  5.5.0
+     *
+     * @return void
+     */
+    public function render_sidebar(): void
+    {
+        echo '<h3>Blocking with Premium</h3><p>Go beyond usernames and user enumeration. Premium adds geo-blocking, XML-RPC controls, and other ways to stop unwanted requests.</p>';
+    }
 }
 

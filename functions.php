@@ -51,8 +51,53 @@ function array_value($key, array $ary, bool $lookupValue = true)
 }
 
 /**
+ * Prevent Keep-Alive connections
+ *
+ * @since  5.5.0    Moved from premium
+ * @since  5.0.0
+ *
+ * @param  bool $testing
+ *
+ * @return bool
+ */
+function prevent_keepalive(bool $testing = false): bool
+{
+    static $shutdown = true;
+
+    if (!headers_sent()) {
+        header('Connection: close');
+    }
+
+    if ($shutdown || $testing) {
+        register_shutdown_function(__NAMESPACE__.'\shutdown');
+        $shutdown = false;
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Try to finish FastCGI request
+ *
+ * @since  5.5.0    Moved from premium
+ * @since  5.0.0
+ *
+ * @return void
+ *
+ * @codeCoverageIgnore
+ */
+function shutdown(): void
+{
+    if (function_exists('\fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    }
+}
+
+/**
  * Graceful immediate exit
  *
+ * @since  5.5.0    Close keep-alive connections
  * @since  4.4.0    Add return type
  * @since  4.3.0    Remove JSON support
  * @since  4.0.5    Add JSON support
@@ -62,6 +107,8 @@ function array_value($key, array $ary, bool $lookupValue = true)
  */
 function bail(): bool
 {
+    prevent_keepalive();
+
     if (false === apply_filters(__FUNCTION__, true)) {
         return false; // @codeCoverageIgnore
     }
@@ -87,3 +134,24 @@ function bail(): bool
     return false; // for testing
 }
 
+/**
+ * Check if the current site is compatible with Premium
+ *
+ * @since  5.5.0
+ *
+ * @return bool
+ */
+function is_premium_compatible(): bool
+{
+    // PHP >= 8.1
+    if (version_compare(PHP_VERSION, '8.1', '<')) {
+        return false;
+    }
+
+    // WordPress >= 6.3
+    if (version_compare(get_bloginfo('version'), '6.3', '<')) {
+        return false;
+    }
+
+    return true;
+}

@@ -12,6 +12,8 @@ namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 
 use          org\lecklider\charles\wordpress\wp_fail2ban\InvalidIpException;
 
+defined('ABSPATH') or exit;
+
 require_once __DIR__.'/invalid-ip-exception.php';
 require_once __DIR__.'/ip-range-list.php';
 
@@ -80,7 +82,7 @@ class IP
                     if (is_numeric($p[1])) {
                         $this->cidr = intval($p[1]);
                     } elseif ($throw) {
-                        throw new InvalidIpException($msg);
+                        throw new InvalidIpException(esc_html($msg));
                     } else {
                         return;
                     }
@@ -120,13 +122,13 @@ class IP
                         $this->valid = true;
 
                     } elseif ($throw) {
-                        throw new InvalidIpException($msg);
+                        throw new InvalidIpException(esc_html($msg));
                     }
                     break;
                 default:
                     // completely bogus
                     if ($throw) {
-                        throw new InvalidIpException($msg);
+                        throw new InvalidIpException(esc_html($msg));
                     }
                     break;
             }

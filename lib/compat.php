@@ -6,6 +6,8 @@
  * @since  4.4.0
  */
 namespace {
+    defined('ABSPATH') or exit;
+
     /**
      * For ClassicPress and WP < 5.3
      *

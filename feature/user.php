@@ -56,7 +56,9 @@ function block_users($user, string $username, string $password) // : ?mixed
              */
             $blocked_users = Config::get('WP_FAIL2BAN_BLOCKED_USERS');
             $matched = (is_array($blocked_users))
-                ? in_array($username, $blocked_users)
+                ? array_reduce($blocked_users, function ($carry, $item) use ($username) {
+                    return $carry || (0 === strcasecmp($username, $item));
+                }, false)
                 : preg_match('/'.$blocked_users.'/i', $username);
 
             if ($matched) {

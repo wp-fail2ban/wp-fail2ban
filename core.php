@@ -15,6 +15,7 @@ use          org\lecklider\charles\wordpress\wp_fail2ban\IP;
 use          org\lecklider\charles\wordpress\wp_fail2ban\Syslog;
 
 use function org\lecklider\charles\wordpress\wp_fail2ban\bail;
+use function org\lecklider\charles\wordpress\wp_fail2ban\prevent_keepalive;
 
 defined('ABSPATH') or exit;
 
@@ -32,7 +33,7 @@ function _remote_addr(): ?IP
     try {
         // Typical path first
         if (!defined('WP_FAIL2BAN_REMOTE_ADDR')) {
-            $ip = new IP($_SERVER['REMOTE_ADDR'], true, 'REMOTE_ADDR');
+            $ip = new IP($_SERVER['REMOTE_ADDR'] ?? null, true, 'REMOTE_ADDR');
 
             if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
                 /**
@@ -73,7 +74,8 @@ function _remote_addr(): ?IP
         }
 
     } catch (InvalidIpException $e) {
-        error_log(sprintf("%s is invalid: '%s'", $e->getMessage(), $_SERVER['REMOTE_ADDR']));
+        error_log(sprintf("%s is invalid: '%s'", $e->getMessage(), $_SERVER['REMOTE_ADDR'] ?? ''));
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- False positive
         \wp_die('Internal server error', 'Internal server error', ['exit' => !defined('PHPUNIT_COMPOSER_INSTALL'), 'response' => 500]);
     }
 
@@ -103,6 +105,7 @@ function remote_addr(): ?IP
  *
  * @see \wp_authenticate()
  *
+ * @since  5.5.0    Close keep-alive connections
  * @since  4.4.0    Add type hints
  * @since  4.3.4.0  Refactor to use Syslog::single
  * @since  4.3.0
@@ -118,6 +121,8 @@ function remote_addr(): ?IP
 function authenticate($user, string $username, string $password) // : ?mixed
 {
     if (empty($username) && isset($_POST['log'])) {
+        prevent_keepalive();
+
         Syslog::single(LOG_NOTICE, 'Empty username');
 
         do_action(__FUNCTION__, $user, $username, $password);
@@ -155,6 +160,7 @@ function wp_login(string $user_login, $user): void
 /**
  * Hook: wp_login_failed
  *
+ * @since  5.5.0    Close keep-alive connections
  * @since  4.4.0    Add type hints, return type
  * @since  4.3.4.0  Refactor to use Syslog::single
  * @since  4.3.0.5  Handle empty username
@@ -178,6 +184,8 @@ function wp_login(string $user_login, $user): void
  */
 function wp_login_failed(string $username): void
 {
+    prevent_keepalive();
+
     $username = trim($username);
 
     if (empty($username)) {
@@ -203,6 +211,7 @@ function wp_login_failed(string $username): void
                 : "uthentication attempt for unknown user {$username}";
     }
 
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Plugin Check strips leading "wp_" from the slug and wrongly rejects the "wp_fail2ban" prefix.
     $msg  = apply_filters("wp_fail2ban::wp_login_failed{$filter}", $msg);
 
     Syslog::single(LOG_NOTICE, $msg);

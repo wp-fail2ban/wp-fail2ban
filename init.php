@@ -232,9 +232,11 @@ function init__late(): void
      *
      * @since 4.3.0
      */
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Plugin Check strips leading "wp_" from the slug and wrongly rejects the "wp_fail2ban" prefix.
     global $wp_fail2ban;
     $wp_fail2ban['plugins'] = [];
 
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Plugin Check strips leading "wp_" from the slug and wrongly rejects the "wp_fail2ban" prefix.
     do_action('wp_fail2ban_register');
 }
 add_action('init', __NAMESPACE__.'\init__late', PHP_INT_MAX);

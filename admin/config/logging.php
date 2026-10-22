@@ -152,8 +152,11 @@ class TabLogging extends TabLoggingBase
     {
         printf(
             '<label>%s: %s</label><p class="description">%s</p>',
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- __() is a static translated string.
             __('Use facility', 'wp-fail2ban'),
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static text
             $this->getLogFacilities('WP_FAIL2BAN_AUTH_LOG', true),
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Generated HTML
             Config::desc('WP_FAIL2BAN_AUTH_LOG')
         );
     }
@@ -235,6 +238,18 @@ class TabLogging extends TabLoggingBase
             'WP_FAIL2BAN_LOG_SPAM',
             'WP_FAIL2BAN_SPAM_LOG'
         );
+    }
+
+    /**
+     * Render sidebar content
+     *
+     * @since  5.5.0
+     *
+     * @return void
+     */
+    public function render_sidebar(): void
+    {
+        echo '<h3>Logging with Premium</h3><p>Keep a structured history of security events and investigate activity by IP address, country, username, event type, and more. Your existing syslog and <code>fail2ban</code> integration continues to work as before.</p>';
     }
 }
 

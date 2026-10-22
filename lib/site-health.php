@@ -360,8 +360,10 @@ class SiteHealth
                         {
                             $ver = WP_FAIL2BAN_HASHES[$installed_file][$filter];
                             $reasons = [];
-                            switch ($this->check_filter_needs_update($ver, $filter, $reasons)) {
-                                case true:
+                            $result = $this->check_filter_needs_update($ver, $filter, $reasons);
+                            // switch on true to avoid loose type comparison (null == false)
+                            switch (true) {
+                                case $result === true:
                                     $failures[$filter] = [
                                         'status'  => 'obsolete',
                                         'file'    => $filter_file,
@@ -370,7 +372,7 @@ class SiteHealth
                                     ];
                                     $status['obsolete'] = true;
                                     break;
-                                case null:
+                                case $result === null:
                                     $failures[$filter] = [
                                         'status'  => 'old',
                                         'file'    => $filter_file,
@@ -378,7 +380,7 @@ class SiteHealth
                                     ];
                                     $status['old'] = true;
                                     break;
-                                case false:
+                                default:
                                     // OK - compatible
                                     break;
                             }
@@ -604,9 +606,9 @@ class SiteHealth
                 switch ($failure['status']) {
                     case 'obsolete':
                         $output .= '<li><span class="dashicons dashicons-warning" style="color: #dc3232"></span> '.sprintf(
-                            /* translators: %s: The filter name. */
-                            __('%s is <strong>obsolete</strong> (version %s)', 'wp-fail2ban'),
-                            "<code>{$failure['file']}</code>",
+                            /* translators: 1: The filter name. 2: The filter version. */
+                            __('%1$s is <strong>obsolete</strong> (version %2$s)', 'wp-fail2ban'),
+                            '<code>'.$failure['file'].'</code>',
                             $failure['version']
                         );
                         if (count($failure['reasons'] ?? [])) {

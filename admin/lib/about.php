@@ -27,20 +27,25 @@ function _get_extra_about()
      */
     if (!wf_fs()->is_tracking_prohibited()) {
         $extra = get_site_transient('wp_fail2ban_extra_about');
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Plugin Check strips leading "wp_" from the slug and wrongly rejects the "wp_fail2ban" prefix.
         if (false === ($extra = apply_filters('wp_fail2ban_extra_about_transient', $extra))) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Plugin Check strips leading "wp_" from the slug and wrongly rejects the "wp_fail2ban" prefix.
             $url = apply_filters('wp_fail2ban_extra_about_url', 'https://wp-fail2ban.com/extra-about/?version='.WP_FAIL2BAN_VER);
             if (!is_wp_error($rv = wp_remote_get($url))) {
                 /**
                  * Try not to fetch more than once per day
                  */
-                set_site_transient('wp_fail2ban_extra_about', $rv['body'], DAY_IN_SECONDS);
-
-                $extra = $rv['body'];
+                $extra = wp_kses_post($rv['body']);
+                set_site_transient('wp_fail2ban_extra_about', $extra, DAY_IN_SECONDS);
             }
+        } elseif (is_string($extra)) {
+            $extra = wp_kses_post($extra);
+        } else {
+            $extra = '';
         }
     }
 
-    return $extra;
+    return is_string($extra) ? $extra : '';
 }
 
 /**
@@ -154,7 +159,7 @@ function getContactForm7Info(): string
             'WP_FAIL2BAN_ADDON_CF7',
             'wp-fail2ban-addon-contact-form-7',
             'wp-fail2ban-addon-contact-form-7-premium',
-            __('', 'wp-fail2ban')
+            ''
         )
         : '';
 }
@@ -174,7 +179,7 @@ function getGravityFormsInfo(): string
             'WP_FAIL2BAN_ADDON_GRAVITY_FORMS',
             'wp-fail2ban-addon-gravity-forms',
             'wp-fail2ban-addon-gravity-forms-premium',
-            __('', 'wp-fail2ban')
+            ''
         )
         : '';
 }
@@ -192,16 +197,11 @@ function getDbInfo(): string
     $results = $shi->get_test_premium_db();
 
     if ('good' == $results['status']) {
-        $fmt = <<<HTML
-<p><span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s:</span> %s</p>
-HTML;
-        $html =sprintf($fmt, __('OK', 'wp-fail2ban'), strip_tags($results['description']));
+        $fmt = '<p><span class="wpf2b-ok"><span class="dashicons dashicons-yes"></span> %s:</span> %s</p>';
+        $html = sprintf($fmt, __('OK', 'wp-fail2ban'), wp_strip_all_tags($results['description']));
 
     } else {
-        $fmt = <<<HTML
-<p class="error">%s</p>
-<p>%s</p>
-HTML;
+        $fmt = '<p class="error">%s</p><p>%s</p>';
         $html = sprintf(
             $fmt,
             __('MISSING - ACTION REQUIRED.', 'wp-fail2ban'),
@@ -245,6 +245,7 @@ function getCloudflareInfo(): string
             });
             $l = array_slice($short_ips, 0, (int)ceil(count($short_ips)/2));
             $r = array_slice($short_ips, count($l));
+            // phpcs:ignore PluginCheck.CodeAnalysis.Heredoc.NotAllowed -- Static HTML template.
             $fmt = <<<HTML
 <p>{$lu}<p>
 <table id="cloudflare-ips">
@@ -280,9 +281,7 @@ HTML;
  */
 function li(string $class_wpf2b, string $class_dashicon, string $blurb): void
 {
-    echo <<<HTML
-<li><span class="wpf2b-{$class_wpf2b}"><span class="dashicons dashicons-{$class_dashicon}"></span> {$blurb}</span></li>
-HTML;
+    echo '<li><span class="wpf2b-'.esc_attr($class_wpf2b).'"><span class="dashicons dashicons-'.esc_attr($class_dashicon).'"></span> '.wp_kses_post($blurb).'</span></li>';
 }
 
 /**
@@ -321,9 +320,9 @@ function about(): void
     <div id="post-body" class="metabox-holder columns-2">
       <div id="post-body-content">
         <div class="meta-box-sortables ui-sortable">
-          <?=$extra?>
+          <?=$extra // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped ?>
           <div class="postbox" id="4-4-0">
-            <h2>Version <?=WP_FAIL2BAN_VER2?></h2>
+            <h2>Version <?=WP_FAIL2BAN_VER2 // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static text ?></h2>
             <div class="inside">
               <section class="premium">
 
@@ -344,10 +343,10 @@ function about(): void
               <h3>Status</h3>
               <dl>
                 <?php if (wf_fs()->can_use_premium_code()): ?>
-                <dt><?=__('Database table', 'wp-fail2ban')?></dt>
-                <dd><?=$info['db']?></dd>
-                <dt><?=__('Cloudflare IPs', 'wp-fail2ban')?></dt>
-                <dd><?=$info['cloudflare']?></dd>
+                <dt><?=__('Database table', 'wp-fail2ban') // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- __() is a static translated string.?></dt>
+                <dd><?=$info['db'] // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Generated HTML ?></dd>
+                <dt><?=__('Cloudflare IPs', 'wp-fail2ban') // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- __() is a static translated string.?></dt>
+                <dd><?=$info['cloudflare'] // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Generated HTML ?></dd>
                 <?php endif; ?>
 
                 <?php if (!defined('WP_FAIL2BAN_SITE_HEALTH_SKIP_FILTERS')): ?>
@@ -399,6 +398,7 @@ function about(): void
                     }
 
                     if ($run_site_health) {
+                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- __() is a static translated string.
                         printf('</ul><p><span class="wpf2b-error"><span class="dashicons dashicons-star-filled"></span> %s</span></p>', __('Run Site Health Tool.', 'wp-fail2ban'));
                     } else {
                         echo '</ul>';
@@ -413,9 +413,9 @@ function about(): void
             <div class="inside">
               <h3>Add-Ons</h3>
               <dl>
-                <?=getBlocklistInfo()?>
-                <?=getContactForm7Info()?>
-                <?=getGravityFormsInfo()?>
+                <?=getBlocklistInfo() // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Generated HTML ?>
+                <?=getContactForm7Info() // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Generated HTML ?>
+                <?=getGravityFormsInfo() // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Generated HTML ?>
               </dl>
             </div>
           </div>
@@ -437,6 +437,7 @@ function about(): void
  */
 function logo_box(array $args): void
 {
+    // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Static text
     ?>
           <div class="postbox alt">
             <img src="<?=$args['logo']?>"?>
@@ -450,5 +451,6 @@ function logo_box(array $args): void
             </div>
           </div>
     <?php
+    // phpcs:enable
 }
 

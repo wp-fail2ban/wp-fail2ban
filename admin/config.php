@@ -141,10 +141,12 @@ function render_tabs(array $tabs, string $menu, string $title = null): void
 
     ?>
 <div class="wrap" id="wp-fail2ban" style="margin-top: 0">
-    <?=apply_filters(__METHOD__.'.title', sprintf('<h1>%s</h1>', $title))?>
-  <hr class="wp-header-end">
+    <?=apply_filters(__METHOD__.'.title', sprintf('<h1>%s</h1>', $title)) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Always static, may contain HTML ?>
+    <div class="wp-fail2ban-columns">
+        <div class="content-column" style="flex: 1;">
+            <hr class="wp-header-end">
 
-  <h2 class="nav-tab-wrapper wp-clearfix">
+            <h2 class="nav-tab-wrapper wp-clearfix">
     <?php
     foreach ($tabs as $slug) {
         $class = 'nav-tab';
@@ -155,10 +157,15 @@ function render_tabs(array $tabs, string $menu, string $title = null): void
             'page' => $menu,
             'tab' => $slug
         ]);
-        printf('<a class="%s" href="?%s">%s</a>', $class, http_build_query($params), TabBase::getTabName($slug));
+        printf(
+            '<a class="%s" href="?%s">%s</a>',
+            $class, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Always static
+            http_build_query($params), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already urlencoded
+            TabBase::getTabName($slug) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Always static
+        );
     }
     ?>
-  </h2>
+            </h2>
 
     <?php
     // Because the settings API was never finished we need an ugly hack
@@ -167,16 +174,17 @@ function render_tabs(array $tabs, string $menu, string $title = null): void
         admin_url(is_network_admin()
             ? 'admin-post.php'
             : 'options.php'),
-        $active_tab->getSlug()
+        $active_tab->getSlug() // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Always static
     );
     ?>
 
-  <form action="<?=$action?>" method="post">
+            <form action="<?=$action // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped ?>" method="post">
     <?php
     settings_fields('wp-fail2ban');
-    $active_tab->render();
-    ?>
-  </form>
+        $active_tab->render();
+        ?>
+            </form>
+        </div>
 </div>
     <?php
 }

@@ -13,6 +13,7 @@ use          org\lecklider\charles\wordpress\wp_fail2ban\Syslog;
 
 use function org\lecklider\charles\wordpress\wp_fail2ban\bail;
 use function org\lecklider\charles\wordpress\wp_fail2ban\core\remote_addr;
+use function org\lecklider\charles\wordpress\wp_fail2ban\prevent_keepalive;
 
 defined('ABSPATH') or exit;
 
@@ -55,6 +56,7 @@ function xmlrpc_login_error(\IXR_Error $error, \WP_Error $user): \IXR_Error
  *
  * @see \wp_xmlrpc_server::pingback_error()
  *
+ * @since  5.5.0    Close keep-alive connections
  * @since  5.2.0    Use default facility
  * @since  4.4.0    Add type hints, return type
  * @since  4.3.0    Added action
@@ -71,7 +73,9 @@ function xmlrpc_login_error(\IXR_Error $error, \WP_Error $user): \IXR_Error
 function xmlrpc_pingback_error(\IXR_Error $ixr_error): \IXR_Error
 {
     if (48 !== $ixr_error->code) {
-        Syslog::single(LOG_NOTICE, 'Pingback error '.$ixr_error->code.' generated');
+        prevent_keepalive();
+
+        Syslog::single(LOG_NOTICE, 'Pingback error '.$ixr_error->code.' generated', 'WP_FAIL2BAN_PINGBACK_LOG');
 
         do_action(__FUNCTION__, $ixr_error);
     }

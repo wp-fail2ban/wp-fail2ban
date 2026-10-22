@@ -86,10 +86,7 @@ abstract class TabLoggingBase extends TabBase
     protected function log(string $define_name, string $define_log, array $toggle = [], bool $echo = true): string
     {
         $enabled = (true === Config::get($define_name)); // @TODO
-        $fmt = <<< HTML
-<input type="checkbox" disabled="disabled" %s> <label>%s</label>,
-<label>%s:</label> %s
-HTML;
+        $fmt = '<input type="checkbox" disabled="disabled" %s> <label>%s</label>,<label>%s:</label> %s';
         $html = sprintf(
             $fmt,
             checked($enabled, true, false),
@@ -98,9 +95,10 @@ HTML;
             $this->getLogFacilities($define_log)
         );
         $html .= sprintf('<p class="description">%s</p>', Config::desc($define_name));
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Plugin Check strips leading "wp_" from the slug and wrongly rejects the "wp_fail2ban" prefix.
         $rv = apply_filters("wp_fail2ban_log_{$define_name}", $html, $define_name, $define_log);
         if ($echo) {
-            echo $rv;
+            echo $rv; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Generated HTML
         }
         return $rv;
     }

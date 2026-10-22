@@ -12,6 +12,8 @@ use       org\lecklider\charles\wordpress\wp_fail2ban\Syslog;
 
 defined('ABSPATH') or exit;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Plugin Check strips leading "wp_" from the slug and wrongly rejects the "wp_fail2ban" prefix.
+
 /**
  * Register plugin
  *
