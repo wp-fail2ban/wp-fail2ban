@@ -5,7 +5,7 @@
  * @package wp-fail2ban
  * @since   5.0.0
  *
- * Auto-generated: 2026-10-20T17:42:38+00:00
+ * Auto-generated: 2026-11-12T11:50:03+00:00
  */
 namespace    org\lecklider\charles\wordpress\wp_fail2ban;
 
@@ -38,6 +38,22 @@ define('WP_FAIL2BAN_HASHES', array (
   array (
     'extra' => '4.3.0-RC4',
   ),
+  '38da5876aaccf29070ec663867cd4c352e748e41' => 
+  array (
+    'waf' => '6.2.0',
+  ),
+  '0f9b888bc0b3b5fa5d1d6c197017182f13500a50' => 
+  array (
+    'hard' => '6.2.0',
+  ),
+  '531873620f65b8ebab1ea4599230cb787cc2505f' => 
+  array (
+    'soft' => '6.2.0',
+  ),
+  'a6ac26e7d4ba685b80966adcfb6299b178a13386' => 
+  array (
+    'extra' => '6.2.0',
+  ),
   'a002f3c21da522ca8b00bb0b13e7c3256682c315' => 
   array (
     'wordpress' => '1.1',
@@ -65,6 +81,22 @@ define('WP_FAIL2BAN_HASHES', array (
   '3549f202ab231e8cab5a84b67b844f4515380cc6' => 
   array (
     'extra' => '4.3.2.1',
+  ),
+  '2cc19a77339ceefe10e098a2944b5c13351ee5d0' => 
+  array (
+    'waf' => '6.0.1',
+  ),
+  'b331c4fac8e3eff58dfbae40b25f6d2cc43d405e' => 
+  array (
+    'hard' => '6.0.1',
+  ),
+  '1861ee3ba9c51e346241d74ec2cc9a1e36a0e465' => 
+  array (
+    'soft' => '6.0.1',
+  ),
+  'f2231d54a2379d76bd38875be01097e016b0ee4a' => 
+  array (
+    'extra' => '6.0.1',
   ),
   '5b90e7058aa56ee54957c971d4b5d917de8b2882' => 
   array (
@@ -241,6 +273,22 @@ define('WP_FAIL2BAN_HASHES', array (
   'f35c36b38035e5ffafbfa87974b4f96665ddd499' => 
   array (
     'extra' => '4.3.0.2',
+  ),
+  'e0792dcba04db2a30607c3f02dcc6ab65ff46ab7' => 
+  array (
+    'waf' => '6.1.0',
+  ),
+  '07f829932265e92b96d02fbd04fd01da3afd1ce5' => 
+  array (
+    'hard' => '6.1.0',
+  ),
+  '405dd68ed2870e3f6ac8c4806ae71cbc42bffd64' => 
+  array (
+    'soft' => '6.1.0',
+  ),
+  'fbaabe7cda955fc323ea89a4693795d8b279cd38' => 
+  array (
+    'extra' => '6.1.0',
   ),
   'bb7a6d1a2a542a1399fc04834206ee57165f7930' => 
   array (
@@ -426,6 +474,22 @@ define('WP_FAIL2BAN_HASHES', array (
   array (
     'hard' => '3.0.1',
   ),
+  '86aeca088568b4c38ed9bf5a87dd50d453a40ba2' => 
+  array (
+    'waf' => '6.0.0',
+  ),
+  'bab1e4fa493e7eb16bf54108fd11006267a83a77' => 
+  array (
+    'hard' => '6.0.0',
+  ),
+  'ffea2f3a61c7cb36512762f927c5faedaa1b6b39' => 
+  array (
+    'soft' => '6.0.0',
+  ),
+  '9169f07982d0e300b45fd8575d06b5c858a25f72' => 
+  array (
+    'extra' => '6.0.0',
+  ),
   'cffac76722c9b77bcb161e27ba95819ec664f1c7' => 
   array (
     'hard' => '4.2.6',
@@ -465,6 +529,34 @@ define('WP_FAIL2BAN_HASHES', array (
   '7b4b84aaadf1ef88b981bacafeef366f45b61937' => 
   array (
     'extra' => '4.3.0.3',
+  ),
+  'fd786184f5516254ab34a42af6b21c197614153d' => 
+  array (
+    'waf' => '6.2.1',
+  ),
+  'd3c6511cf3d94517cc517d366d784fbfaa33dddb' => 
+  array (
+    'hard' => '6.2.1',
+  ),
+  '7b9eea05e809996027f4791a79bfe4c463d12959' => 
+  array (
+    'soft' => '6.2.1',
+  ),
+  '0eaaf47c8a6b468cb954aab95291edcd54e62b2b' => 
+  array (
+    'extra' => '6.2.1',
+  ),
+  '3f29ce7d38bcaf41e2ba42c0dad7903d49ffd9c2' => 
+  array (
+    'hard' => '5.5.0',
+  ),
+  'c5f0585bb941aa7b0ebbd1e91ca0f1fea9902857' => 
+  array (
+    'soft' => '5.5.0',
+  ),
+  'd73bd7ea531ecda9e51c6c018f268f20c9be4e09' => 
+  array (
+    'extra' => '5.5.0',
   ),
   '348e1ae494101e502b0b7127bc694671cbd5e208' => 
   array (

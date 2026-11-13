@@ -87,7 +87,7 @@ namespace org\lecklider\charles\wordpress\wp_fail2ban {
      *
      * @codeCoverageIgnore
      */
-    function syslog(int $level, string $msg, string $remote_addr = null): bool
+    function syslog(int $level, string $msg, ?string $remote_addr = null): bool
     {
         return Syslog::write($level, $msg, $remote_addr);
     }

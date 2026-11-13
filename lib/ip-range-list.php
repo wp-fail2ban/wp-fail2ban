@@ -36,7 +36,7 @@ class IpRangeList implements \ArrayAccess, \Countable, \Iterator
      * @param  array        $ranges
      * @param  string|null  $cacheTag
      */
-    public function __construct(array $ranges, string $cacheTag = null)
+    public function __construct(array $ranges, ?string $cacheTag = null)
     {
         $canCache = (!is_null($cacheTag) &&
                      class_exists(__NAMESPACE__.'\\premium\\WPf2b') &&

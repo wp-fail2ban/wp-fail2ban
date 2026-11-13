@@ -172,6 +172,7 @@ function wp_login(string $user_login, $user): void
  * @since  1.0.0
  *
  * @param  string   $username
+ * @param  mixed    $error       Ignored. Present so PHP 8 accepts the hook's second argument.
  *
  * @return void
  *
@@ -182,7 +183,7 @@ function wp_login(string $user_login, $user): void
  * @wp-f2b-soft XML-RPC authentication failure for .*
  * @wp-f2b-soft Authentication attempt for unknown user .*
  */
-function wp_login_failed(string $username): void
+function wp_login_failed(string $username, $error = null): void
 {
     prevent_keepalive();
 

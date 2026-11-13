@@ -12,7 +12,7 @@
  * Plugin Name:       WP fail2ban
  * Plugin URI:        https://wp-fail2ban.com/
  * Description:       Write a myriad of WordPress events to syslog for integration with fail2ban.
- * Version:           5.5.0
+ * Version:           5.5.1
  * Author:            Charles Lecklider
  * Author URI:        https://invis.net/
  * License:           GPLv3
@@ -20,6 +20,7 @@
  * Network:           true
  * GitHub Plugin URI: wp-fail2ban/wp-fail2ban
  * Update URI:        https://github.com/wp-fail2ban/wp-fail2ban
+ * Requires at least: 5.3
  * Requires PHP:      7.4
  *
  */

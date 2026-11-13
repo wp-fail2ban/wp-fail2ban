@@ -238,7 +238,7 @@ abstract class TabBase
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function sanitize(array $input = null): array
+    public function sanitize(?array $input = null): array
     {
         return [];
     }
@@ -525,7 +525,7 @@ HTML;
      *
      * @return string
      */
-    protected function field_id(string $define, string $suffix = null): string
+    protected function field_id(string $define, ?string $suffix = null): string
     {
         global $wp_fail2ban;
 
@@ -617,7 +617,7 @@ HTML;
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function radio($define, bool $show_desc = true, string $plan = 'bronze', bool $echo = true): string
+    protected function radio($define, bool $show_desc = true, string $plan = 'bronze', bool $echo = true, string $cssClass = ''): string
     {
         global $wp_fail2ban;
 
@@ -658,7 +658,7 @@ HTML;
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function inputText(string $define, bool $show_desc = true, string $plan = 'bronze', bool $echo = true, string $value = null, string $cssClass = 'regular-text', string $type = 'text'): string
+    protected function inputText(string $define, bool $show_desc = true, string $plan = 'bronze', bool $echo = true, ?string $value = null, string $cssClass = 'regular-text', string $type = 'text'): string
     {
         if (is_null($value)) {
             $value = Config::get($define);
@@ -699,7 +699,7 @@ HTML;
         bool $show_desc = true,
         string $plan = 'bronze',
         bool $echo = true,
-        string $value = null,
+        ?string $value = null,
         string $cssClass = 'regular-text'
     ) : string {
         return $this->inputText($define, $show_desc, $plan, $echo, $value, $cssClass, 'email');
@@ -725,7 +725,7 @@ HTML;
         bool $show_desc = true,
         string $plan = 'bronze',
         bool $echo = true,
-        string $value = null,
+        ?string $value = null,
         string $cssClass = 'regular-text'
     ) : string {
         return $this->inputText($define, $show_desc, $plan, $echo, $value, $cssClass, 'password');

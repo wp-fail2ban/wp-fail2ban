@@ -132,7 +132,7 @@ function settings(): void
  *
  * @return void
  */
-function render_tabs(array $tabs, string $menu, string $title = null): void
+function render_tabs(array $tabs, string $menu, ?string $title = null): void
 {
     if (is_null($title)) {
         $title = __('Settings', 'wp-fail2ban');

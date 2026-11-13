@@ -69,8 +69,8 @@ class IP
      * @param  bool         $throw
      * @param  string       $msg
      *
-     * @throw  InvalidIpException
-     * @throw  \RuntimeException
+     * @throws InvalidIpException
+     * @throws \RuntimeException
      */
     public function __construct(?string $ip, bool $throw = false, string $msg = '')
     {
@@ -291,7 +291,7 @@ class IP
      *
      * @return bool
      */
-    public function inRanges(array $ranges, string $cacheTag = null): bool
+    public function inRanges(array $ranges, ?string $cacheTag = null): bool
     {
         $rv = false;
 

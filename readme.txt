@@ -1,11 +1,11 @@
 === WP fail2ban - Advanced Security ===
 Contributors: invisnet
-Author URI: https://invis.net/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0
-Plugin URI: https://wp-fail2ban.com/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0
+Author URI: https://invis.net/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1
+Plugin URI: https://wp-fail2ban.com/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1
 Tags: fail2ban, login, security, syslog, brute force, protection
-Requires at least: 4.2
+Requires at least: 5.3
 Tested up to: 7.1
-Stable tag: 5.5.0
+Stable tag: 5.5.1
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -30,7 +30,7 @@ The Free edition covers the attacks WordPress sites see every day:
 * **Pingbacks and trackbacks** — turns abusive or failed requests into useful signals for `fail2ban`.
 * **Blocklist** — the free Blocklist can stop known hostile IP addresses *before* they attack your site.
 
-**[Need more protection? See what Premium adds →](https://wp-fail2ban.com/premium/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0)**
+**[Need more protection? See what Premium adds →](https://wp-fail2ban.com/premium/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1)**
 
 = How WP fail2ban works =
 
@@ -60,7 +60,7 @@ Premium goes beyond `fail2ban`.
 
 Premium also adds controls including geo‑blocking, XML‑RPC restrictions, honeypots, and safeguards around sensitive WordPress operations.
 
-[See Premium plans and pricing →](https://wp-fail2ban.com/pricing/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0)
+[See Premium plans and pricing →](https://wp-fail2ban.com/pricing/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1)
 
 Your firewall can stop an IP address, but it cannot see what that address is doing inside WordPress. WP fail2ban fills that gap: the Free edition gives `fail2ban` the information it needs to act on everyday abuse, while Premium adds protection and intelligence that go beyond `fail2ban`.
 
@@ -98,7 +98,7 @@ That means your firewall can block an address before it attacks your site, rathe
 
 The Blocklist is built from WP fail2ban’s own data, not third-party threat feeds. The Free edition receives a reduced list; Premium receives the full current intelligence available for your site.
 
-[Learn more about the WP fail2ban Blocklist add-on →](https://wp-fail2ban.com/features/miscellaneous/blocklist/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0)
+[Learn more about the WP fail2ban Blocklist add-on →](https://wp-fail2ban.com/features/miscellaneous/blocklist/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1)
 
 = Why is the WordPress.org edition 5.x while Premium is 6.x? =
 
@@ -114,7 +114,7 @@ The Free edition covers the everyday WordPress abuse most sites need `fail2ban` 
 
 Premium goes further with the full Blocklist, the Web Application Firewall, persistent event history, geo‑blocking, maintained security data, and additional controls.
 
-[Compare all Free and Premium features →](https://wp-fail2ban.com/features/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0)
+[Compare all Free and Premium features →](https://wp-fail2ban.com/features/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1)
 
 = Is WP fail2ban a firewall? =
 
@@ -150,7 +150,7 @@ Free lets you configure trusted proxy networks yourself. Premium can keep Cloudf
 
 The `CF-Connecting-IP` header is not used to determine the client address. WP fail2ban only uses it as a signal that a site appears to be behind Cloudflare, so it can recommend the appropriate QuickStart configuration.
 
-[Read more about how WP fail2ban handles client IP addresses →](https://wp-fail2ban.com/features/miscellaneous/client-ip/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0)
+[Read more about how WP fail2ban handles client IP addresses →](https://wp-fail2ban.com/features/miscellaneous/client-ip/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1)
 
 = Does WP fail2ban send my security data anywhere? =
 
@@ -174,7 +174,7 @@ WP fail2ban has two parts to set up: WordPress needs to generate the events, and
 2. The Free edition is configured in `wp‑config.php`. The defaults are a good starting point; change them only where your site needs different behaviour.
 3. Check the WP fail2ban settings pages to see the effective configuration.
 
-[Configure WP fail2ban →](https://docs.wp-fail2ban.com/en/5.5/configuration.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0)
+[Configure WP fail2ban →](https://docs.wp-fail2ban.com/en/5.5/configuration.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1)
 
 = fail2ban =
 
@@ -184,11 +184,16 @@ The hard filter is for events that can normally be banned immediately. The soft 
 
 Exactly where `fail2ban` reads its logs depends on your operating system and whether it uses traditional syslog files or the systemd journal, so use the installation documentation for the current examples.
 
-[Configure fail2ban →](https://docs.wp-fail2ban.com/en/5.5/configuration/fail2ban.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0)
+[Configure fail2ban →](https://docs.wp-fail2ban.com/en/5.5/configuration/fail2ban.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1)
 
 Once both sides are configured, test the installation before relying on it.
 
 == Changelog ==
+
+= 5.5.1-LTS =
+* Fix admin menu icon alignment with dashicons. [Back-port from 6.3.0]
+* Fix PHP>=8.4 warnings.
+* Skip Site Health checks that cannot run, and report when `fail2ban` status cannot be determined. [Back-port from 6.3.0]
 
 = 5.5.0-LTS =
 * Add support for closing keep-alive connections on blocked and failed requests (was Premium only).
@@ -317,9 +322,9 @@ Please [read the notes](https://wp-fail2ban.com/blog/2023/01/16/upgrading-to-ver
 * Fix type error (h/t @brianshim).
 
 = 4.4.0.2 =
-* Add [`WP_FAIL2BAN_USE_AUTHPRIV`](https://docs.wp-fail2ban.com/en/4.4/defines/WP_FAIL2BAN_USE_AUTHPRIV.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) - a single place to switch to `LOG_AUTHPRIV` for systems without `LOG_AUTH`.
-* Add [`WP_FAIL2BAN_FREE_ONLY`](https://docs.wp-fail2ban.com/en/4.4/defines/WP_FAIL2BAN_FREE_ONLY.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [`WP_FAIL2BAN_PLUGIN_LOG_OTHER`](https://docs.wp-fail2ban.com/en/4.4/defines/WP_FAIL2BAN_PLUGIN_LOG_OTHER.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) and [`WP_FAIL2BAN_PLUGIN_OTHER_LOG`](https://docs.wp-fail2ban.com/en/4.4/defines/WP_FAIL2BAN_PLUGIN_OTHER_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Add [`WP_FAIL2BAN_USE_AUTHPRIV`](https://docs.wp-fail2ban.com/en/4.4/defines/WP_FAIL2BAN_USE_AUTHPRIV.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) - a single place to switch to `LOG_AUTHPRIV` for systems without `LOG_AUTH`.
+* Add [`WP_FAIL2BAN_FREE_ONLY`](https://docs.wp-fail2ban.com/en/4.4/defines/WP_FAIL2BAN_FREE_ONLY.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [`WP_FAIL2BAN_PLUGIN_LOG_OTHER`](https://docs.wp-fail2ban.com/en/4.4/defines/WP_FAIL2BAN_PLUGIN_LOG_OTHER.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) and [`WP_FAIL2BAN_PLUGIN_OTHER_LOG`](https://docs.wp-fail2ban.com/en/4.4/defines/WP_FAIL2BAN_PLUGIN_OTHER_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 * Improve performance.
 * Moved cron event to update trusted Cloudflare IP ranges to the Cloudflare add-on. [Premium only]
 * Add support for Pingbacks while blocking XML‑RPC. [Premium only]
@@ -335,7 +340,7 @@ Please [read the notes](https://wp-fail2ban.com/blog/2023/01/16/upgrading-to-ver
 * Update Freemius library.
 
 = 4.3.2.1 =
-* Add support for [WP fail2ban Blocklist](https://addons.wp-fail2ban.com/blocklist/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Add support for [WP fail2ban Blocklist](https://addons.wp-fail2ban.com/blocklist/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 * Add new [Standard Configurations](https://github.com/wp-fail2ban/conf.d/).
 * Improve Help links.
 * Fix logging checkboxes [Premium only].
@@ -376,14 +381,14 @@ Please [read the notes](https://wp-fail2ban.com/blog/2023/01/16/upgrading-to-ver
 
 = 4.3.0.4 "Columbo" =
 * Add new dashboard widget: last 5 `syslog` messages.
-* Add full [multisite support](https://wp-fail2ban.com/features/multisite-networks/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [username login blocking](https://wp-fail2ban.com/features/block-username-logins/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) (force login with email).
-* Add [separate logging](https://wp-fail2ban.com/features/empty-username-logging/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) for login attempts with an empty username.
-* Improve [user enumeration blocking](https://wp-fail2ban.com/features/block-user-enumeration/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) compatibility with the WordPress block editor (Gutenberg).
+* Add full [multisite support](https://wp-fail2ban.com/features/multisite-networks/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [username login blocking](https://wp-fail2ban.com/features/block-username-logins/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) (force login with email).
+* Add [separate logging](https://wp-fail2ban.com/features/empty-username-logging/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) for login attempts with an empty username.
+* Improve [user enumeration blocking](https://wp-fail2ban.com/features/block-user-enumeration/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) compatibility with the WordPress block editor (Gutenberg).
 * Bump the minimum PHP version to 5.6.
 
 = 4.2.8 =
-* Add link to new [support forum](https://forums.invis.net/c/wp-fail2ban/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Add link to new [support forum](https://forums.invis.net/c/wp-fail2ban/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 * Fix user enumeration conflict with Gutenberg (h/t @dinghy).
 * Fix notices wrt admin menu (h/t @marioivangf).
 * Fix harmless XDebug notice (h/t @dinghy).
@@ -397,7 +402,7 @@ Please [read the notes](https://wp-fail2ban.com/blog/2023/01/16/upgrading-to-ver
 * Fix buttons on Settings tabs.
 
 = 4.2.6 =
-* Add support for [Remote Tools](https://wp-fail2ban.com/add-ons/remote-tools/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) add-on.
+* Add support for [Remote Tools](https://wp-fail2ban.com/add-ons/remote-tools/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) add-on.
 * Add support for the new ClassicPress security page.
 * Improved user enumeration blocking.
 
@@ -423,8 +428,8 @@ Please [read the notes](https://wp-fail2ban.com/blog/2023/01/16/upgrading-to-ver
 * Fix 5.3 compatibility.
 
 = 4.2.1 =
-* Completed support for [`WP_FAIL2BAN_COMMENT_EXTRA_LOG`](https://docs.wp-fail2ban.com/en/4.2/defines/WP_FAIL2BAN_COMMENT_EXTRA_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add support for 3rd-party plugins; see [Developers](https://docs.wp-fail2ban.com/en/4.2/developers.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Completed support for [`WP_FAIL2BAN_COMMENT_EXTRA_LOG`](https://docs.wp-fail2ban.com/en/4.2/defines/WP_FAIL2BAN_COMMENT_EXTRA_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add support for 3rd-party plugins; see [Developers](https://docs.wp-fail2ban.com/en/4.2/developers.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
   * Add-on for [Contact Form 7](https://wordpress.org/plugins/wp-fail2ban-addon-contact-form-7/) (experimental).
   * Add-on for [Gravity Forms](https://wordpress.org/plugins/wp-fail2ban-addon-gravity-forms/) (experimental).
 * Change logging for known-user with incorrect password; previously logged as unknown user and matched by `hard` filters (due to limitations in older versions of WordPress), now logged as known user and matched by `soft`.
@@ -436,11 +441,11 @@ Please [read the notes](https://wp-fail2ban.com/blog/2023/01/16/upgrading-to-ver
 
 = 4.1.0 =
 * Add separate logging for REST authentication.
-* Fix conflict with earlier versions preinstalled in `mu‑plugins`. See [Is *WPf2b* Already Installed?](https://docs.wp-fail2ban.com/en/4.1/installation.html#is-wp-fail2ban-already-installed?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Fix conflict with earlier versions preinstalled in `mu‑plugins`. See [Is *WPf2b* Already Installed?](https://docs.wp-fail2ban.com/en/4.1/installation.html#is-wp-fail2ban-already-installed?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 
 = 4.0.5 =
-* Add [`WP_FAIL2BAN_COMMENT_EXTRA_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_COMMENT_EXTRA_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [`WP_FAIL2BAN_PINGBACK_ERROR_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PINGBACK_ERROR_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) (future functionality).
+* Add [`WP_FAIL2BAN_COMMENT_EXTRA_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_COMMENT_EXTRA_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [`WP_FAIL2BAN_PINGBACK_ERROR_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PINGBACK_ERROR_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) (future functionality).
 * Change `WP_FAIL2BAN_LOG_SPAM` to use `LOG_NOTICE`.
 * Change `WP_FAIL2BAN_SPAM_LOG` to `LOG_AUTH`.
 * Change `WP_FAIL2BAN_LOG_COMMENTS_EXTRA` events to use `LOG_NOTICE` by default.
@@ -454,9 +459,9 @@ Please [read the notes](https://wp-fail2ban.com/blog/2023/01/16/upgrading-to-ver
 = 4.0.1 =
 * Add extra features via Freemius. **This is entirely optional.** *WPf2b* works as before, including new features listed here.
 * Add settings summary page (Settings -> WP fail2ban).
-* Add [`WP_FAIL2BAN_PASSWORD_REQUEST_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PASSWORD_REQUEST_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [`WP_FAIL2BAN_SPAM_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_SPAM_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [`WP_FAIL2BAN_LOG_COMMENTS_EXTRA`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_LOG_COMMENTS_EXTRA.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) - enable logging for attempted comments on posts which are:
+* Add [`WP_FAIL2BAN_PASSWORD_REQUEST_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PASSWORD_REQUEST_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [`WP_FAIL2BAN_SPAM_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_SPAM_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [`WP_FAIL2BAN_LOG_COMMENTS_EXTRA`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_LOG_COMMENTS_EXTRA.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) - enable logging for attempted comments on posts which are:
   * not found,
   * closed for commenting,
   * in the trash,
@@ -468,70 +473,70 @@ Please [read the notes](https://wp-fail2ban.com/blog/2023/01/16/upgrading-to-ver
 * Not released.
 
 = 3.6.0 =
-* The [filter files](https://docs.wp-fail2ban.com/en/4.1/filters.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) are now generated from PHPDoc in the code. There were too many times when the filters were out of sync with the code (programmer error) - this should resolve that by bringing the patterns closer to the code that emits them.
-* Added [PHPUnit tests](https://docs.wp-fail2ban.com/en/4.1/tests.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0). Almost 100% code coverage, with the exception of [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) which is quite hard to test properly.
-* Bug-fix for [`wordpress-soft.conf`](https://docs.wp-fail2ban.com/en/4.1/filters.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0#wordpress-soft-conf).
-* Add [`WP_FAIL2BAN_XMLRPC_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_XMLRPC_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [`WP_FAIL2BAN_REMOTE_ADDR`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_REMOTE_ADDR.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) now supports an array of IPs with PHP 7.
-* Moved all documentation to [https://docs.wp-fail2ban.com/](https://docs.wp-fail2ban.com/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* The [filter files](https://docs.wp-fail2ban.com/en/4.1/filters.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) are now generated from PHPDoc in the code. There were too many times when the filters were out of sync with the code (programmer error) - this should resolve that by bringing the patterns closer to the code that emits them.
+* Added [PHPUnit tests](https://docs.wp-fail2ban.com/en/4.1/tests.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1). Almost 100% code coverage, with the exception of [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) which is quite hard to test properly.
+* Bug-fix for [`wordpress-soft.conf`](https://docs.wp-fail2ban.com/en/4.1/filters.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1#wordpress-soft-conf).
+* Add [`WP_FAIL2BAN_XMLRPC_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_XMLRPC_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [`WP_FAIL2BAN_REMOTE_ADDR`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_REMOTE_ADDR.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) now supports an array of IPs with PHP 7.
+* Moved all documentation to [https://docs.wp-fail2ban.com/](https://docs.wp-fail2ban.com/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 
 = 3.5.3 =
-* Bug-fix for [`wordpress-hard.conf`](https://docs.wp-fail2ban.com/en/4.1/filters.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0#wordpress-hard-conf).
+* Bug-fix for [`wordpress-hard.conf`](https://docs.wp-fail2ban.com/en/4.1/filters.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1#wordpress-hard-conf).
 
 = 3.5.1 =
-* Bug-fix for [`WP_FAIL2BAN_BLOCK_USER_ENUMERATION`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCK_USER_ENUMERATION.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Bug-fix for [`WP_FAIL2BAN_BLOCK_USER_ENUMERATION`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCK_USER_ENUMERATION.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 
 = 3.5.0 =
-* Add [`WP_FAIL2BAN_OPENLOG_OPTIONS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_OPENLOG_OPTIONS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [`WP_FAIL2BAN_LOG_COMMENTS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_LOG_COMMENTS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) and [`WP_FAIL2BAN_COMMENT_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_COMMENT_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [`WP_FAIL2BAN_LOG_PASSWORD_REQUEST`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_LOG_PASSWORD_REQUEST.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [`WP_FAIL2BAN_LOG_SPAM`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_LOG_SPAM.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [`WP_FAIL2BAN_TRUNCATE_HOST`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_TRUNCATE_HOST.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* [`WP_FAIL2BAN_BLOCKED_USERS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCKED_USERS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) now supports an array of users with PHP 7.
+* Add [`WP_FAIL2BAN_OPENLOG_OPTIONS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_OPENLOG_OPTIONS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [`WP_FAIL2BAN_LOG_COMMENTS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_LOG_COMMENTS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) and [`WP_FAIL2BAN_COMMENT_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_COMMENT_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [`WP_FAIL2BAN_LOG_PASSWORD_REQUEST`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_LOG_PASSWORD_REQUEST.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [`WP_FAIL2BAN_LOG_SPAM`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_LOG_SPAM.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [`WP_FAIL2BAN_TRUNCATE_HOST`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_TRUNCATE_HOST.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* [`WP_FAIL2BAN_BLOCKED_USERS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCKED_USERS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) now supports an array of users with PHP 7.
 
 = 3.0.3 =
-* Fix regex in [`wordpress-hard.conf`](https://docs.wp-fail2ban.com/en/4.1/filters.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0#wordpress-hard-conf).
+* Fix regex in [`wordpress-hard.conf`](https://docs.wp-fail2ban.com/en/4.1/filters.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1#wordpress-hard-conf).
 
 = 3.0.2 =
 * Prevent double logging in WP 4.5.x for XML‑RPC authentication failure
 
 = 3.0.1 =
-* Fix regex in [`wordpress-hard.conf`](https://docs.wp-fail2ban.com/en/4.1/filters.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0#wordpress-hard-conf).
+* Fix regex in [`wordpress-hard.conf`](https://docs.wp-fail2ban.com/en/4.1/filters.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1#wordpress-hard-conf).
 
 = 3.0.0 =
-* Add [`WP_FAIL2BAN_SYSLOG_SHORT_TAG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_SYSLOG_SHORT_TAG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add [`WP_FAIL2BAN_HTTP_HOST`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_HTTP_HOST.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Add [`WP_FAIL2BAN_SYSLOG_SHORT_TAG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_SYSLOG_SHORT_TAG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add [`WP_FAIL2BAN_HTTP_HOST`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_HTTP_HOST.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 * Log XML‑RPC authentication failure.
 * Add better support for MU deployment.
 
 = 2.3.2 =
-* Bug-fix [`WP_FAIL2BAN_BLOCKED_USERS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCKED_USERS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Bug-fix [`WP_FAIL2BAN_BLOCKED_USERS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCKED_USERS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 
 = 2.3.0 =
-* Bug-fix in *experimental* [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) code (thanks to KyleCartmell).
+* Bug-fix in *experimental* [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) code (thanks to KyleCartmell).
 
 = 2.2.1 =
-* Fix stupid mistake with [`WP_FAIL2BAN_BLOCKED_USERS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCKED_USERS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Fix stupid mistake with [`WP_FAIL2BAN_BLOCKED_USERS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCKED_USERS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 
 = 2.2.0 =
-* Custom authentication log is now called [`WP_FAIL2BAN_AUTH_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_AUTH_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add logging for pingbacks; see [`WP_FAIL2BAN_LOG_PINGBACKS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_LOG_PINGBACKS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Custom pingback log is called [`WP_FAIL2BAN_PINGBACK_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PINGBACK_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Custom authentication log is now called [`WP_FAIL2BAN_AUTH_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_AUTH_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add logging for pingbacks; see [`WP_FAIL2BAN_LOG_PINGBACKS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_LOG_PINGBACKS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Custom pingback log is called [`WP_FAIL2BAN_PINGBACK_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PINGBACK_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 
 = 2.1.1 =
 * Minor bug-fix.
 
 = 2.1.0 =
-* Add support for blocking user enumeration; see [`WP_FAIL2BAN_BLOCK_USER_ENUMERATION`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCK_USER_ENUMERATION.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add support for CIDR notation in [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Add support for blocking user enumeration; see [`WP_FAIL2BAN_BLOCK_USER_ENUMERATION`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCK_USER_ENUMERATION.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add support for CIDR notation in [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 
 = 2.0.1 =
-* Bug-fix in *experimental* [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) code.
+* Bug-fix in *experimental* [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) code.
 
 = 2.0.0 =
-* Add *experimental* support for X-Forwarded-For header; see [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
-* Add *experimental* support for regex-based login blocking; see [`WP_FAIL2BAN_BLOCKED_USERS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCKED_USERS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+* Add *experimental* support for X-Forwarded-For header; see [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
+* Add *experimental* support for regex-based login blocking; see [`WP_FAIL2BAN_BLOCKED_USERS`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCKED_USERS.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 
 = 1.2.1 =
 * Update FAQ.
@@ -546,6 +551,9 @@ Please [read the notes](https://wp-fail2ban.com/blog/2023/01/16/upgrading-to-ver
 * Initial release.
 
 == Upgrade Notice ==
+
+= 5.5.1 =
+This is a bug-fix release.  You do not need to update your filters from 5.1.0.
 
 = 5.5.0 =
 This is a feature release. You do not need to update your filters from 5.1.0.
@@ -712,7 +720,7 @@ You will need up update your `fail2ban` filters.
 You will need up update your `fail2ban` filters.
 
 = 3.5.1 =
-Bug-fix: disable [`WP_FAIL2BAN_BLOCK_USER_ENUMERATION`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCK_USER_ENUMERATION.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0) in admin area....
+Bug-fix: disable [`WP_FAIL2BAN_BLOCK_USER_ENUMERATION`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_BLOCK_USER_ENUMERATION.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1) in admin area....
 
 = 3.5.0 =
 You will need up update your `fail2ban` filters.
@@ -724,13 +732,13 @@ You will need up update your `fail2ban` filters.
 BREAKING CHANGE: The `fail2ban` filters have been split into two files. You will need up update your `fail2ban` configuration.
 
 = 2.3.0 =
-Fix for [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0); if you’re not using it you can safely skip this release.
+Fix for [`WP_FAIL2BAN_PROXIES`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_PROXIES.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1); if you’re not using it you can safely skip this release.
 
 = 2.2.1 =
 Bug-fix.
 
 = 2.2.0 =
-BREAKING CHANGE:  `WP_FAIL2BAN_LOG` has been renamed to [`WP_FAIL2BAN_AUTH_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_AUTH_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.0).
+BREAKING CHANGE:  `WP_FAIL2BAN_LOG` has been renamed to [`WP_FAIL2BAN_AUTH_LOG`](https://docs.wp-fail2ban.com/en/4.1/defines/WP_FAIL2BAN_AUTH_LOG.html?utm_source=wordpress.org&utm_medium=readme&utm_campaign=wp-fail2ban-premium-5.5.1).
 
 Pingbacks are getting a lot of attention recently, so *WPf2b* can now log them.
 The `wordpress.conf` filter has been updated; you will need to update your `fail2ban` configuration.

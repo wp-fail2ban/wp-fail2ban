@@ -44,7 +44,7 @@ function plugins_loaded(): void
      *
      * @since 4.3.0
      */
-    add_action('authenticate', __NAMESPACE__.'\core\authenticate', 1, 3);
+    add_action('authenticate', __NAMESPACE__.'\core\authenticate', 1, 3); // @phpstan-ignore return.void
     add_action('wp_login', __NAMESPACE__.'\core\wp_login', 10, 2);
     add_action('wp_login_failed', __NAMESPACE__.'\core\wp_login_failed');
 
@@ -140,7 +140,7 @@ function plugins_loaded(): void
      *
      * @since 4.3.0
      */
-    add_action('wp_fail2ban_register_plugin', __NAMESPACE__.'\feature\register_plugin', 1, 2);
+    add_action('wp_fail2ban_register_plugin', __NAMESPACE__.'\feature\register_plugin', 1, 2); // @phpstan-ignore return.void
     add_action('wp_fail2ban_register_message', __NAMESPACE__.'\feature\register_message', 1, 2);
     add_action('wp_fail2ban_register_messages', __NAMESPACE__.'\feature\register_messages', 1, 2);
     add_action('wp_fail2ban_log_message', __NAMESPACE__.'\feature\log_message', 1, 3);
@@ -174,7 +174,7 @@ function init(): void
          * @since 3.0.0
          */
         if (defined('XMLRPC_REQUEST') && true === XMLRPC_REQUEST) {
-            add_action('xmlrpc_login_error', __NAMESPACE__.'\feature\xmlrpc_login_error', 10, 2);
+            add_action('xmlrpc_login_error', __NAMESPACE__.'\feature\xmlrpc_login_error', 10, 2); // @phpstan-ignore return.void
             add_filter('xmlrpc_pingback_error', __NAMESPACE__.'\feature\xmlrpc_pingback_error', 5);
 
             /**
@@ -200,7 +200,7 @@ function init(): void
      * @since 4.3.0 Relocate.
      * @since 4.2.5
      */
-    if (defined('WP_ADMIN') && WP_ADMIN) {
+    if (is_admin()) {
         require_once __DIR__.'/admin/admin.php'; // @codeCoverageIgnore
     }
 

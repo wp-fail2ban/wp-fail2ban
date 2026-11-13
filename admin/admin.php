@@ -180,7 +180,7 @@ function _security_settings(string $capability = 'manage_options'): void
  *
  * @return void
  */
-function _settings(string $page = null, string $capability = 'manage_options'): void
+function _settings(?string $page = null, string $capability = 'manage_options'): void
 {
     if ($hook = add_submenu_page(
         'wp-fail2ban-menu',
@@ -233,6 +233,25 @@ function admin_menu(): void
     }
 }
 add_action('admin_menu', __NAMESPACE__.'\admin_menu');
+
+/**
+ * Align the menu icon with dashicons.
+ *
+ * Core pads menu images 9px from the top; dashicons use 7px. Correct the
+ * image box so the mark shares the dashicon vertical center.
+ *
+ * @since  5.5.1
+ *
+ * @return void
+ */
+function admin_enqueue_scripts(): void
+{
+    wp_add_inline_style(
+        'admin-menu',
+        '#toplevel_page_wp-fail2ban-menu .wp-menu-image img{width:20px;height:20px;padding-top:7px;opacity:1}'
+    );
+}
+add_action('admin_enqueue_scripts', __NAMESPACE__.'\admin_enqueue_scripts');
 
 /**
  * Register network admin menus

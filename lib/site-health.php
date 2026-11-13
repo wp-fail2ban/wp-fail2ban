@@ -59,6 +59,40 @@ class SiteHealth
     }
 
     /**
+     * Is a PHP function unavailable via disable_functions?
+     *
+     * function_exists() remains true for disabled functions.
+     *
+     * @since  5.5.1
+     *
+     * @param  string $function
+     *
+     * @return bool
+     */
+    public static function is_function_disabled(string $function): bool
+    {
+        $disabled = array_map('trim', explode(',', (string) ini_get('disable_functions')));
+
+        return in_array($function, $disabled, true);
+    }
+
+    /**
+     * Can we attempt the fail2ban-running check?
+     *
+     * @since  5.5.1
+     *
+     * @return bool
+     */
+    public static function can_check_fail2ban_running(): bool
+    {
+        if (!function_exists('exec') || self::is_function_disabled('exec')) {
+            return false;
+        }
+
+        return file_exists('/usr/bin/systemctl');
+    }
+
+    /**
      * @see \WP_Site_Health::get_tests()
      *
      * @since  5.0.0
@@ -69,37 +103,44 @@ class SiteHealth
     {
         $instance = self::get_instance();
 
-        $tests['direct']['wp_fail2ban_mu_ensure_active'] = [
-            'label' => 'Ensure standard plugin activated when Must-Use',
-            'test'  => [$instance, 'get_test_mu_ensure_activated']
-        ];
+        // Side effect only: activate the normal plugin when running as Must-Use.
+        $instance->get_test_mu_ensure_activated();
 
-        $tests['direct']['wp_fail2ban_log_comments_extra_deprecaed'] = [
-            'label' => 'WP_FAIL2BAN_LOG_COMMENTS_EXTRA deprecated',
-            'test'  => [$instance, 'get_test_log_comments_extra_deprecated']
-        ];
-        $tests['direct']['wp_fail2ban_comments_extra_log_deprecaed'] = [
-            'label' => 'WP_FAIL2BAN_COMMENTS_EXTRA_LOG deprecated',
-            'test'  => [$instance, 'get_test_comments_extra_log_deprecated']
-        ];
-
-        $tests['direct']['wp_fail2ban_running'] = [
-            'label' => 'fail2ban running',
-            'test'  => [$instance, 'get_test_fail2ban_running']
+        if (Config::def('WP_FAIL2BAN_LOG_COMMENTS_EXTRA')) {
+            $tests['direct']['wp_fail2ban_log_comments_extra_obsolete'] = [
+                'label' => 'WP_FAIL2BAN_LOG_COMMENTS_EXTRA deprecated',
+                'test'  => [$instance, 'get_test_log_comments_extra_deprecated']
             ];
+        }
+        if (Config::def('WP_FAIL2BAN_COMMENTS_EXTRA_LOG')) {
+            $tests['direct']['wp_fail2ban_comments_extra_log_obsolete'] = [
+                'label' => 'WP_FAIL2BAN_COMMENTS_EXTRA_LOG deprecated',
+                'test'  => [$instance, 'get_test_comments_extra_log_deprecated']
+            ];
+        }
+
+        if (self::can_check_fail2ban_running()) {
+            $tests['direct']['wp_fail2ban_running'] = [
+                'label' => 'fail2ban running',
+                'test'  => [$instance, 'get_test_fail2ban_running']
+            ];
+        }
         if (!self::should_skip_filters()) {
             $tests['direct']['wp_fail2ban_filter_obsolete'] = [
                 'label' => 'WP fail2ban obsolete filters',
                 'test'  => [$instance, 'get_test_filter_obsolete']
             ];
-            $tests['direct']['wp_fail2ban_filter_modified'] = [
-                'label' => 'WP fail2ban modified filters',
-                'test'  => [$instance, 'get_test_filter_modified']
-            ];
-            $tests['direct']['wp_fail2ban_filter_missing'] = [
-                'label' => 'WP fail2ban missing filters',
-                'test'  => [$instance, 'get_test_filter_missing']
-            ];
+            // Modified/missing only make sense when the filter directory is reachable.
+            if (null !== self::get_fail2ban_path('filter.d')) {
+                $tests['direct']['wp_fail2ban_filter_modified'] = [
+                    'label' => 'WP fail2ban modified filters',
+                    'test'  => [$instance, 'get_test_filter_modified']
+                ];
+                $tests['direct']['wp_fail2ban_filter_missing'] = [
+                    'label' => 'WP fail2ban missing filters',
+                    'test'  => [$instance, 'get_test_filter_missing']
+                ];
+            }
         }
 
         return $tests;
@@ -108,11 +149,12 @@ class SiteHealth
     /**
      * Is the "normal" plugin activated if we're running as Must-Use?
      *
+     * @since  5.5.1    Side effect only; no longer registered as a Site Health test
      * @since  4.4.0.8
      *
-     * @return array    Empty
+     * @return void
      */
-    public function get_test_mu_ensure_activated()
+    public function get_test_mu_ensure_activated(): void
     {
         foreach (get_mu_plugins() as $plugin => $data) {
             if (0 === strpos($data['Name'], 'WP fail2ban')) {
@@ -132,8 +174,6 @@ class SiteHealth
                 break;
             }
         }
-
-        return false;
     }
 
     /**
@@ -176,7 +216,7 @@ class SiteHealth
                 )
             ),
             'actions'       => '',
-            'test'          => 'wp_fail2ban_log_comments_extra_deprecaed'
+            'test'          => 'wp_fail2ban_log_comments_extra_obsolete'
         ];
     }
 
@@ -220,7 +260,7 @@ class SiteHealth
                 )
             ),
             'actions'       => '',
-            'test'          => 'wp_fail2ban_comments_extra_log_deprecaed'
+            'test'          => 'wp_fail2ban_comments_extra_log_obsolete'
         ];
     }
 
@@ -426,14 +466,15 @@ class SiteHealth
      *
      * For now, just try systemctl.
      *
+     * @since  5.5.1    Recommended result when systemctl cannot be queried
      * @since  5.2.2    Check for exec
      * @since  5.1.0
      *
-     * @return array    The test result.
+     * @return array|false  The test result, or false when the check cannot be attempted.
      */
     public function get_test_fail2ban_running()
     {
-        if (!function_exists('exec')) {
+        if (!function_exists('exec') || !file_exists('/usr/bin/systemctl')) {
             return false;
         }
 
@@ -449,45 +490,69 @@ class SiteHealth
             'test'          => 'wp_fail2ban_running'
         ];
 
-        if (file_exists('/usr/bin/systemctl')) {
-            $output = [];
+        $output = [];
+        $rv = 0;
 
-            // get the active status; there is no output
-            if (false === exec('/usr/bin/systemctl is-active --quiet fail2ban', $output, $rv)) {
-                return false;
-            }
-            // get the status
-            if (false === exec('/usr/bin/systemctl status --quiet fail2ban', $output)) {
-                return false;
-            }
-
-            if ($rv) { // 0 is active
-                $results['label']       = __('fail2ban is not running', 'wp-fail2ban');
-                $results['status']      = 'critical';
-                $results['description'] = sprintf(
-                    /* translators: %s: fail2ban */
-                    __('%s is not running - your server is unprotected.', 'wp-fail2ban'),
-                    '<tt>fail2ban</tt>'
-                );
-                $results['actions']     = sprintf(
-                    '<p><a href="https://life-with.wp-fail2ban.com/core/maintenance/fail2ban/starting/digitalocean-wordpress-droplet/" target="_blank" rel="noopener">%s<span class="dashicons dashicons-external"></span></a></p>',
-                    sprintf(
-                        /* translators: %s: fail2ban */
-                        __('Enable %s', 'wp-fail2ban'),
-                        '<tt>fail2ban</tt>'
-                    )
-                );
-            }
-            $results['description'] .= '<pre>'.join("\n", $output).'</pre>';
-
-        } else {
-            // for now don't try anything else
-            return false;
+        // get the active status; there is no output
+        if (false === exec('/usr/bin/systemctl is-active --quiet fail2ban', $output, $rv)) {
+            return $this->couldNotDetermineFail2banRunning();
         }
+        // get the status
+        if (false === exec('/usr/bin/systemctl status --quiet fail2ban', $output)) {
+            return $this->couldNotDetermineFail2banRunning();
+        }
+
+        if ($rv) { // 0 is active
+            $results['label']       = __('fail2ban is not running', 'wp-fail2ban');
+            $results['status']      = 'critical';
+            $results['description'] = sprintf(
+                /* translators: %s: fail2ban */
+                __('%s is not running - your server is unprotected.', 'wp-fail2ban'),
+                '<tt>fail2ban</tt>'
+            );
+            $results['actions']     = sprintf(
+                '<p><a href="https://life-with.wp-fail2ban.com/core/maintenance/fail2ban/starting/digitalocean-wordpress-droplet/" target="_blank" rel="noopener">%s<span class="dashicons dashicons-external"></span></a></p>',
+                sprintf(
+                    /* translators: %s: fail2ban */
+                    __('Enable %s', 'wp-fail2ban'),
+                    '<tt>fail2ban</tt>'
+                )
+            );
+        }
+        $results['description'] .= '<pre>'.join("\n", $output).'</pre>';
 
         $results['label'] = self::PREFIX.$results['label'];
 
         return $results;
+    }
+
+    /**
+     * Recommended result when systemctl could not be queried.
+     *
+     * @since  5.5.1
+     *
+     * @return array
+     */
+    protected function couldNotDetermineFail2banRunning(): array
+    {
+        return [
+            'label'       => self::PREFIX.__('Could not determine whether fail2ban is running', 'wp-fail2ban'),
+            'status'      => 'recommended',
+            'badge'       => [
+                'label' => __('Security', 'wp-fail2ban'),
+                'color' => 'blue'
+            ],
+            'description' => sprintf(
+                '<p>%s</p>',
+                sprintf(
+                    /* translators: %s: fail2ban */
+                    __('The status of %s could not be checked from this server.', 'wp-fail2ban'),
+                    '<tt>fail2ban</tt>'
+                )
+            ),
+            'actions'     => '',
+            'test'        => 'wp_fail2ban_running'
+        ];
     }
 
     /**

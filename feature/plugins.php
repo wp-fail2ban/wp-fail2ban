@@ -245,7 +245,7 @@ function is_registered_plugin_message(string $plugin_slug, string $message_slug)
  *
  * @return void
  */
-function log_message(string $plugin_slug, string $message_slug = null, array $vars = []): void
+function log_message(string $plugin_slug, ?string $message_slug = null, array $vars = []): void
 {
     global $wp_fail2ban;
 
